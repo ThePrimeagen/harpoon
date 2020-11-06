@@ -56,7 +56,7 @@ nnoremap <leader>ce :call SendTerminalCommand(0, "cd ~/personal/VimDeathmatch/se
 
 
 That means when I am in Deathmatch and I want to test my current file I press
-<leader>ce and it will open a terminal if there isn't one opened and execute
+`<leader>ce` and it will open a terminal if there isn't one opened and execute
 the commands.  I could of made that command a lot better, I was just in a hurry
 :)  Forgive me.
 
