@@ -21,6 +21,14 @@ fun! GotoBuffer(ctrlId)
     end
 
     let bufh = l:contents[1]
+    if !bufexists(bufh)
+        " Create the terminal
+        terminal
+        call SetBuffer(a:ctrlId)
+    endif
+
+    let contents = g:win_ctrl_buf_list[a:ctrlId]
+    let bufh = l:contents[1]
     call nvim_win_set_buf(0, l:bufh)
 endfun
 
@@ -55,7 +63,3 @@ fun! SendTerminalCommand(ctrlId, command)
     let job_id = l:contents[0]
     call chansend(l:job_id, a:command)
 endfun
-
-
-
-
