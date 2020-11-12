@@ -12,7 +12,7 @@ fun! GotoBuffer(ctrlId)
     let contents = g:win_ctrl_buf_list[a:ctrlId]
     if type(l:contents) != v:t_list
         " Create the terminal
-        terminal
+        exe has("nvim") ? "terminal" : "terminal ++curwin"
         call SetBuffer(a:ctrlId)
     end
     let contents = g:win_ctrl_buf_list[a:ctrlId]
@@ -23,17 +23,17 @@ fun! GotoBuffer(ctrlId)
     let bufh = l:contents[1]
     if !bufexists(bufh)
         " Create the terminal
-        terminal
+        exe has("nvim") ? "terminal" : "terminal ++curwin"
         call SetBuffer(a:ctrlId)
     endif
 
     let contents = g:win_ctrl_buf_list[a:ctrlId]
     let bufh = l:contents[1]
-    call nvim_win_set_buf(0, l:bufh)
+    exe "b" . l:bufh
 endfun
 
 fun! SetBuffer(ctrlId)
-    if has_key(b:, "terminal_job_id") == 0
+    if &buftype != "terminal"
         echo "You must be in a terminal to execute this command"
         return
     end
@@ -42,7 +42,7 @@ fun! SetBuffer(ctrlId)
         return
     end
 
-    let g:win_ctrl_buf_list[a:ctrlId] = [b:terminal_job_id, nvim_win_get_buf(0)]
+    let g:win_ctrl_buf_list[a:ctrlId] = [has_key(b:, "terminal_job_id") ? b:terminal_job_id : 0, bufnr()]
 endfun
 
 fun! SendTerminalCommand(ctrlId, command)
@@ -60,6 +60,11 @@ fun! SendTerminalCommand(ctrlId, command)
         echo "Unable to send command to terminal"
     end
 
-    let job_id = l:contents[0]
-    call chansend(l:job_id, a:command)
+    if has("nvim")
+        let job_id = l:contents[0]
+        call chansend(l:job_id, a:command)
+    else
+        let bufh = l:contents[1]
+        call term_sendkeys(l:bufh, a:command)
+    endif
 endfun
