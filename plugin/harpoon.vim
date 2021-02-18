@@ -3,7 +3,7 @@
 " How to do this but much better?
 let g:win_ctrl_buf_list = [0, 0, 0, 0]
 
-fun! GotoBuffer(ctrlId)
+fun! Harpoon_GotoTerminal(ctrlId)
     if (a:ctrlId > 9) || (a:ctrlId < 0)
         echo "CtrlID must be between 0 - 9"
         return
@@ -13,7 +13,7 @@ fun! GotoBuffer(ctrlId)
     if type(l:contents) != v:t_list
         " Create the terminal
         exe has("nvim") ? "terminal" : "terminal ++curwin"
-        call SetBuffer(a:ctrlId)
+        call Harpoon_SetTerminal(a:ctrlId)
     end
     let contents = g:win_ctrl_buf_list[a:ctrlId]
     if type(l:contents) != v:t_list
@@ -24,7 +24,7 @@ fun! GotoBuffer(ctrlId)
     if !bufexists(bufh)
         " Create the terminal
         exe has("nvim") ? "terminal" : "terminal ++curwin"
-        call SetBuffer(a:ctrlId)
+        call Harpoon_SetTerminal(a:ctrlId)
     endif
 
     let contents = g:win_ctrl_buf_list[a:ctrlId]
@@ -32,7 +32,7 @@ fun! GotoBuffer(ctrlId)
     exe "b" . l:bufh
 endfun
 
-fun! SetBuffer(ctrlId)
+fun! Harpoon_SetTerminal(ctrlId)
     if &buftype != "terminal"
         echo "You must be in a terminal to execute this command"
         return
@@ -45,7 +45,7 @@ fun! SetBuffer(ctrlId)
     let g:win_ctrl_buf_list[a:ctrlId] = [has_key(b:, "terminal_job_id") ? b:terminal_job_id : 0, bufnr()]
 endfun
 
-fun! SendTerminalCommand(ctrlId, command)
+fun! Harpoon_SendTerminalCommand(ctrlId, command)
     if (a:ctrlId > 9) || (a:ctrlId < 0)
         echo "CtrlID must be between 0 - 9"
         return
