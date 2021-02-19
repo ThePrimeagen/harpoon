@@ -185,5 +185,8 @@ M.get_length = function()
     return #marked_files
 end
 
+M.setup = function() 
+end
+
 return M
 

@@ -1,8 +1,15 @@
 # harpoon
-Harpoon is a terminal navigator for Neovim (currently, but I want vim to work
-as well).  Harpoon itself does not provide much for functionality other than
-goto a terminal, set a terminal, and sending commands.  Where it shines is in
-local configs.
+The goal of Harpoon is to get you where you want with the fewest keystrokes.
+
+## The Problem
+You work on code.  The code base is medium, large, tiny, whatever.  You find
+yourself frequenting a small set of files (maybe it depends on task) and you
+are tired of using a fuzzy finder, :bnext/prev, alternate file doesn't quite
+cut it, etc etc.
+
+## The Solution
+The ability to specify, or on the fly, mark and create persisting key strokes
+to go to the files you want.  This includes terminal navigation.
 
 ## Installation
 Simply install via your favorite plugin manager.
