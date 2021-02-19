@@ -51,7 +51,7 @@ function get_index_of(item)
     end
     if type(item) == 'string' then
         for idx = 1, #marked_files do
-            if marked_files[idx] == item then
+           if marked_files[idx] == item then
                 return idx
             end
         end
