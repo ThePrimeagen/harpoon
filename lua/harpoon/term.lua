@@ -3,9 +3,8 @@ local cwd = cwd or vim.loop.cwd()
 
 local M = {}
 
-harpoon_terminal_config = { }
-harpoon_terminals = {}
-harpoon_init = false
+local terminal_config = { }
+local terminals = {}
 
 function create_terminal() 
     local current_id = vim.fn.bufnr()
@@ -38,26 +37,39 @@ lua require("harpoon").setup({
 --]]
 
 function getCmd(idx) 
-    local commandSet = harpoon_terminal_config[cwd]
+    local commandSet = terminal_config[cwd]
     if not commandSet then
         return nil
     end
     return commandSet[idx]
 end
 
-M.setup = function(config)
-
-    local expanded_config = {}
-    for k in pairs(config.terminal) do
-        local expanded_path = Path.new(k):expand()
-        expanded_config[expanded_path] = config.terminal[k]
+--[[
+{
+    projects: {
+        "/path/to/dir": {
+            term: {
+                cmds: string[],
+                ... top level settings .. (we don't have)
+            }
+            mark: {
+                marks: string[], // very skept -- has odd behavior
+                ... top level settings .. (we don't have)
+            }
+        }
+    }
+}
+--]]
+M.setup = function(config) 
+    if not config.projects[cwd] then
+        terminal_config = {}
+    else 
+        terminal_config = config.projects[cwd].term
     end
-
-    harpoon_terminal_config = expanded_config or {}
 end
 
 M.gotoTerminal = function(idx) 
-    local term_handle = harpoon_terminals[idx]
+    local term_handle = terminals[idx]
 
     if not term_handle then
         local buf_id, term_id = create_terminal()
@@ -68,18 +80,18 @@ M.gotoTerminal = function(idx)
             buf_id = buf_id,
             term_id = term_id
         }
-        harpoon_terminals[idx] = term_handle
+        terminals[idx] = term_handle
     end
 
     vim.api.nvim_set_current_buf(term_handle.buf_id)
 end
 
 M.sendCommand = function(idx, cmd) 
-    local term_handle = harpoon_terminals[idx]
+    local term_handle = terminals[idx]
 
     if not term_handle then
         M.gotoTerminal(idx)
-        term_handle = harpoon_terminals[idx]
+        term_handle = terminals[idx]
     end
 
     if type(cmd) == "number" then

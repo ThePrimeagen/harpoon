@@ -2,15 +2,33 @@ local Path = require('plenary.path')
 
 local M = {}
 
-harpoon_win_id = nil
-harpoon_bufh = nil
-
 local cwd = cwd or vim.loop.cwd()
 local data_path = vim.fn.stdpath("data")
+local mark_config = {}
 
 cwd = cwd:gsub("/", "_")
 
 local file_name = string.format("%s/%s.cache", data_path, cwd)
+
+--[[
+{
+    projects = {
+        ["/path/to/director"] = {
+            term = {
+                cmds = {
+                }
+                ... is there antyhnig that could be options?
+            },
+            mark = {
+                marks = {
+                }
+                ... is there antyhnig that could be options?
+            }
+        }
+    },
+    ... high level settings
+}
+--]]
 
 function get_id_or_current_buffer(id)
     if id == nil then
@@ -34,6 +52,18 @@ function hydrate_from_cache()
     end
 
     return {}, {}
+end
+
+M.setup = function(config) 
+    if not config.projects[cwd] then
+        mark_config = {}
+    else 
+        mark_config = config.projects[cwd].mark
+    end
+end
+
+M.get_config = function() 
+    return mark_config
 end
 
 M.save = function()
@@ -199,9 +229,6 @@ end
 
 M.get_length = function() 
     return #marked_files
-end
-
-M.setup = function() 
 end
 
 return M

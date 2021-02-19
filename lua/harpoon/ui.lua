@@ -1,6 +1,6 @@
 local Path = require('plenary.path')
 local float = require('plenary.window.float')
-local Marked = require('harpoon.manage-a-mark')
+local Marked = require('harpoon.mark')
 
 local factorw = 0.42069
 local factorh = 0.69420

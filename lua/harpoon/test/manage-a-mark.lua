@@ -1,5 +1,5 @@
 -- TODO: Harpooned
-local Marker = require('harpoon.manage-a-mark')
+local Marker = require('harpoon.mark')
 local eq = assert.are.same
 
 
