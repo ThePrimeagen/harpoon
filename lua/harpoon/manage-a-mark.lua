@@ -101,7 +101,8 @@ M.add_file = function()
 end
 
 M.store_offset = function() 
-    local idx = get_id_or_current_buffer()
+    local id = get_id_or_current_buffer()
+    local idx = get_index_of(id)
     if not valid_index(idx) then
         return
     end
@@ -110,8 +111,8 @@ M.store_offset = function()
 end
 
 M.swap = function(a, b)
-    a_idx = get_index_of(a)
-    b_idx = get_index_of(get_id_or_current_buffer(b))
+    local a_idx = get_index_of(a)
+    local b_idx = get_index_of(get_id_or_current_buffer(b))
 
     if not valid_index(a_idx) or not valid_index(b_idx) then
         return
@@ -121,8 +122,8 @@ M.swap = function(a, b)
 end
 
 M.rm_file = function()
-    id = get_id_or_current_buffer()
-    idx = get_index_of(id)
+    local id = get_id_or_current_buffer()
+    local idx = get_index_of(id)
 
     if not valid_index(idx) then
         return
@@ -131,13 +132,17 @@ M.rm_file = function()
     marked_files[idx] = nil
 end
 
+M.trim = function() 
+    M.shorten_list(idx)
+end
+
 M.clear_all = function()
     marked_files = {}
 end
 
 M.promote = function(id)
-    id = get_id_or_current_buffer(id)
-    idx = get_index_of(id)
+    local id = get_id_or_current_buffer(id)
+    local idx = get_index_of(id)
 
     if not valid_index(idx) or idx == 1 then
         return
@@ -169,6 +174,17 @@ M.remove_nils = function()
 end
 
 M.shorten_list = function(count) 
+    if not count then
+        local id = get_id_or_current_buffer()
+        local idx = get_index_of(id)
+
+        if not valid_index(idx) then
+            return
+        end
+
+        count = idx
+    end
+
     local next = {}
     local up_to = math.min(count, #marked_files)
     for idx = 1, up_to do
