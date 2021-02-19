@@ -45,8 +45,15 @@ function getCmd(idx)
     return commandSet[idx]
 end
 
-M.setup = function(config) 
-    harpoon_terminal_config = config.terminal or {}
+M.setup = function(config)
+
+    local expanded_config = {}
+    for k in pairs(config.terminal) do
+        local expanded_path = Path.new(k):expand()
+        expanded_config[expanded_path] = config.terminal[k]
+    end
+
+    harpoon_terminal_config = expanded_config or {}
 end
 
 M.gotoTerminal = function(idx) 
