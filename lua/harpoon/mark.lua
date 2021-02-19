@@ -1,34 +1,9 @@
 local Path = require('plenary.path')
 
 local M = {}
-
 local cwd = cwd or vim.loop.cwd()
-local data_path = vim.fn.stdpath("data")
-local mark_config = {}
 
-cwd = cwd:gsub("/", "_")
-
-local file_name = string.format("%s/%s.cache", data_path, cwd)
-
---[[
-{
-    projects = {
-        ["/path/to/director"] = {
-            term = {
-                cmds = {
-                }
-                ... is there antyhnig that could be options?
-            },
-            mark = {
-                marks = {
-                }
-                ... is there antyhnig that could be options?
-            }
-        }
-    },
-    ... high level settings
-}
---]]
+mark_config = mark_config or {}
 
 function get_id_or_current_buffer(id)
     if id == nil then
@@ -38,25 +13,9 @@ function get_id_or_current_buffer(id)
     return id
 end
 
-function hydrate_from_cache()
-    ok, res = pcall(function()
-        local results = Path:new(file_name):read()
-        if results == nil then
-            return {}, {}
-        end
-        return vim.fn.json_decode(results), {}
-    end)
-
-    if ok then
-        return res, {}
-    end
-
-    return {}, {}
-end
-
 M.setup = function(config) 
     if not config.projects[cwd] then
-        mark_config = {}
+        mark_config = {marks = {}}
     else 
         mark_config = config.projects[cwd].mark
     end
@@ -66,22 +25,14 @@ M.get_config = function()
     return mark_config
 end
 
-M.save = function()
-    Path:new(file_name):write(vim.fn.json_encode(marked_files), 'w')
-end
-
-if not marked_files then
-    marked_files, marked_offsets = hydrate_from_cache() 
-end
-
 function get_index_of(item)
     if item == nil then
         error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
         return
     end
     if type(item) == 'string' then
-        for idx = 1, #marked_files do
-           if marked_files[idx] == item then
+        for idx = 1, #mark_config.marks do
+           if mark_config.marks[idx] == item then
                 return idx
             end
         end
@@ -93,7 +44,7 @@ function get_index_of(item)
         item = item + 1
     end
 
-    if item <= #marked_files and item >= 1 then
+    if item <= #mark_config.marks and item >= 1 then
         return item
     end
 
@@ -101,16 +52,16 @@ function get_index_of(item)
 end
 
 function valid_index(idx) 
-    return idx ~= nil and marked_files[idx] ~= nil
+    return idx ~= nil and mark_config.marks[idx] ~= nil
 end
 
 M.get_index_of = get_index_of
 M.valid_index = valid_index
 
 function swap(a_idx, b_idx) 
-    local tmp = marked_files[a_idx]
-    marked_files[a_idx] = marked_files[b_idx]
-    marked_files[b_idx] = tmp
+    local tmp = mark_config.marks[a_idx]
+    mark_config.marks[a_idx] = mark_config.marks[b_idx]
+    mark_config.marks[b_idx] = tmp
 end
 
 M.add_file = function()
@@ -120,14 +71,14 @@ M.add_file = function()
         return
     end
 
-    for idx = 1, #marked_files do
-        if marked_files[idx] == nil then
-            marked_files[idx] = buf_name
+    for idx = 1, #mark_config.marks do
+        if mark_config.marks[idx] == nil then
+            mark_config.marks[idx] = buf_name
             return
         end
     end
 
-    table.insert(marked_files, buf_name)
+    table.insert(mark_config.marks, buf_name)
 end
 
 M.store_offset = function() 
@@ -159,7 +110,7 @@ M.rm_file = function()
         return
     end
 
-    marked_files[idx] = nil
+    mark_config.marks[idx] = nil
 end
 
 M.trim = function() 
@@ -167,7 +118,7 @@ M.trim = function()
 end
 
 M.clear_all = function()
-    marked_files = {}
+    mark_config.marks = {}
 end
 
 M.promote = function(id)
@@ -194,13 +145,13 @@ end
 
 M.remove_nils = function()
     local next = {}
-    for idx = 1, #marked_files do
-        if marked_files[idx] ~= nil then
-            table.insert(next, marked_files[idx])
+    for idx = 1, #mark_config.marks do
+        if mark_config.marks[idx] ~= nil then
+            table.insert(next, mark_config.marks[idx])
         end
     end
 
-    marked_files = next
+    mark_config.marks = next
 end
 
 M.shorten_list = function(count) 
@@ -216,19 +167,19 @@ M.shorten_list = function(count)
     end
 
     local next = {}
-    local up_to = math.min(count, #marked_files)
+    local up_to = math.min(count, #mark_config.marks)
     for idx = 1, up_to do
-        table.insert(next, marked_files[idx])
+        table.insert(next, mark_config.marks[idx])
     end
-    marked_files = next
+    mark_config.marks = next
 end
 
 M.get_marked_file = function(idx)
-    return marked_files[idx]
+    return mark_config.marks[idx]
 end
 
 M.get_length = function() 
-    return #marked_files
+    return #mark_config.marks
 end
 
 return M

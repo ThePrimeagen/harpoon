@@ -3,7 +3,7 @@ local cwd = cwd or vim.loop.cwd()
 
 local M = {}
 
-local terminal_config = { }
+terminal_config = terminal_config or { }
 local terminals = {}
 
 function create_terminal() 
@@ -21,6 +21,10 @@ function create_terminal()
     -- Resets the buffer back to the old one
     vim.api.nvim_set_current_buf(current_id)
     return buf_id, term_id
+end
+
+M.get_config = function() 
+    return terminal_config
 end
 
 --[[
