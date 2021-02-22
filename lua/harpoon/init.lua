@@ -30,6 +30,24 @@ local M = {}
 --]]
 harpoon_config = harpoon_config or {}
 
+function ensure_correct_config(config) 
+    local projects = config.projects
+    if projects[cwd] == nil then
+        projects[cwd] = {
+            marks = {},
+            term = {},
+        }
+    end
+
+    if projects[cwd].marks == nil then
+        projects[cwd].marks = {}
+    end
+
+    if projects[cwd].term == nil then
+        projects[cwd].term = {}
+    end
+end
+
 function expand_dir(config) 
     local projects = config.projects or {}
     local expanded_config = {}
@@ -82,6 +100,10 @@ M.setup = function(config)
             expand_dir(c_config), 
             expand_dir(u_config),
             expand_dir(config))
+
+    -- There was this issue where the cwd didn't have marks or term, but had
+    -- an object for cwd
+    ensure_correct_config(complete_config)
 
     terminals.setup(complete_config)
     mark.setup(complete_config)
