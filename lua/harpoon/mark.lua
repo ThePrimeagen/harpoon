@@ -14,10 +14,16 @@ function get_id_or_current_buffer(id)
 end
 
 M.setup = function(config) 
-    if not config.projects[cwd] then
-        mark_config = {marks = {}}
-    else 
-        mark_config = config.projects[cwd].mark
+    mark_config = config
+    if mark_config.marks == nil then
+
+        -- resetting the mark config if there is an issue loading the config
+        -- this can hide errors.  
+        --
+        -- TODO: create a logging mechanism to get these values
+        mark_config = {
+            marks = {}
+        }
     end
 end
 

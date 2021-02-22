@@ -64,11 +64,17 @@ end
     }
 }
 --]]
+
 M.setup = function(config) 
-    if not config.projects[cwd] then
-        terminal_config = {}
-    else 
-        terminal_config = config.projects[cwd].term
+    terminal_config = config
+    if terminal_config.cmds == nil then
+
+        -- Resets terminal config if there is some missing values.
+        --
+        -- TODO: create a logging mechanism to get these values
+        terminal_config = {
+            cmds = {}
+        }
     end
 end
 

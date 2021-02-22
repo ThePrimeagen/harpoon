@@ -132,8 +132,8 @@ M.setup = function(config)
     -- an object for cwd
     ensure_correct_config(complete_config)
 
-    terminals.setup(complete_config)
-    mark.setup(complete_config)
+    terminals.setup(complete_config.projects[cwd].term)
+    mark.setup(complete_config.projects[cwd].mark)
     harpoon_config = complete_config
 end
 
