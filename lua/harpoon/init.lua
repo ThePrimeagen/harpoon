@@ -34,17 +34,21 @@ function ensure_correct_config(config)
     local projects = config.projects
     if projects[cwd] == nil then
         projects[cwd] = {
-            marks = {},
-            term = {},
+            mark = {
+                marks = {}
+            },
+            term = {
+                cmds = {}
+            },
         }
     end
 
     if projects[cwd].marks == nil then
-        projects[cwd].marks = {}
+        projects[cwd].mark = {marks = {}}
     end
 
     if projects[cwd].term == nil then
-        projects[cwd].term = {}
+        projects[cwd].term = {cmds = {}}
     end
 end
 
@@ -109,6 +113,14 @@ M.setup = function(config)
     mark.setup(complete_config)
     harpoon_config = complete_config
 end
+
+-- should only be called for debug purposes
+M.print_config = function() 
+    print(vim.inspect(harpoon_config))
+end
+
+-- Sets a default config with no values
+M.setup({projects = {}})
 
 return M
 
