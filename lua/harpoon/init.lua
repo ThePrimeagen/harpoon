@@ -30,6 +30,29 @@ local M = {}
 --]]
 harpoon_config = harpoon_config or {}
 
+-- tbl_deep_extend does not work the way you would think
+function merge_table_impl(t1, t2)
+    for k, v in pairs(t2) do
+        if type(v) == "table" then
+            if type(t1[k]) == "table" then
+                merge_table_impl(t1[k], v)
+            else
+                t1[k] = v
+            end
+        else
+            t1[k] = v
+        end
+    end
+end
+
+function merge_tables(...) 
+    local out = {}
+    for i = 2, select("#",...) do
+        merge_table_impl(out, select(i, ...))
+    end
+    return out
+end
+
 function ensure_correct_config(config) 
     local projects = config.projects
     if projects[cwd] == nil then
@@ -43,7 +66,7 @@ function ensure_correct_config(config)
         }
     end
 
-    if projects[cwd].marks == nil then
+    if projects[cwd].mark == nil then
         projects[cwd].mark = {marks = {}}
     end
 
@@ -99,7 +122,7 @@ M.setup = function(config)
     end
 
     local complete_config = 
-        vim.tbl_deep_extend("force", 
+        merge_tables(
             {projects = {}}, 
             expand_dir(c_config), 
             expand_dir(u_config),
