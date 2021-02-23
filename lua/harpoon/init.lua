@@ -1,6 +1,4 @@
 local Path = require("plenary.path")
-local terminals = require("harpoon.term")
-local mark = require("harpoon.mark")
 local cwd = cwd or vim.loop.cwd()
 local config_path = vim.fn.stdpath("config")
 local data_path = vim.fn.stdpath("data")
@@ -132,9 +130,17 @@ M.setup = function(config)
     -- an object for cwd
     ensure_correct_config(complete_config)
 
-    terminals.setup(complete_config.projects[cwd].term)
-    mark.setup(complete_config.projects[cwd].mark)
     harpoon_config = complete_config
+end
+
+M.get_term_config = function()
+    ensure_correct_config(harpoon_config)
+    return harpoon_config.projects[cwd].term
+end
+
+M.get_mark_config = function()
+    ensure_correct_config(harpoon_config)
+    return harpoon_config.projects[cwd].mark
 end
 
 -- should only be called for debug purposes

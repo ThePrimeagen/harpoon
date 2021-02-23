@@ -1,5 +1,4 @@
 local Path = require("plenary.path")
-local cwd = cwd or vim.loop.cwd()
 
 local M = {}
 
@@ -23,59 +22,8 @@ function create_terminal()
     return buf_id, term_id
 end
 
-M.get_config = function() 
-    return terminal_config
-end
-
---[[
--- First iteration of the setup script
-lua require("harpoon").setup({
-    terminal: {
-        "/home/theprimeagen/work/netflix": {
-            "yarn build",
-            "yarn test",
-            "yarn dtest"
-        }
-    }
-})
---]]
-
 function getCmd(idx) 
-    local commandSet = terminal_config[cwd]
-    if not commandSet then
-        return nil
-    end
-    return commandSet[idx]
-end
-
---[[
-{
-    projects: {
-        "/path/to/dir": {
-            term: {
-                cmds: string[],
-                ... top level settings .. (we don't have)
-            }
-            mark: {
-                marks: string[], // very skept -- has odd behavior
-                ... top level settings .. (we don't have)
-            }
-        }
-    }
-}
---]]
-
-M.setup = function(config) 
-    terminal_config = config
-    if terminal_config.cmds == nil then
-
-        -- Resets terminal config if there is some missing values.
-        --
-        -- TODO: create a logging mechanism to get these values
-        terminal_config = {
-            cmds = {}
-        }
-    end
+    return 
 end
 
 M.gotoTerminal = function(idx) 
@@ -105,7 +53,7 @@ M.sendCommand = function(idx, cmd)
     end
 
     if type(cmd) == "number" then
-        cmd = getCmd(cmd)
+        cmd = terminal_config.cmds[cmd]
     end
 
     if cmd then
