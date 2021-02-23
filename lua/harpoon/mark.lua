@@ -1,9 +1,7 @@
 local Path = require('plenary.path')
+local harpoon = require('harpoon')
 
 local M = {}
-local cwd = cwd or vim.loop.cwd()
-
-mark_config = mark_config or {}
 
 function get_id_or_current_buffer(id)
     if id == nil then
@@ -13,32 +11,15 @@ function get_id_or_current_buffer(id)
     return id
 end
 
-M.setup = function(config) 
-    mark_config = config
-    if mark_config.marks == nil then
-
-        -- resetting the mark config if there is an issue loading the config
-        -- this can hide errors.  
-        --
-        -- TODO: create a logging mechanism to get these values
-        mark_config = {
-            marks = {}
-        }
-    end
-end
-
-M.get_config = function() 
-    return mark_config
-end
-
 function get_index_of(item)
     if item == nil then
         error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
         return
     end
+    local config = harpoon.get_mark_config()
     if type(item) == 'string' then
-        for idx = 1, #mark_config.marks do
-           if mark_config.marks[idx] == item then
+        for idx = 1, #config.marks do
+           if config.marks[idx] == item then
                 return idx
             end
         end
@@ -50,7 +31,7 @@ function get_index_of(item)
         item = item + 1
     end
 
-    if item <= #mark_config.marks and item >= 1 then
+    if item <= #config.marks and item >= 1 then
         return item
     end
 
@@ -58,16 +39,17 @@ function get_index_of(item)
 end
 
 function valid_index(idx) 
-    return idx ~= nil and mark_config.marks[idx] ~= nil
+    return idx ~= nil and harpoon.get_mark_config().marks[idx] ~= nil
 end
 
 M.get_index_of = get_index_of
 M.valid_index = valid_index
 
 function swap(a_idx, b_idx) 
-    local tmp = mark_config.marks[a_idx]
-    mark_config.marks[a_idx] = mark_config.marks[b_idx]
-    mark_config.marks[b_idx] = tmp
+    local config = harpoon.get_mark_config()
+    local tmp = config.marks[a_idx]
+    config.marks[a_idx] = mark_config.marks[b_idx]
+    config.marks[b_idx] = tmp
 end
 
 M.add_file = function()
@@ -77,14 +59,15 @@ M.add_file = function()
         return
     end
 
-    for idx = 1, #mark_config.marks do
-        if mark_config.marks[idx] == nil then
-            mark_config.marks[idx] = buf_name
+    local config = harpoon.get_mark_config()
+    for idx = 1, #config.marks do
+        if config.marks[idx] == nil then
+            config.marks[idx] = buf_name
             return
         end
     end
 
-    table.insert(mark_config.marks, buf_name)
+    table.insert(config.marks, buf_name)
 end
 
 M.store_offset = function() 
@@ -116,7 +99,7 @@ M.rm_file = function()
         return
     end
 
-    mark_config.marks[idx] = nil
+    harpoon.get_mark_config().marks[idx] = nil
 end
 
 M.trim = function() 
@@ -124,7 +107,7 @@ M.trim = function()
 end
 
 M.clear_all = function()
-    mark_config.marks = {}
+    harpoon.get_mark_config().marks = {}
 end
 
 M.promote = function(id)
@@ -151,13 +134,14 @@ end
 
 M.remove_nils = function()
     local next = {}
-    for idx = 1, #mark_config.marks do
-        if mark_config.marks[idx] ~= nil then
-            table.insert(next, mark_config.marks[idx])
+    local config = harpoon.get_mark_config()
+    for idx = 1, #config.marks do
+        if config.marks[idx] ~= nil then
+            table.insert(next, config.marks[idx])
         end
     end
 
-    mark_config.marks = next
+    config.marks = next
 end
 
 M.shorten_list = function(count) 
@@ -173,19 +157,20 @@ M.shorten_list = function(count)
     end
 
     local next = {}
-    local up_to = math.min(count, #mark_config.marks)
+    local config = harpoon.get_mark_config()
+    local up_to = math.min(count, #config.marks)
     for idx = 1, up_to do
-        table.insert(next, mark_config.marks[idx])
+        table.insert(next, config.marks[idx])
     end
-    mark_config.marks = next
+    config.marks = next
 end
 
 M.get_marked_file = function(idx)
-    return mark_config.marks[idx]
+    return harpoon.get_mark_config().marks[idx]
 end
 
 M.get_length = function() 
-    return #mark_config.marks
+    return #harpoon.get_mark_config().marks
 end
 
 return M
