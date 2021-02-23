@@ -85,16 +85,6 @@ function expand_dir(config)
 end
 
 M.save = function()
-    local term_config = terminals.get_config()
-    local mark_config = mark.get_config()
-
-    if not harpoon_config.projects[cwd] then
-        harpoon_config.projects[cwd] = {}
-    end
-
-    harpoon_config.projects[cwd].term = term_config
-    harpoon_config.projects[cwd].mark = mark_config
-
     Path:new(cache_config):write(vim.fn.json_encode(harpoon_config), 'w')
 end
 
