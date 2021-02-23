@@ -43,7 +43,7 @@ function merge_table_impl(t1, t2)
     end
 end
 
-function merge_tables(...) 
+function merge_tables(...)
     local out = {}
     for i = 2, select("#",...) do
         merge_table_impl(out, select(i, ...))
@@ -51,7 +51,7 @@ function merge_tables(...)
     return out
 end
 
-function ensure_correct_config(config) 
+function ensure_correct_config(config)
     local projects = config.projects
     if projects[cwd] == nil then
         projects[cwd] = {
@@ -73,7 +73,7 @@ function ensure_correct_config(config)
     end
 end
 
-function expand_dir(config) 
+function expand_dir(config)
     local projects = config.projects or {}
     local expanded_config = {}
     for k in pairs(projects) do
@@ -99,7 +99,7 @@ M.save = function()
 end
 
 -- 1. saved.  Where do we save?
-M.setup = function(config) 
+M.setup = function(config)
     function read_config(config)
         return vim.fn.json_decode(Path:new(config):read())
     end
@@ -119,10 +119,10 @@ M.setup = function(config)
         c_config = {}
     end
 
-    local complete_config = 
+    local complete_config =
         merge_tables(
-            {projects = {}}, 
-            expand_dir(c_config), 
+            {projects = {}},
+            expand_dir(c_config),
             expand_dir(u_config),
             expand_dir(config))
 
@@ -144,7 +144,7 @@ M.get_mark_config = function()
 end
 
 -- should only be called for debug purposes
-M.print_config = function() 
+M.print_config = function()
     print(vim.inspect(harpoon_config))
 end
 
