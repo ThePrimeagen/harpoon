@@ -12,18 +12,23 @@ local M = {}
     projects = {
         ["/path/to/director"] = {
             term = {
-                cmds = {
-                }
+                cmds = { },
                 ... is there antyhnig that could be options?
             },
             mark = {
-                marks = {
-                }
+                marks = {},
                 ... is there antyhnig that could be options?
             }
         }
     },
-    ... high level settings
+
+    term = {
+        layout = "float" | "split" | "vsplit" | "replace" (default)
+    },
+
+    mark = {
+        layout = "float" | "split" | "vsplit" | "replace" (default)
+    },
 }
 --]]
 harpoon_config = harpoon_config or {}
@@ -121,7 +126,9 @@ M.setup = function(config)
 
     local complete_config = 
         merge_tables(
-            {projects = {}}, 
+            {
+                projects = {},
+            }, 
             expand_dir(c_config), 
             expand_dir(u_config),
             expand_dir(config))

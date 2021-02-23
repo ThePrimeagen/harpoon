@@ -10,7 +10,17 @@ local M = {}
 win_id = nil
 bufh = nil
 
-function create_window()
+--[[
+return {
+    bufnr = bufnr,
+    win_id = win_id,
+
+    // optional if plenary is used
+    border_bufnr = border.bufnr,
+    border_win_id = border.win_id,
+  }
+--]]
+function create_window(config)
     local win_info = float.percentage_range_window(
         factorw,
         factorh,
