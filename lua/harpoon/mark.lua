@@ -121,6 +121,28 @@ M.promote = function(id)
     swap(idx - 1, idx)
 end
 
+M.fill_missing_indexes = function()
+    local marks = harpoon.get_mark_config().marks
+
+    -- Thanks @anott03
+    local maxIdx = math.max(unpack(vim.tbl_keys(marks)))
+    for i = 1, maxIdx do
+      if not marks[i] then marks[i] = vim.NIL end
+    end
+end
+
+M.set_current_at = function(idx)
+    local config = harpoon.get_mark_config()
+    local buf_name = get_id_or_current_buffer()
+    local current_idx = get_index_of(buf_name)
+
+    if valid_index(current_idx) then
+        config.marks[current_idx] = nil
+    end
+
+    config.marks[idx] = buf_name
+end
+
 M.promote_to_front = function(id)
     id = get_id_or_current_buffer(id)
 
@@ -136,7 +158,7 @@ M.remove_nils = function()
     local next = {}
     local config = harpoon.get_mark_config()
     for idx = 1, #config.marks do
-        if config.marks[idx] ~= nil then
+        if config.marks[idx] ~= nil and config.marks[idx] ~= vim.NIL then
             table.insert(next, config.marks[idx])
         end
     end

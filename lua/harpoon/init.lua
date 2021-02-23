@@ -85,6 +85,7 @@ function expand_dir(config)
 end
 
 M.save = function()
+    require('harpoon.mark').fill_missing_indexes()
     Path:new(cache_config):write(vim.fn.json_encode(harpoon_config), 'w')
 end
 
