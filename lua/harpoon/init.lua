@@ -8,26 +8,31 @@ local cache_config = string.format("%s/harpoon.json", data_path)
 local M = {}
 
 --[[
+-- type Layout = "float" | "split" | "vsplit" | "hsplit" | "replace" (default) | "tab"
 {
     projects = {
         ["/path/to/director"] = {
             term = {
                 cmds = { },
+                // Per project layout specific
+                layout = Layout
                 ... is there antyhnig that could be options?
             },
             mark = {
                 marks = {},
+                // Per project layout specific
+                layout = Layout
                 ... is there antyhnig that could be options?
             }
         }
     },
 
     term = {
-        layout = "float" | "split" | "vsplit" | "replace" (default)
+        layout = Layout
     },
 
     mark = {
-        layout = "float" | "split" | "vsplit" | "replace" (default)
+        layout = Layout
     },
 }
 --]]
