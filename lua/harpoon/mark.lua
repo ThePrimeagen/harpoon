@@ -38,14 +38,14 @@ function get_index_of(item)
     return nil
 end
 
-function valid_index(idx) 
+function valid_index(idx)
     return idx ~= nil and harpoon.get_mark_config().marks[idx] ~= nil
 end
 
 M.get_index_of = get_index_of
 M.valid_index = valid_index
 
-function swap(a_idx, b_idx) 
+function swap(a_idx, b_idx)
     local config = harpoon.get_mark_config()
     local tmp = config.marks[a_idx]
     config.marks[a_idx] = mark_config.marks[b_idx]
@@ -70,7 +70,7 @@ M.add_file = function()
     table.insert(config.marks, buf_name)
 end
 
-M.store_offset = function() 
+M.store_offset = function()
     local id = get_id_or_current_buffer()
     local idx = get_index_of(id)
     if not valid_index(idx) then
@@ -102,7 +102,7 @@ M.rm_file = function()
     harpoon.get_mark_config().marks[idx] = nil
 end
 
-M.trim = function() 
+M.trim = function()
     M.shorten_list(idx)
 end
 
@@ -144,7 +144,7 @@ M.remove_nils = function()
     config.marks = next
 end
 
-M.shorten_list = function(count) 
+M.shorten_list = function(count)
     if not count then
         local id = get_id_or_current_buffer()
         local idx = get_index_of(id)
@@ -169,7 +169,7 @@ M.get_marked_file = function(idx)
     return harpoon.get_mark_config().marks[idx]
 end
 
-M.get_length = function() 
+M.get_length = function()
     return #harpoon.get_mark_config().marks
 end
 
