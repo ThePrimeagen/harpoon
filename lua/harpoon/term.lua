@@ -26,10 +26,9 @@ function getCmd(idx)
     return 
 end
 
-M.gotoTerminal = function(idx) 
+function find_terminal(idx)
     local term_handle = terminals[idx]
-
-    if not term_handle or nvim_is_buf_valid(term_handle.buf_id) then
+    if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
         local buf_id, term_id = create_terminal()
         if buf_id == nil then
             return
@@ -41,17 +40,17 @@ M.gotoTerminal = function(idx)
         }
         terminals[idx] = term_handle
     end
+    return term_handle
+end
+
+M.gotoTerminal = function(idx) 
+    local term_handle = find_terminal(idx)
 
     vim.api.nvim_set_current_buf(term_handle.buf_id)
 end
 
 M.sendCommand = function(idx, cmd) 
-    local term_handle = terminals[idx]
-
-    if not term_handle then
-        M.gotoTerminal(idx)
-        term_handle = terminals[idx]
-    end
+    local term_handle = find_terminal(idx)
 
     if type(cmd) == "number" then
         cmd = terminal_config.cmds[cmd]
