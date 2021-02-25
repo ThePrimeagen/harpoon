@@ -29,11 +29,12 @@ end
 M.gotoTerminal = function(idx) 
     local term_handle = terminals[idx]
 
-    if not term_handle then
+    if not term_handle or nvim_is_buf_valid(term_handle.buf_id) then
         local buf_id, term_id = create_terminal()
         if buf_id == nil then
             return
         end
+
         term_handle = {
             buf_id = buf_id,
             term_id = term_id
