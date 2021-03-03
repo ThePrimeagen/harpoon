@@ -53,7 +53,7 @@ fun! Harpoon_SendTerminalCommand(ctrlId, command)
     let contents = g:win_ctrl_buf_list[a:ctrlId]
     if type(l:contents) != v:t_list
         echo "No terminal created, sorry for not creating this in the background..."
-        call GotoBuffer(a:ctrlId)
+        call Harpoon_GotoTerminal(a:ctrlId)
     end
     let contents = g:win_ctrl_buf_list[a:ctrlId]
     if type(l:contents) != v:t_list
