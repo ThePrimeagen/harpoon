@@ -48,7 +48,7 @@ M.valid_index = valid_index
 function swap(a_idx, b_idx) 
     local config = harpoon.get_mark_config()
     local tmp = config.marks[a_idx]
-    config.marks[a_idx] = mark_config.marks[b_idx]
+    config.marks[a_idx] = config.marks[b_idx]
     config.marks[b_idx] = tmp
 end
 
