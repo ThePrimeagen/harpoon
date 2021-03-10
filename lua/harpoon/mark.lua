@@ -36,7 +36,7 @@ local function get_index_of(item)
     return nil
 end
 
-local function get_id_or_current_buffer(id)
+local function get_buf_name(id)
     if id == nil then
         return utils.normalize_path(vim.fn.bufname(vim.fn.bufnr()))
     elseif type(id) == "string" then
@@ -64,7 +64,7 @@ local function swap(a_idx, b_idx)
 end
 
 M.add_file = function()
-    local buf_name = get_id_or_current_buffer()
+    local buf_name = get_buf_name()
 
     if valid_index(get_index_of(buf_name)) then
         -- we don't alter file layout.
@@ -83,7 +83,7 @@ M.add_file = function()
 end
 
 M.store_offset = function()
-    local buf_name = get_id_or_current_buffer()
+    local buf_name = get_buf_name()
     local idx = get_index_of(buf_name)
     if not valid_index(idx) then
         return
@@ -94,7 +94,7 @@ end
 
 M.swap = function(a, b)
     local a_idx = get_index_of(a)
-    local b_idx = get_index_of(get_id_or_current_buffer(b))
+    local b_idx = get_index_of(get_buf_name(b))
 
     if not valid_index(a_idx) or not valid_index(b_idx) then
         return
@@ -104,7 +104,7 @@ M.swap = function(a, b)
 end
 
 M.rm_file = function()
-    local buf_name = get_id_or_current_buffer()
+    local buf_name = get_buf_name()
     local idx = get_index_of(buf_name)
 
     if not valid_index(idx) then
@@ -123,7 +123,7 @@ M.clear_all = function()
 end
 
 M.promote = function(id)
-    local buf_name = get_id_or_current_buffer(id)
+    local buf_name = get_buf_name(id)
     local idx = get_index_of(buf_name)
 
     if not valid_index(idx) or idx == 1 then
@@ -134,7 +134,7 @@ M.promote = function(id)
 end
 
 M.promote_to_front = function(id)
-    local buf_name = get_id_or_current_buffer(id)
+    local buf_name = get_buf_name(id)
     local idx = get_index_of(buf_name)
 
     if not valid_index(idx) or idx == 1 then
@@ -158,7 +158,7 @@ end
 
 M.shorten_list = function(count)
     if not count then
-        local buf_name = get_id_or_current_buffer()
+        local buf_name = get_buf_name()
         local idx = get_index_of(buf_name)
 
         if not valid_index(idx) then
