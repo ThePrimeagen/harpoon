@@ -1,25 +1,23 @@
 local Path = require('plenary.path')
 local harpoon = require('harpoon')
+local utils = require('harpoon.utils')
 
 local M = {}
 
-function get_id_or_current_buffer(id)
-    if id == nil then
-        return vim.fn.bufname(vim.fn.bufnr())
-    end
-
-    return id
+local function valid_index(idx)
+    return idx ~= nil and harpoon.get_mark_config().marks[idx] ~= nil
 end
 
-function get_index_of(item)
+local function get_index_of(item)
     if item == nil then
         error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
         return
     end
     local config = harpoon.get_mark_config()
     if type(item) == 'string' then
+        local relative_item = utils.normalize_path(item)
         for idx = 1, #config.marks do
-           if config.marks[idx] == item then
+           if config.marks[idx] == relative_item then
                 return idx
             end
         end
@@ -38,14 +36,27 @@ function get_index_of(item)
     return nil
 end
 
-function valid_index(idx) 
-    return idx ~= nil and harpoon.get_mark_config().marks[idx] ~= nil
+local function get_id_or_current_buffer(id)
+    if id == nil then
+        return utils.normalize_path(vim.fn.bufname(vim.fn.bufnr()))
+    elseif type(id) == "string" then
+        return utils.normalize_path(id)
+    end
+
+    local idx = get_index_of(id)
+    if valid_index(idx) then
+        return harpoon.get_mark_config().marks[idx]
+    end
+    --
+    -- not sure what to do here...
+    --
+    return ""
 end
 
 M.get_index_of = get_index_of
 M.valid_index = valid_index
 
-function swap(a_idx, b_idx) 
+local function swap(a_idx, b_idx)
     local config = harpoon.get_mark_config()
     local tmp = config.marks[a_idx]
     config.marks[a_idx] = config.marks[b_idx]
@@ -54,6 +65,7 @@ end
 
 M.add_file = function()
     local buf_name = get_id_or_current_buffer()
+
     if valid_index(get_index_of(buf_name)) then
         -- we don't alter file layout.
         return
@@ -70,9 +82,9 @@ M.add_file = function()
     table.insert(config.marks, buf_name)
 end
 
-M.store_offset = function() 
-    local id = get_id_or_current_buffer()
-    local idx = get_index_of(id)
+M.store_offset = function()
+    local buf_name = get_id_or_current_buffer()
+    local idx = get_index_of(buf_name)
     if not valid_index(idx) then
         return
     end
@@ -92,8 +104,8 @@ M.swap = function(a, b)
 end
 
 M.rm_file = function()
-    local id = get_id_or_current_buffer()
-    local idx = get_index_of(id)
+    local buf_name = get_id_or_current_buffer()
+    local idx = get_index_of(buf_name)
 
     if not valid_index(idx) then
         return
@@ -102,7 +114,7 @@ M.rm_file = function()
     harpoon.get_mark_config().marks[idx] = nil
 end
 
-M.trim = function() 
+M.trim = function()
     M.shorten_list(idx)
 end
 
@@ -111,8 +123,8 @@ M.clear_all = function()
 end
 
 M.promote = function(id)
-    local id = get_id_or_current_buffer(id)
-    local idx = get_index_of(id)
+    local buf_name = get_id_or_current_buffer(id)
+    local idx = get_index_of(buf_name)
 
     if not valid_index(idx) or idx == 1 then
         return
@@ -122,9 +134,9 @@ M.promote = function(id)
 end
 
 M.promote_to_front = function(id)
-    id = get_id_or_current_buffer(id)
+    local buf_name = get_id_or_current_buffer(id)
+    local idx = get_index_of(buf_name)
 
-    idx = get_index_of(id)
     if not valid_index(idx) or idx == 1 then
         return
     end
@@ -144,10 +156,10 @@ M.remove_nils = function()
     config.marks = next
 end
 
-M.shorten_list = function(count) 
+M.shorten_list = function(count)
     if not count then
-        local id = get_id_or_current_buffer()
-        local idx = get_index_of(id)
+        local buf_name = get_id_or_current_buffer()
+        local idx = get_index_of(buf_name)
 
         if not valid_index(idx) then
             return
@@ -169,7 +181,7 @@ M.get_marked_file = function(idx)
     return harpoon.get_mark_config().marks[idx]
 end
 
-M.get_length = function() 
+M.get_length = function()
     return #harpoon.get_mark_config().marks
 end
 

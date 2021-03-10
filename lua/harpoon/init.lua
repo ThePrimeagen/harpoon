@@ -1,7 +1,8 @@
 local Path = require("plenary.path")
-local cwd = cwd or vim.loop.cwd()
+local cwd = vim.loop.cwd()
 local config_path = vim.fn.stdpath("config")
 local data_path = vim.fn.stdpath("data")
+local utils = require("harpoon.utils")
 local user_config = string.format("%s/harpoon.json", config_path)
 local cache_config = string.format("%s/harpoon.json", data_path)
 
@@ -26,10 +27,10 @@ local M = {}
     ... high level settings
 }
 --]]
-harpoon_config = harpoon_config or {}
+HarpoonConfig = HarpoonConfig or {}
 
 -- tbl_deep_extend does not work the way you would think
-function merge_table_impl(t1, t2)
+local function merge_table_impl(t1, t2)
     for k, v in pairs(t2) do
         if type(v) == "table" then
             if type(t1[k]) == "table" then
@@ -43,7 +44,7 @@ function merge_table_impl(t1, t2)
     end
 end
 
-function merge_tables(...)
+local function merge_tables(...)
     local out = {}
     for i = 2, select("#",...) do
         merge_table_impl(out, select(i, ...))
@@ -51,7 +52,7 @@ function merge_tables(...)
     return out
 end
 
-function ensure_correct_config(config)
+local function ensure_correct_config(config)
     local projects = config.projects
     if projects[cwd] == nil then
         projects[cwd] = {
@@ -64,18 +65,23 @@ function ensure_correct_config(config)
         }
     end
 
-    if projects[cwd].mark == nil then
-        projects[cwd].mark = {marks = {}}
+    local proj = projects[cwd]
+    if proj.mark == nil then
+        proj.mark = {marks = {}}
     end
 
-    if projects[cwd].term == nil then
-        projects[cwd].term = {cmds = {}}
+    if proj.term == nil then
+        proj.term = {cmds = {}}
+    end
+
+    local marks = proj.mark.marks
+    for idx = 1, #marks do
+        marks[idx] = utils.normalize_path(marks[idx])
     end
 end
 
-function expand_dir(config)
+local function expand_dir(config)
     local projects = config.projects or {}
-    local expanded_config = {}
     for k in pairs(projects) do
         local expanded_path = Path.new(k):expand()
         projects[expanded_path] = projects[k]
@@ -85,20 +91,21 @@ function expand_dir(config)
 end
 
 M.save = function()
-    Path:new(cache_config):write(vim.fn.json_encode(harpoon_config), 'w')
+    Path:new(cache_config):write(vim.fn.json_encode(HarpoonConfig), 'w')
+end
+
+local function read_config(local_config)
+    return vim.fn.json_decode(Path:new(local_config):read())
 end
 
 -- 1. saved.  Where do we save?
 M.setup = function(config)
-    function read_config(config)
-        return vim.fn.json_decode(Path:new(config):read())
-    end
 
     if not config then
         config = {}
     end
 
-    local ok, u_config = pcall(read_config, user_terminal_config)
+    local ok, u_config = pcall(read_config, user_config)
     local ok2, c_config = pcall(read_config, cache_config)
 
     if not ok then
@@ -120,22 +127,20 @@ M.setup = function(config)
     -- an object for cwd
     ensure_correct_config(complete_config)
 
-    harpoon_config = complete_config
+    HarpoonConfig = complete_config
 end
 
 M.get_term_config = function()
-    ensure_correct_config(harpoon_config)
-    return harpoon_config.projects[cwd].term
+    return HarpoonConfig.projects[cwd].term
 end
 
 M.get_mark_config = function()
-    ensure_correct_config(harpoon_config)
-    return harpoon_config.projects[cwd].mark
+    return HarpoonConfig.projects[cwd].mark
 end
 
 -- should only be called for debug purposes
 M.print_config = function()
-    print(vim.inspect(harpoon_config))
+    print(vim.inspect(HarpoonConfig))
 end
 
 -- Sets a default config with no values
