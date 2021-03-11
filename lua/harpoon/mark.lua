@@ -36,6 +36,17 @@ local function get_index_of(item)
     return nil
 end
 
+local function filter_nulls(list)
+    local next = {}
+    for idx = 1, #list do
+        if list[idx] ~= nil then
+            table.insert(next, list[idx])
+        end
+    end
+
+    return next
+end
+
 local function get_buf_name(id)
     if id == nil then
         return utils.normalize_path(vim.fn.bufname(vim.fn.bufnr()))
@@ -145,15 +156,8 @@ M.promote_to_front = function(id)
 end
 
 M.remove_nils = function()
-    local next = {}
     local config = harpoon.get_mark_config()
-    for idx = 1, #config.marks do
-        if config.marks[idx] ~= nil then
-            table.insert(next, config.marks[idx])
-        end
-    end
-
-    config.marks = next
+    config.marks = filter_nulls(config.marks)
 end
 
 M.shorten_list = function(count)
@@ -184,6 +188,21 @@ end
 M.get_length = function()
     return #harpoon.get_mark_config().marks
 end
+
+M.to_quickfix_list = function()
+    local config = harpoon.get_mark_config()
+    local file_list = filter_nulls(config.marks)
+    local qf_list = {}
+    for idx = 1, #file_list do
+        qf_list[idx] = {
+            text = string.format("%d: %s", idx, file_list[idx]),
+            filename = file_list[idx],
+        }
+    end
+    vim.fn.setqflist(qf_list)
+end
+
+M.to_quickfix_list()
 
 return M
 
