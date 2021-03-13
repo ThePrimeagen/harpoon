@@ -1,11 +1,10 @@
+local harpoon = require('harpoon')
 local Path = require("plenary.path")
 
 local M = {}
-
-terminal_config = terminal_config or { }
 local terminals = {}
 
-function create_terminal() 
+function create_terminal()
     local current_id = vim.fn.bufnr()
 
     vim.cmd(":terminal")
@@ -22,8 +21,8 @@ function create_terminal()
     return buf_id, term_id
 end
 
-function getCmd(idx) 
-    return 
+function getCmd(idx)
+    return
 end
 
 function find_terminal(idx)
@@ -43,17 +42,17 @@ function find_terminal(idx)
     return term_handle
 end
 
-M.gotoTerminal = function(idx) 
+M.gotoTerminal = function(idx)
     local term_handle = find_terminal(idx)
 
     vim.api.nvim_set_current_buf(term_handle.buf_id)
 end
 
-M.sendCommand = function(idx, cmd) 
+M.sendCommand = function(idx, cmd)
     local term_handle = find_terminal(idx)
 
     if type(cmd) == "number" then
-        cmd = terminal_config.cmds[cmd]
+        cmd = harpoon.get_term_config().cmds[cmd]
     end
 
     if cmd then
