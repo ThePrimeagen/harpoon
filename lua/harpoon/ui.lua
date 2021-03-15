@@ -62,6 +62,7 @@ M.toggle_quick_menu = function()
     end
 
     vim.api.nvim_buf_set_lines(bufh, 0, #contents, false, contents)
+    vim.api.nvim_buf_set_option(bufh, "filetype", "harpoon")
 end
 
 M.nav_file = function(id)
