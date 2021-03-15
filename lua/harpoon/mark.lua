@@ -202,6 +202,12 @@ M.to_quickfix_list = function()
     vim.fn.setqflist(qf_list)
 end
 
+M.set_mark_list = function(new_list)
+    local config = harpoon.get_mark_config()
+
+    config.marks = new_list
+end
+
 M.to_quickfix_list()
 
 return M
