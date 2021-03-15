@@ -12,7 +12,6 @@ local harpoon = require('harpoon')
 
 local default_options = {
     results_title = 'Harpoon',
-    finder = finders.new_table(harpoon.get_mark_config().marks),
     sorter = sorters.get_fuzzy_file(),
     previewer = previewers.vim_buffer_cat.new {}
 }
@@ -36,6 +35,7 @@ M = {}
 function M.marks(opts)
     opts = opts or {}
     local picker_options = merge_tables(default_options, opts)
+    picker_options.finder = finders.new_table(harpoon.get_mark_config().marks)
 
     pickers.new(picker_options):find()
 end
