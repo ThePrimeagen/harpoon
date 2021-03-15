@@ -83,7 +83,7 @@ M.add_file = function(file_name_or_buf_id)
     end
 
     if buf_name == "" or buf_name == nil then
-        print("Couldn't find a valid file name to mark, sorry.")
+        error("Couldn't find a valid file name to mark, sorry.")
         return
     end
 
