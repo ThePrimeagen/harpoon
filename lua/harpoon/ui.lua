@@ -21,8 +21,28 @@ function create_window()
     return win_info
 end
 
+function get_menu_items()
+    local lines = vim.api.nvim_buf_get_lines(bufh, 0, -1, true)
+    local indices = {}
+
+    for idx = 1, #lines do
+        local space_location = string.find(lines[idx], ' ')
+
+        if space_location ~= nil then
+            table.insert(indices, string.sub(lines[idx], space_location + 1))
+        end
+    end
+
+    return indices
+end
+
+local save_changes = function()
+    Marked.set_mark_list(get_menu_items())
+end
+
 M.toggle_quick_menu = function()
     if win_id ~= nil and vim.api.nvim_win_is_valid(win_id) then
+        save_changes()
         vim.api.nvim_win_close(win_id, true)
 
         win_id = nil
