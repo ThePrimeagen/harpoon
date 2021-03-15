@@ -74,8 +74,8 @@ local function swap(a_idx, b_idx)
     config.marks[b_idx] = tmp
 end
 
-M.add_file = function()
-    local buf_name = get_buf_name()
+M.add_file = function(file_name_or_buf_id)
+    local buf_name = get_buf_name(file_name_or_buf_id)
 
     if valid_index(get_index_of(buf_name)) then
         -- we don't alter file layout.
