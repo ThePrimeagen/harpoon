@@ -82,6 +82,11 @@ M.add_file = function(file_name_or_buf_id)
         return
     end
 
+    if buf_name == "" or buf_name == nil then
+        print("Couldn't find a valid file name to mark, sorry.")
+        return
+    end
+
     local config = harpoon.get_mark_config()
     for idx = 1, #config.marks do
         if config.marks[idx] == nil then
