@@ -119,8 +119,8 @@ M.swap = function(a, b)
     swap(a_idx, b_idx)
 end
 
-M.rm_file = function()
-    local buf_name = get_buf_name()
+M.rm_file = function(file_name_or_buf_id)
+    local buf_name = get_buf_name(file_name_or_buf_id)
     local idx = get_index_of(buf_name)
 
     if not valid_index(idx) then
@@ -211,6 +211,21 @@ M.set_mark_list = function(new_list)
     local config = harpoon.get_mark_config()
 
     config.marks = new_list
+end
+
+M.toggle_file = function(file_name_or_buf_id)
+    local mark_count_before = #harpoon.get_mark_config().marks
+
+    M.add_file(file_name_or_buf_id)
+
+    local mark_count_after = #harpoon.get_mark_config().marks
+
+    if (mark_count_before == mark_count_after) then
+        M.rm_file(file_name_or_buf_id)
+        print("Mark removed")
+    else
+        print("Mark Added")
+    end
 end
 
 M.to_quickfix_list()
