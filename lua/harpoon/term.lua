@@ -16,6 +16,10 @@ function create_terminal()
         return nil
     end
 
+    -- Make sure the term buffer has "hidden" set so it doesn't get thrown
+    -- away and cause an error
+    vim.api.nvim_buf_set_option(bufh, 'bufhidden', 'hide')
+
     -- Resets the buffer back to the old one
     vim.api.nvim_set_current_buf(current_id)
     return buf_id, term_id
