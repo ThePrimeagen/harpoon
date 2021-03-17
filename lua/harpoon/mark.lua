@@ -117,7 +117,7 @@ end
 
 M.rm_file = function(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
-    local idx = get_index_of(buf_name)
+    local idx = M.get_index_of(buf_name)
 
     if not M.valid_index(idx) then
         return
