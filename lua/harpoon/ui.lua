@@ -58,7 +58,11 @@ M.toggle_quick_menu = function()
     bufh = win_info.bufh
 
     for idx = 1, Marked.get_length() do
-        contents[idx] = string.format("%d %s", idx, Marked.get_marked_file(idx))
+        local file = Marked.get_marked_file(idx)
+        if file == "" then
+            file = "(empty)"
+        end
+        contents[idx] = string.format("%d %s", idx, file)
     end
 
     vim.api.nvim_buf_set_lines(bufh, 0, #contents, false, contents)
