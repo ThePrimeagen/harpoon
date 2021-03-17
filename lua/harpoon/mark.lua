@@ -34,7 +34,7 @@ end
 local function mark_exists(buf_name)
     local marks = harpoon.get_mark_config().marks
 
-    for idx = 1, #marks do
+    for idx = 1, M.get_length() do
         if marks[idx] == buf_name then
             return true
         end
