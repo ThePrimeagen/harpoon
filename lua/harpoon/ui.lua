@@ -55,7 +55,7 @@ M.toggle_quick_menu = function()
     local contents = {}
 
     win_id = win_info.win_id
-    bufh = win_info.bufh
+    bufh = win_info.bufnr
 
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file(idx)
