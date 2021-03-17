@@ -60,6 +60,15 @@ M.get_index_of = function(item)
     return nil
 end
 
+M.status = function()
+    local idx = M.get_index_of(get_buf_name())
+
+    if M.valid_index(idx) then
+        return "M" .. idx
+    end
+    return ""
+end
+
 M.valid_index = function(idx)
     local config = harpoon.get_mark_config()
     return idx ~= nil and config.marks[idx] ~= nil and config.marks[idx] ~= ""
