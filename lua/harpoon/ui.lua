@@ -42,7 +42,6 @@ end
 
 M.toggle_quick_menu = function()
     if win_id ~= nil and vim.api.nvim_win_is_valid(win_id) then
-        save_changes()
         vim.api.nvim_win_close(win_id, true)
 
         win_id = nil
@@ -55,7 +54,7 @@ M.toggle_quick_menu = function()
     local contents = {}
 
     win_id = win_info.win_id
-    bufh = win_info.bufh
+    bufh = win_info.bufnr
 
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file(idx)
@@ -65,8 +64,16 @@ M.toggle_quick_menu = function()
         contents[idx] = string.format("%d %s", idx, file)
     end
 
+    vim.api.nvim_buf_set_name(bufh, "harpoon-menu")
     vim.api.nvim_buf_set_lines(bufh, 0, #contents, false, contents)
     vim.api.nvim_buf_set_option(bufh, "filetype", "harpoon")
+    vim.api.nvim_buf_set_option(bufh, "buftype", "acwrite")
+    vim.cmd(string.format("autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()", bufh))
+end
+
+M.on_menu_save = function()
+    save_changes()
+    vim.cmd("set nomodified")
 end
 
 M.nav_file = function(id)
