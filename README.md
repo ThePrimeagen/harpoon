@@ -2,7 +2,10 @@
 This is still beta.  We are getting there, but its not as fast as I would like.
 Therefore APIs are subject to change.
 
-# harpoon
+![Harpoon](images/harpoon.png)
+
+# Harpoon
+
 The goal of Harpoon is to get you where you want with the fewest keystrokes.
 
 ## The Problem
