@@ -1,4 +1,3 @@
-local Path = require('plenary.path')
 local float = require('plenary.window.float')
 local Marked = require('harpoon.mark')
 
@@ -68,6 +67,7 @@ M.toggle_quick_menu = function()
     vim.api.nvim_buf_set_lines(bufh, 0, #contents, false, contents)
     vim.api.nvim_buf_set_option(bufh, "filetype", "harpoon")
     vim.api.nvim_buf_set_option(bufh, "buftype", "acwrite")
+    vim.api.nvim_buf_set_option(bufh, "bufhidden", "delete")
     vim.cmd(string.format("autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()", bufh))
 end
 
