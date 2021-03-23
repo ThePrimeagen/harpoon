@@ -68,13 +68,12 @@ M.toggle_quick_menu = function()
     vim.api.nvim_buf_set_option(bufh, "filetype", "harpoon")
     vim.api.nvim_buf_set_option(bufh, "buftype", "acwrite")
     vim.api.nvim_buf_set_option(bufh, "bufhidden", "delete")
-    vim.api.nvim_buf_set_option(bufh, "modified", false)
     vim.cmd(string.format("autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()", bufh))
+    vim.cmd(string.format("autocmd BufModifiedSet <buffer=%s> set nomodified", bufh))
 end
 
 M.on_menu_save = function()
     save_changes()
-    vim.cmd("set nomodified")
 end
 
 M.nav_file = function(id)
