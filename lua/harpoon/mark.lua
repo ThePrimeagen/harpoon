@@ -31,6 +31,25 @@ local function get_buf_name(id)
     return ""
 end
 
+local function mark_exists(buf_name)
+    local marks = harpoon.get_mark_config().marks
+
+    for idx = 1, M.get_length() do
+        if marks[idx] == buf_name then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function validate_buf_name(buf_name)
+    if buf_name == "" or buf_name == nil then
+        error("Couldn't find a valid file name to mark, sorry.")
+        return
+    end
+end
+
 M.get_index_of = function(item)
     if item == nil then
         error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
@@ -82,10 +101,7 @@ M.add_file = function(file_name_or_buf_id)
         return
     end
 
-    if buf_name == "" or buf_name == nil then
-        error("Couldn't find a valid file name to mark, sorry.")
-        return
-    end
+    validate_buf_name(buf_name)
 
     local config = harpoon.get_mark_config()
     for idx = 1, M.get_length() do
@@ -187,16 +203,15 @@ M.set_mark_list = function(new_list)
 end
 
 M.toggle_file = function(file_name_or_buf_id)
-    local mark_count_before = #harpoon.get_mark_config().marks
+    local buf_name = get_buf_name(file_name_or_buf_id)
 
-    M.add_file(file_name_or_buf_id)
+    validate_buf_name(buf_name)
 
-    local mark_count_after = #harpoon.get_mark_config().marks
-
-    if (mark_count_before == mark_count_after) then
-        M.rm_file(file_name_or_buf_id)
+    if (mark_exists(buf_name)) then
+        M.rm_file(buf_name)
         print("Mark removed")
     else
+        M.add_file(buf_name)
         print("Mark Added")
     end
 end
