@@ -149,7 +149,8 @@ M.store_offset = function()
             return
         end
 
-        local row, col = vim.api.nvim_eval("line('.')");
+        harpoon.get_mark_config().marks[idx].row =
+            vim.fn.line(".");
     end)
 
     if not ok then
