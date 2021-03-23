@@ -7,7 +7,7 @@ local function filter_empty_string(list)
     local next = {}
     for idx = 1, #list do
         if list[idx] ~= "" then
-            table.insert(next, list[idx])
+            table.insert(next, list[idx].filename)
         end
     end
 
@@ -23,7 +23,7 @@ local function get_buf_name(id)
 
     local idx = M.get_index_of(id)
     if M.valid_index(idx) then
-        return harpoon.get_mark_config().marks[idx]
+        return M.get_marked_file_name(idx)
     end
     --
     -- not sure what to do here...
@@ -31,11 +31,17 @@ local function get_buf_name(id)
     return ""
 end
 
-local function mark_exists(buf_name)
-    local marks = harpoon.get_mark_config().marks
+local function create_mark(filename)
+    return {
+        filename = filename,
+        row = 0,
+        col = 0,
+    }
+end
 
+local function mark_exists(buf_name)
     for idx = 1, M.get_length() do
-        if marks[idx] == buf_name then
+        if M.get_marked_file_name(idx) == buf_name then
             return true
         end
     end
@@ -56,11 +62,10 @@ M.get_index_of = function(item)
         return
     end
 
-    local config = harpoon.get_mark_config()
     if type(item) == 'string' then
         local relative_item = utils.normalize_path(item)
         for idx = 1, M.get_length() do
-           if config.marks[idx] == relative_item then
+           if M.get_marked_file_name(idx) == relative_item then
                 return idx
             end
         end
@@ -89,8 +94,12 @@ M.status = function()
 end
 
 M.valid_index = function(idx)
-    local config = harpoon.get_mark_config()
-    return idx ~= nil and config.marks[idx] ~= nil and config.marks[idx] ~= ""
+    if idx == nil then
+        return false
+    end
+
+    local file_name = M.get_marked_file_name(idx)
+    return file_name ~= nil and file_name ~= ""
 end
 
 M.add_file = function(file_name_or_buf_id)
@@ -103,16 +112,17 @@ M.add_file = function(file_name_or_buf_id)
 
     validate_buf_name(buf_name)
 
-    local config = harpoon.get_mark_config()
     for idx = 1, M.get_length() do
-        if config.marks[idx] == "" then
-            config.marks[idx] = buf_name
+        local filename = M.get_marked_file_name(idx)
+        if filename == "" then
+            harpoon.get_mark_config().marks[idx] = create_mark(filename)
+
             M.remove_empty_tail()
             return
         end
     end
 
-    table.insert(config.marks, buf_name)
+    table.insert(harpoon.get_mark_config().marks, create_mark(buf_name))
     M.remove_empty_tail()
 end
 
@@ -120,24 +130,32 @@ M.remove_empty_tail = function()
     local config = harpoon.get_mark_config()
 
     for i = M.get_length(), 1, -1 do
-        if config.marks[i] ~= "" then
+        local filename = M.get_marked_file_name(i)
+        if filename ~= "" then
             return
         end
 
-        if config.marks[i] == "" then
+        if filename == "" then
             table.remove(config.marks, i)
         end
     end
 end
 
 M.store_offset = function()
-    local buf_name = get_buf_name()
-    local idx = M.get_index_of(buf_name)
-    if not M.valid_index(idx) then
-        return
-    end
+    local ok, res = pcall(function()
+        local buf_name = get_buf_name()
+        local idx = M.get_index_of(buf_name)
+        if not M.valid_index(idx) then
+            return
+        end
 
-    local line = vim.api.nvim_eval("line('.')");
+        local row, col = vim.api.nvim_eval("line('.')");
+    end)
+
+    if not ok then
+        -- TODO: Developer logs?
+        print("M.store_offset#pcall failed:", res)
+    end
 end
 
 M.rm_file = function(file_name_or_buf_id)
@@ -148,7 +166,7 @@ M.rm_file = function(file_name_or_buf_id)
         return
     end
 
-    harpoon.get_mark_config().marks[idx] = ""
+    harpoon.get_mark_config().marks[idx] = create_mark("")
     M.remove_empty_tail()
 end
 
@@ -156,8 +174,17 @@ M.clear_all = function()
     harpoon.get_mark_config().marks = {}
 end
 
-M.get_marked_file = function(idx)
-    return harpoon.get_mark_config().marks[idx]
+--- ENTERPRISE PROGRAMMING
+M.get_marked_file = function(idxOrName)
+    if type(idxOrName) == "string" then
+        idxOrName = M.get_index_of(idxOrName)
+    end
+    return harpoon.get_mark_config().marks[idxOrName]
+end
+
+M.get_marked_file_name = function(idx)
+    local mark = harpoon.get_mark_config().marks[idx]
+    return mark and mark.filename
 end
 
 M.get_length = function()
@@ -174,11 +201,11 @@ M.set_current_at = function(idx)
         config.marks[current_idx] = ""
     end
 
-    config.marks[idx] = buf_name
+    config.marks[idx] = create_mark(buf_name)
 
     for i = 1, M.get_length() do
         if not config.marks[i] then
-            config.marks[i] = ""
+            config.marks[i] = create_mark("")
         end
     end
 end
@@ -188,16 +215,31 @@ M.to_quickfix_list = function()
     local file_list = filter_empty_string(config.marks)
     local qf_list = {}
     for idx = 1, #file_list do
+        local mark = M.get_marked_file(idx)
         qf_list[idx] = {
             text = string.format("%d: %s", idx, file_list[idx]),
-            filename = file_list[idx],
+            filename = mark.filename,
+            row = mark.row,
+            col = mark.col,
         }
     end
     vim.fn.setqflist(qf_list)
 end
 
 M.set_mark_list = function(new_list)
+
     local config = harpoon.get_mark_config()
+
+    for k, v in pairs(new_list) do
+        if type(v) == "string" then
+            local mark = M.get_marked_file(v)
+            if not mark then
+                mark = create_mark(v)
+            end
+
+            new_list[k] = mark
+        end
+    end
 
     config.marks = new_list
 end

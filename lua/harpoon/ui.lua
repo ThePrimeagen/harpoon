@@ -20,7 +20,7 @@ function create_window()
     return win_info
 end
 
-function get_menu_items()
+local function get_menu_items()
     local lines = vim.api.nvim_buf_get_lines(bufh, 0, -1, true)
     local indices = {}
 
@@ -56,7 +56,7 @@ M.toggle_quick_menu = function()
     bufh = win_info.bufnr
 
     for idx = 1, Marked.get_length() do
-        local file = Marked.get_marked_file(idx)
+        local file = Marked.get_marked_file_name(idx)
         if file == "" then
             file = "(empty)"
         end
@@ -77,12 +77,12 @@ M.on_menu_save = function()
 end
 
 M.nav_file = function(id)
-    idx = Marked.get_index_of(id)
+    local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
         return
     end
 
-    local buf_id = vim.fn.bufnr(Marked.get_marked_file(idx))
+    local buf_id = vim.fn.bufnr(Marked.get_marked_file_name(idx))
 
     if vim.api.nvim_win_is_valid(buf_id) then
         vim.api.nvim_win_close(win_id)
