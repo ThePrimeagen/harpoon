@@ -9,7 +9,7 @@ local M = {}
 win_id = nil
 bufh = nil
 
-function create_window()
+local function create_window()
     local win_info = float.percentage_range_window(
         factorw,
         factorh,
@@ -20,7 +20,7 @@ function create_window()
     return win_info
 end
 
-function get_menu_items()
+local function get_menu_items()
     local lines = vim.api.nvim_buf_get_lines(bufh, 0, -1, true)
     local indices = {}
 
@@ -56,7 +56,7 @@ M.toggle_quick_menu = function()
     bufh = win_info.bufnr
 
     for idx = 1, Marked.get_length() do
-        local file = Marked.get_marked_file(idx)
+        local file = Marked.get_marked_file_name(idx)
         if file == "" then
             file = "(empty)"
         end
@@ -77,21 +77,18 @@ M.on_menu_save = function()
 end
 
 M.nav_file = function(id)
-    idx = Marked.get_index_of(id)
+    local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
         return
     end
 
-    local buf_id = vim.fn.bufnr(Marked.get_marked_file(idx))
+    local mark = Marked.get_marked_file(idx)
+    local buf_id = vim.fn.bufnr(mark.filename)
+    local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
 
-    if vim.api.nvim_win_is_valid(buf_id) then
-        vim.api.nvim_win_close(win_id)
-    end
-
-    if buf_id ~= nil and buf_id ~= -1 then
-        vim.api.nvim_set_current_buf(buf_id)
-    else
-        vim.cmd(string.format("e %s", Marked.get_marked_file(idx)))
+    vim.api.nvim_set_current_buf(buf_id)
+    if set_row and mark.row then
+        vim.cmd(string.format(":%d", mark.row))
     end
 end
 
