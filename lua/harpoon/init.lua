@@ -85,6 +85,7 @@ local function expand_dir(config)
     for k in pairs(projects) do
         local expanded_path = Path.new(k):expand()
         projects[expanded_path] = projects[k]
+        projects[k] = nil
     end
 
     return config
