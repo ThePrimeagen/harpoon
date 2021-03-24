@@ -4,7 +4,7 @@ local Path = require("plenary.path")
 local M = {}
 local terminals = {}
 
-function create_terminal()
+local function create_terminal()
     local current_id = vim.fn.bufnr()
 
     vim.cmd(":terminal")
