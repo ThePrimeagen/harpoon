@@ -68,3 +68,6 @@ fun! Harpoon_SendTerminalCommand(ctrlId, command)
         call term_sendkeys(l:bufh, a:command)
     endif
 endfun
+
+highlight default HarpoonWindow ctermbg=none
+highlight default HarpoonBorder ctermbg=none ctermfg=white

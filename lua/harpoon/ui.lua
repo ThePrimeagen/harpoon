@@ -1,23 +1,35 @@
-local float = require('plenary.window.float')
+local harpoon = require('harpoon')
+local popup = require('popup')
 local Marked = require('harpoon.mark')
-
-local factorw = 0.42069
-local factorh = 0.69420
 
 local M = {}
 
 win_id = nil
 bufh = nil
 
-local function create_window()
-    local win_info = float.percentage_range_window(
-        factorw,
-        factorh,
-        {
-            winblend = 0
-        })
+function create_window()
+    local config = harpoon.get_menu_config()
+    local width = config.width or 60
+    local height = config.height or 10
+    local borderchars = config.borderchars or { '─', '│', '─', '│', '╭', '╮', '╯', '╰' }
+    local bufnr = vim.api.nvim_create_buf(false, false)
 
-    return win_info
+    local win_id, win = popup.create(bufnr, {
+        title = 'Harpoon',
+        highlight = 'HarpoonWindow',
+        line = math.floor(((vim.o.lines - height) / 2) - 1),
+        col = math.floor((vim.o.columns - width) / 2),
+        minwidth = width,
+        minheight = height,
+        borderchars = borderchars,
+    })
+
+    vim.api.nvim_win_set_option(win.border.win_id, 'winhl', 'Normal:HarpoonBorder')
+
+    return {
+        bufnr = bufnr,
+        win_id = win_id,
+    }
 end
 
 local function get_menu_items()

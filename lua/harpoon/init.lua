@@ -149,6 +149,10 @@ M.get_mark_config = function()
     return HarpoonConfig.projects[cwd].mark
 end
 
+M.get_menu_config = function()
+    return HarpoonConfig.menu or {}
+end
+
 -- should only be called for debug purposes
 M.print_config = function()
     print(vim.inspect(HarpoonConfig))
