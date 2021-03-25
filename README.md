@@ -3,6 +3,7 @@ This is still beta.  We are getting there, but its not as fast as I would like.
 Therefore APIs are subject to change.
 
 ![Harpoon](harpoon.png)
+-- Image provided by Liberty_DevCap
 
 # harpoon
 The goal of Harpoon is to get you where you want with the fewest keystrokes.
