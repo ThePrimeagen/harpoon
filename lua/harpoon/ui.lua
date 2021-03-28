@@ -41,6 +41,11 @@ end
 
 M.toggle_quick_menu = function()
     if win_id ~= nil and vim.api.nvim_win_is_valid(win_id) then
+        local global_config = harpoon.get_global_settings()
+        print(global_config.save_on_menu_quit)
+        if global_config.save_on_toggle == true then
+            vim.cmd(":lua require('harpoon.ui').on_menu_save()")
+        end
         vim.api.nvim_win_close(win_id, true)
 
         win_id = nil
