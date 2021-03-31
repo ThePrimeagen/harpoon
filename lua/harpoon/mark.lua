@@ -115,7 +115,7 @@ M.add_file = function(file_name_or_buf_id)
     for idx = 1, M.get_length() do
         local filename = M.get_marked_file_name(idx)
         if filename == "" then
-            harpoon.get_mark_config().marks[idx] = create_mark(filename)
+            harpoon.get_mark_config().marks[idx] = create_mark(buf_name)
 
             M.remove_empty_tail()
             return
