@@ -1,5 +1,4 @@
 local Path = require("plenary.path")
-local cwd = vim.loop.cwd()
 local config_path = vim.fn.stdpath("config")
 local data_path = vim.fn.stdpath("data")
 local utils = require("harpoon.utils")
@@ -54,8 +53,8 @@ end
 
 local function ensure_correct_config(config)
     local projects = config.projects
-    if projects[cwd] == nil then
-        projects[cwd] = {
+    if projects[vim.loop.cwd()] == nil then
+        projects[vim.loop.cwd()] = {
             mark = {
                 marks = {}
             },
@@ -65,7 +64,7 @@ local function ensure_correct_config(config)
         }
     end
 
-    local proj = projects[cwd]
+    local proj = projects[vim.loop.cwd()]
     if proj.mark == nil then
         proj.mark = {marks = {}}
     end
@@ -134,19 +133,19 @@ M.setup = function(config)
             expand_dir(u_config),
             expand_dir(config))
 
-    -- There was this issue where the cwd didn't have marks or term, but had
-    -- an object for cwd
+    -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
+    -- an object for vim.loop.cwd()
     ensure_correct_config(complete_config)
 
     HarpoonConfig = complete_config
 end
 
 M.get_term_config = function()
-    return HarpoonConfig.projects[cwd].term
+    return HarpoonConfig.projects[vim.loop.cwd()].term
 end
 
 M.get_mark_config = function()
-    return HarpoonConfig.projects[cwd].mark
+    return HarpoonConfig.projects[vim.loop.cwd()].mark
 end
 
 M.get_menu_config = function()
