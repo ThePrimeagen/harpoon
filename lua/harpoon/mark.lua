@@ -259,8 +259,6 @@ M.toggle_file = function(file_name_or_buf_id)
     end
 end
 
-M.to_quickfix_list()
-
 M.get_current_index = function()
     return M.get_index_of(vim.fn.bufname(vim.fn.bufnr()))
 end
