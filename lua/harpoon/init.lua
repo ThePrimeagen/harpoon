@@ -7,9 +7,45 @@ local cache_config = string.format("%s/harpoon.json", data_path)
 
 local M = {}
 
+local function get_project_config(config)
+    local projs = config.projects
+    local cwd = vim.loop.cwd()
+    local cwd_parts = string.gmatch(cwd, Path.sep)
+
+    for k, v in pairs(projs) do
+        local start = string.find(k, "{}", 1, true)
+        if start == nil and k == cwd then
+            return projs[k], k
+        end
+
+        local k_parts = string.gmatch(k, Path.sep)
+        if #k_parts == #cwd_parts then
+            local found = true
+            local wildcard = nil
+            for idx = 1, #k_parts do
+                local k_part = k_parts[idx]
+                found = found and (k_part == "{}" or k_part == cwd_parts[idx])
+
+                if k_part == "{}" then
+                    wildcard = cwd_parts[idx]
+                end
+            end
+
+            if found then
+                return projs[k], k, wildcard
+            end
+        end
+    end
+
+    return nil, nil
+end
+
 --[[
 {
     projects = {
+        ["/path/to/other/{}"] = {
+            // TODO: pattern matching
+        }
         ["/path/to/director"] = {
             term = {
                 cmds = {
@@ -23,6 +59,10 @@ local M = {}
             }
         }
     },
+    menu = {
+        // TODO: Be filled in on settings...
+        // WE should also consider just having a help doc
+    }
     ... high level settings
 }
 --]]
@@ -52,9 +92,11 @@ local function merge_tables(...)
 end
 
 local function ensure_correct_config(config)
-    local projects = config.projects
-    if projects[vim.loop.cwd()] == nil then
-        projects[vim.loop.cwd()] = {
+    local projects, cwd, wildcard = get_project_config(config)
+
+    cwd = cwd or vim.loop.cwd
+    if projects[cwd] == nil then
+        projects[cwd] = {
             mark = {
                 marks = {}
             },
@@ -64,7 +106,8 @@ local function ensure_correct_config(config)
         }
     end
 
-    local proj = projects[vim.loop.cwd()]
+    local proj = projects[cwd]
+    proj.wildcard = wildcard
     if proj.mark == nil then
         proj.mark = {marks = {}}
     end
@@ -144,6 +187,10 @@ end
 
 M.get_term_config = function()
     return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].term
+end
+
+M.get_wildcard = function()
+    return ensure_correct_config(HarpoonConfig).projects.wildcard
 end
 
 M.get_mark_config = function()

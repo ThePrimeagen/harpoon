@@ -1,5 +1,4 @@
 local harpoon = require('harpoon')
-local Path = require("plenary.path")
 
 local M = {}
 local terminals = {}
@@ -25,11 +24,25 @@ local function create_terminal()
     return buf_id, term_id
 end
 
-function getCmd(idx)
-    return
+local function process_wildcards(cmd)
+    local wc = harpoon.get_wildcard()
+    if wc == nil then
+        return cmd
+    end
+
+    local cmd_parts = string.gmatch(cmd, "{}")
+    if #cmd_parts == 1 then
+        return cmd
+    end
+
+    local new_cmd = cmd[1]
+    for idx = 2, #cmd_parts do
+        new_cmd = new_cmd .. wc .. cmd_parts[idx]
+    end
+    return new_cmd
 end
 
-function find_terminal(idx)
+local function find_terminal(idx)
     local term_handle = terminals[idx]
     if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
         local buf_id, term_id = create_terminal()
@@ -58,6 +71,8 @@ M.sendCommand = function(idx, cmd)
     if type(cmd) == "number" then
         cmd = harpoon.get_term_config().cmds[cmd]
     end
+
+    cmd = process_wildcards(cmd)
 
     if cmd then
         vim.fn.chansend(term_handle.term_id, cmd)
