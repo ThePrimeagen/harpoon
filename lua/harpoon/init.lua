@@ -85,6 +85,8 @@ local function ensure_correct_config(config)
 
         marks[idx].filename = utils.normalize_path(mark.filename)
     end
+
+    return config
 end
 
 local function expand_dir(config)
@@ -141,11 +143,11 @@ M.setup = function(config)
 end
 
 M.get_term_config = function()
-    return HarpoonConfig.projects[vim.loop.cwd()].term
+    return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].term
 end
 
 M.get_mark_config = function()
-    return HarpoonConfig.projects[vim.loop.cwd()].mark
+    return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].mark
 end
 
 M.get_menu_config = function()
