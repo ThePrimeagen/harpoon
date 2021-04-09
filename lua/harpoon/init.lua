@@ -7,26 +7,43 @@ local cache_config = string.format("%s/harpoon.json", data_path)
 
 local M = {}
 
+local function to_array(line, sep)
+    local arr = {}
+    local idx = 1
+end
+
 local function get_project_config(config)
     local projs = config.projects
     local cwd = vim.loop.cwd()
-    local cwd_parts = string.gmatch(cwd, Path.sep)
+    local cwd_parts = string.gmatch(cwd, Path.path.sep)
 
+    print("get_project_config", cwd)
     for k, v in pairs(projs) do
         local start = string.find(k, "{}", 1, true)
+        print("    get_project_config#for(", k, "):", start)
+
         if start == nil and k == cwd then
             return projs[k], k
         end
 
-        local k_parts = string.gmatch(k, Path.sep)
-        if #k_parts == #cwd_parts then
+        local k_iter = string.gmatch(k, "([^" .. Path.path.sep .. "]+")
+        local k_parts = {}
+        for v in k_iter do
+            table.insert(k_parts, v)
+        end
+
+        print("    get_project_config#for(", k, "):", vim.inspect(k_parts))
+
+        if k_parts and #k_parts == #cwd_parts then
             local found = true
             local wildcard = nil
             for idx = 1, #k_parts do
                 local k_part = k_parts[idx]
                 found = found and (k_part == "{}" or k_part == cwd_parts[idx])
 
+                print("        g_p_c#for#for(", found, "):", k_parts[idx])
                 if k_part == "{}" then
+                    print("        g_p_c#for#for(", found, "): Wildcard!", cwd_parts[idx])
                     wildcard = cwd_parts[idx]
                 end
             end
