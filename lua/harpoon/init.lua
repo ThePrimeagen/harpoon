@@ -12,27 +12,31 @@ local function to_array(line, sep)
     local idx = 1
 end
 
+-- Directly taken from Stack overflow like a real man
+local function split_str(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t={}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
+
 local function get_project_config(config)
     local projs = config.projects
     local cwd = vim.loop.cwd()
-    local cwd_parts = string.gmatch(cwd, Path.path.sep)
+    local cwd_parts = split_str(cwd, Path.path.sep)
 
-    print("get_project_config", cwd)
     for k, v in pairs(projs) do
         local start = string.find(k, "{}", 1, true)
-        print("    get_project_config#for(", k, "):", start)
 
         if start == nil and k == cwd then
             return projs[k], k
         end
 
-        local k_iter = string.gmatch(k, "([^" .. Path.path.sep .. "]+")
-        local k_parts = {}
-        for v in k_iter do
-            table.insert(k_parts, v)
-        end
-
-        print("    get_project_config#for(", k, "):", vim.inspect(k_parts))
+        local k_parts = split_str(k, Path.path.sep)
 
         if k_parts and #k_parts == #cwd_parts then
             local found = true
@@ -41,9 +45,7 @@ local function get_project_config(config)
                 local k_part = k_parts[idx]
                 found = found and (k_part == "{}" or k_part == cwd_parts[idx])
 
-                print("        g_p_c#for#for(", found, "):", k_parts[idx])
                 if k_part == "{}" then
-                    print("        g_p_c#for#for(", found, "): Wildcard!", cwd_parts[idx])
                     wildcard = cwd_parts[idx]
                 end
             end
