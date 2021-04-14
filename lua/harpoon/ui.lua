@@ -4,17 +4,17 @@ local Marked = require('harpoon.mark')
 
 local M = {}
 
-win_id = nil
-bufh = nil
+Harpoon_win_id = nil
+Harpoon_bufh = nil
 
-function create_window()
+local function create_window()
     local config = harpoon.get_menu_config()
     local width = config.width or 60
     local height = config.height or 10
     local borderchars = config.borderchars or { '─', '│', '─', '│', '╭', '╮', '╯', '╰' }
     local bufnr = vim.api.nvim_create_buf(false, false)
 
-    local win_id, win = popup.create(bufnr, {
+    local Harpoon_win_id, win = popup.create(bufnr, {
         title = 'Harpoon',
         highlight = 'HarpoonWindow',
         line = math.floor(((vim.o.lines - height) / 2) - 1),
@@ -28,12 +28,12 @@ function create_window()
 
     return {
         bufnr = bufnr,
-        win_id = win_id,
+        win_id = Harpoon_win_id,
     }
 end
 
 local function get_menu_items()
-    local lines = vim.api.nvim_buf_get_lines(bufh, 0, -1, true)
+    local lines = vim.api.nvim_buf_get_lines(Harpoon_bufh, 0, -1, true)
     local indices = {}
 
     for idx = 1, #lines do
@@ -52,16 +52,17 @@ local save_changes = function()
 end
 
 M.toggle_quick_menu = function()
-    if win_id ~= nil and vim.api.nvim_win_is_valid(win_id) then
+    if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
         local global_config = harpoon.get_global_settings()
         print(global_config.save_on_menu_quit)
-        if global_config.save_on_toggle == true then
-            vim.cmd(":lua require('harpoon.ui').on_menu_save()")
+        if global_config.save_on_toggle then
+            require('harpoon.ui').on_menu_save()
         end
-        vim.api.nvim_win_close(win_id, true)
 
-        win_id = nil
-        bufh = nil
+        vim.api.nvim_win_close(Harpoon_win_id, true)
+
+        Harpoon_win_id = nil
+        Harpoon_bufh = nil
 
         return
     end
@@ -69,8 +70,8 @@ M.toggle_quick_menu = function()
     local win_info = create_window()
     local contents = {}
 
-    win_id = win_info.win_id
-    bufh = win_info.bufnr
+    Harpoon_win_id = win_info.win_id
+    Harpoon_bufh = win_info.bufnr
 
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file_name(idx)
@@ -80,13 +81,13 @@ M.toggle_quick_menu = function()
         contents[idx] = string.format("%d %s", idx, file)
     end
 
-    vim.api.nvim_buf_set_name(bufh, "harpoon-menu")
-    vim.api.nvim_buf_set_lines(bufh, 0, #contents, false, contents)
-    vim.api.nvim_buf_set_option(bufh, "filetype", "harpoon")
-    vim.api.nvim_buf_set_option(bufh, "buftype", "acwrite")
-    vim.api.nvim_buf_set_option(bufh, "bufhidden", "delete")
-    vim.cmd(string.format("autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()", bufh))
-    vim.cmd(string.format("autocmd BufModifiedSet <buffer=%s> set nomodified", bufh))
+    vim.api.nvim_buf_set_name(Harpoon_bufh, "harpoon-menu")
+    vim.api.nvim_buf_set_lines(Harpoon_bufh, 0, #contents, false, contents)
+    vim.api.nvim_buf_set_option(Harpoon_bufh, "filetype", "harpoon")
+    vim.api.nvim_buf_set_option(Harpoon_bufh, "buftype", "acwrite")
+    vim.api.nvim_buf_set_option(Harpoon_bufh, "bufhidden", "delete")
+    vim.cmd(string.format("autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()", Harpoon_bufh))
+    vim.cmd(string.format("autocmd BufModifiedSet <buffer=%s> set nomodified", Harpoon_bufh))
 end
 
 M.on_menu_save = function()
