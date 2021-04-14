@@ -45,7 +45,7 @@ end
 
 local function merge_tables(...)
     local out = {}
-    for i = 2, select("#",...) do
+    for i = 1, select("#",...) do
         merge_table_impl(out, select(i, ...))
     end
     return out
@@ -130,7 +130,7 @@ M.setup = function(config)
 
     local complete_config =
         merge_tables(
-            {projects = {}},
+            {projects = {} , global_settings = {["save_on_toggle"] = false}},
             expand_dir(c_config),
             expand_dir(u_config),
             expand_dir(config))
@@ -140,6 +140,10 @@ M.setup = function(config)
     ensure_correct_config(complete_config)
 
     HarpoonConfig = complete_config
+end
+
+M.get_global_settings = function()
+    return HarpoonConfig.global_settings
 end
 
 M.get_term_config = function()
@@ -160,7 +164,7 @@ M.print_config = function()
 end
 
 -- Sets a default config with no values
-M.setup({projects = {}})
+M.setup()
 
 return M
 
