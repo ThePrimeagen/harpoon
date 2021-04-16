@@ -132,11 +132,19 @@ Here is the set of global settings and their default values.
 
 require("harpoon").setup({
     global_settings = {
-        save_on_toggle = false
+        save_on_toggle = false,
+        save_on_change = true,
     },
     ... your other configs ...
 })
 ```
+
+* `save_on_toggle` will set the marks upon calling `toggle` on the ui, instead
+  of require `:w`.
+* `save_on_change` will save the harpoon file upon every change.  If you don't
+  enable this option (on by default) harpoon will not save any changes to your
+  file.  It is very unreliable to save your harpoon on exit (at least that is
+  what I have found).
 
 #### Preconfigured Terminal Commands
 These are project specific commands that you wish to execute on the regular.

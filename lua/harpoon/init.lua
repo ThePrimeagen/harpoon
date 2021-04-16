@@ -130,7 +130,10 @@ M.setup = function(config)
 
     local complete_config =
         merge_tables(
-            {projects = {} , global_settings = {["save_on_toggle"] = false}},
+            {projects = {} , global_settings = {
+                ["save_on_toggle"] = false,
+                ["save_on_change"] = true,
+            }},
             expand_dir(c_config),
             expand_dir(u_config),
             expand_dir(config))
