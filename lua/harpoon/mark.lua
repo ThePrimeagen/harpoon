@@ -1,7 +1,26 @@
 local harpoon = require('harpoon')
 local utils = require('harpoon.utils')
 
+-- I think that I may have to organize this better.  I am not the biggest fan
+-- of procedural all the things
 local M = {}
+local callbacks = {}
+
+-- I am trying to avoid over engineering the whole thing.  We will likely only
+-- need one event emitted
+local function emit_changed()
+    if not callbacks["changed"] then
+        return
+    end
+
+    if harpoon.get_global_settings().save_on_change then
+        harpoon.save()
+    end
+
+    for _, cb in pairs(callbacks) do
+        cb()
+    end
+end
 
 local function filter_empty_string(list)
     local next = {}
@@ -12,6 +31,17 @@ local function filter_empty_string(list)
     end
 
     return next
+end
+
+local function get_first_empty_slot()
+    for idx = 1, M.get_length() do
+        local filename = M.get_marked_file_name(idx)
+        if filename == "" then
+            return idx
+        end
+    end
+
+    return M.get_length() + 1
 end
 
 local function get_buf_name(id)
@@ -112,22 +142,17 @@ M.add_file = function(file_name_or_buf_id)
 
     validate_buf_name(buf_name)
 
-    for idx = 1, M.get_length() do
-        local filename = M.get_marked_file_name(idx)
-        if filename == "" then
-            harpoon.get_mark_config().marks[idx] = create_mark(buf_name)
-
-            M.remove_empty_tail()
-            return
-        end
-    end
-
-    table.insert(harpoon.get_mark_config().marks, create_mark(buf_name))
-    M.remove_empty_tail()
+    local found_idx = get_first_empty_slot()
+    harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
+    M.remove_empty_tail(false)
+    emit_changed();
 end
 
-M.remove_empty_tail = function()
+-- dont_emit_on_changed should only be used internally
+M.remove_empty_tail = function(_emit_on_changed)
+    _emit_on_changed = _emit_on_changed == nil or _emit_on_changed
     local config = harpoon.get_mark_config()
+    local found = false
 
     for i = M.get_length(), 1, -1 do
         local filename = M.get_marked_file_name(i)
@@ -137,7 +162,12 @@ M.remove_empty_tail = function()
 
         if filename == "" then
             table.remove(config.marks, i)
+            found = found or _emit_on_changed
         end
+    end
+
+    if found then
+        emit_changed()
     end
 end
 
@@ -157,6 +187,8 @@ M.store_offset = function()
         -- TODO: Developer logs?
         print("M.store_offset#pcall failed:", res)
     end
+
+    emit_changed()
 end
 
 M.rm_file = function(file_name_or_buf_id)
@@ -168,11 +200,13 @@ M.rm_file = function(file_name_or_buf_id)
     end
 
     harpoon.get_mark_config().marks[idx] = create_mark("")
-    M.remove_empty_tail()
+    M.remove_empty_tail(false)
+    emit_changed()
 end
 
 M.clear_all = function()
     harpoon.get_mark_config().marks = {}
+    emit_changed()
 end
 
 --- ENTERPRISE PROGRAMMING
@@ -199,7 +233,7 @@ M.set_current_at = function(idx)
 
     -- Remove it if it already exists
     if M.valid_index(current_idx) then
-        config.marks[current_idx] = ""
+        config.marks[current_idx] = create_mark("")
     end
 
     config.marks[idx] = create_mark(buf_name)
@@ -209,6 +243,8 @@ M.set_current_at = function(idx)
             config.marks[i] = create_mark("")
         end
     end
+
+    emit_changed()
 end
 
 M.to_quickfix_list = function()
@@ -243,6 +279,7 @@ M.set_mark_list = function(new_list)
     end
 
     config.marks = new_list
+    emit_changed()
 end
 
 M.toggle_file = function(file_name_or_buf_id)
@@ -263,5 +300,14 @@ M.get_current_index = function()
     return M.get_index_of(vim.fn.bufname(vim.fn.bufnr()))
 end
 
+M.on = function(event, cb)
+    if not callbacks[event] then
+        callbacks[event] = {}
+    end
+
+    table.insert(callbacks[event], cb)
+end
+
 return M
+
 
