@@ -9,12 +9,12 @@ local callbacks = {}
 -- I am trying to avoid over engineering the whole thing.  We will likely only
 -- need one event emitted
 local function emit_changed()
-    if not callbacks["changed"] then
-        return
-    end
-
     if harpoon.get_global_settings().save_on_change then
         harpoon.save()
+    end
+
+    if not callbacks["changed"] then
+        return
     end
 
     for _, cb in pairs(callbacks) do
