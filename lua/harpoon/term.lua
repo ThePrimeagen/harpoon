@@ -52,7 +52,7 @@ M.gotoTerminal = function(idx)
     vim.api.nvim_set_current_buf(term_handle.buf_id)
 end
 
-M.sendCommand = function(idx, cmd)
+M.sendCommand = function(idx, cmd, ...)
     local term_handle = find_terminal(idx)
 
     if type(cmd) == "number" then
@@ -60,7 +60,7 @@ M.sendCommand = function(idx, cmd)
     end
 
     if cmd then
-        vim.fn.chansend(term_handle.term_id, cmd)
+        vim.fn.chansend(term_handle.term_id, string.format(cmd, ...))
     end
 end
 
