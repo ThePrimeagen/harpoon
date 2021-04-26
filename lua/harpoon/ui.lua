@@ -106,7 +106,7 @@ M.nav_file = function(id)
 
     vim.api.nvim_set_current_buf(buf_id)
     if set_row and mark.row then
-        vim.cmd(string.format(":%d", mark.row))
+        vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
     end
 end
 
