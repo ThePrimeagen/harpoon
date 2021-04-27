@@ -1,5 +1,6 @@
-local harpoon = require('harpoon')
-local utils = require('harpoon.utils')
+local harpoon = require("harpoon")
+local utils = require("harpoon.utils")
+local log = require("harpoon.dev").log
 
 -- I think that I may have to organize this better.  I am not the biggest fan
 -- of procedural all the things
@@ -14,6 +15,7 @@ local function emit_changed()
     end
 
     if not callbacks["changed"] then
+        log.debug("emit_changed(): no callbacks for 'changed', returning")
         return
     end
 
@@ -81,21 +83,21 @@ end
 
 local function validate_buf_name(buf_name)
     if buf_name == "" or buf_name == nil then
-        error("Couldn't find a valid file name to mark, sorry.")
+        log.error("Couldn't find a valid file name to mark, sorry.")
         return
     end
 end
 
 M.get_index_of = function(item)
     if item == nil then
-        error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
+        log.error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
         return
     end
 
-    if type(item) == 'string' then
+    if type(item) == "string" then
         local relative_item = utils.normalize_path(item)
         for idx = 1, M.get_length() do
-           if M.get_marked_file_name(idx) == relative_item then
+            if M.get_marked_file_name(idx) == relative_item then
                 return idx
             end
         end
@@ -145,7 +147,7 @@ M.add_file = function(file_name_or_buf_id)
     local found_idx = get_first_empty_slot()
     harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
     M.remove_empty_tail(false)
-    emit_changed();
+    emit_changed()
 end
 
 -- dont_emit_on_changed should only be used internally
@@ -179,13 +181,11 @@ M.store_offset = function()
             return
         end
 
-        harpoon.get_mark_config().marks[idx].row =
-            vim.fn.line(".");
+        harpoon.get_mark_config().marks[idx].row = vim.fn.line(".")
     end)
 
     if not ok then
-        -- TODO: Developer logs?
-        print("M.store_offset#pcall failed:", res)
+        log.warn("store_offset(): pcall failed:", res)
     end
 
     emit_changed()
@@ -196,16 +196,19 @@ M.rm_file = function(file_name_or_buf_id)
     local idx = M.get_index_of(buf_name)
 
     if not M.valid_index(idx) then
+        log.debug("rm_file(): No mark exists for id", file_name_or_buf_id)
         return
     end
 
     harpoon.get_mark_config().marks[idx] = create_mark("")
     M.remove_empty_tail(false)
     emit_changed()
+    log.debug("rm_file(): Removed mark at id", idx)
 end
 
 M.clear_all = function()
     harpoon.get_mark_config().marks = {}
+    log.debug("clear_all(): Clearing all marks.")
     emit_changed()
 end
 
@@ -230,6 +233,8 @@ M.set_current_at = function(idx)
     local config = harpoon.get_mark_config()
     local buf_name = get_buf_name()
     local current_idx = M.get_index_of(buf_name)
+
+    log.debug("set_current_at(): Setting id", idx, buf_name)
 
     -- Remove it if it already exists
     if M.valid_index(current_idx) then
@@ -260,11 +265,11 @@ M.to_quickfix_list = function()
             col = mark.col,
         }
     end
+    log.debug("to_quickfix_list(): Sending marks to quickfix list.")
     vim.fn.setqflist(qf_list)
 end
 
 M.set_mark_list = function(new_list)
-
     local config = harpoon.get_mark_config()
 
     for k, v in pairs(new_list) do
@@ -285,14 +290,18 @@ end
 M.toggle_file = function(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
 
+    log.debug("toggle_file():", buf_name)
+
     validate_buf_name(buf_name)
 
     if (mark_exists(buf_name)) then
         M.rm_file(buf_name)
         print("Mark removed")
+        log.trace("toggle_file(): Mark removed")
     else
         M.add_file(buf_name)
-        print("Mark Added")
+        print("Mark added")
+        log.trace("toggle_file(): Mark added")
     end
 end
 
@@ -302,6 +311,7 @@ end
 
 M.on = function(event, cb)
     if not callbacks[event] then
+        log.debug("on(): no callbacks yet for", event)
         callbacks[event] = {}
     end
 
@@ -309,5 +319,3 @@ M.on = function(event, cb)
 end
 
 return M
-
-

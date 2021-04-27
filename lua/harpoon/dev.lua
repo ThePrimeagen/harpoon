@@ -6,7 +6,25 @@
 local M = {}
 
 M.reload = function()
-    require("plenary.reload").reload_module("harpoon");
+    require("plenary.reload").reload_module("harpoon")
 end
+
+local function set_log_level()
+    local log_levels = { "trace", "debug", "info", "warning", "error", "fatal" }
+    local log_level = vim.g.harpoon_log_level
+
+    for _, level in pairs(log_levels) do
+        if level == log_level then
+            return log_level
+        end
+    end
+
+    return "warn" -- default, if user hasn't set
+end
+
+M.log = require("plenary.log").new({
+    plugin = "harpoon",
+    level = set_log_level(),
+})
 
 return M

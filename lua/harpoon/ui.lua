@@ -1,6 +1,7 @@
-local harpoon = require('harpoon')
-local popup = require('popup')
-local Marked = require('harpoon.mark')
+local harpoon = require("harpoon")
+local popup = require("popup")
+local Marked = require("harpoon.mark")
+local log = require("harpoon.dev").log
 
 local M = {}
 
@@ -97,6 +98,7 @@ end
 M.nav_file = function(id)
     local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
+        log.debug("nav_file(): No mark exists for id", id)
         return
     end
 
