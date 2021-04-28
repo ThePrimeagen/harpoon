@@ -67,10 +67,11 @@ local function get_buf_name(id)
 end
 
 local function create_mark(filename)
+    local cursor_pos = vim.fn.getcurpos()
     return {
         filename = filename,
-        row = 0,
-        col = 0,
+        row = cursor_pos[2],
+        col = cursor_pos[3],
     }
 end
 
@@ -196,9 +197,10 @@ M.store_offset = function()
             return
         end
 
-        local line = vim.fn.line(".")
-        harpoon.get_mark_config().marks[idx].row = line
-        log.debug("store_offset(): Stored line:", line)
+        local cursor_pos = vim.fn.getcurpos()
+        log.debug(string.format("store_offset(): Stored row: %d, col: %d", cursor_pos[2], cursor_pos[3]))
+        harpoon.get_mark_config().marks[idx].row = cursor_pos[2]
+        harpoon.get_mark_config().marks[idx].col = cursor_pos[3]
     end)
 
     if not ok then
