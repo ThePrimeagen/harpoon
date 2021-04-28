@@ -127,12 +127,13 @@ M.setup = function(config)
     end
 
     local ok, u_config = pcall(read_config, user_config)
-    local ok2, c_config = pcall(read_config, cache_config)
 
     if not ok then
         log.debug("setup(): No user config present at", user_config)
         u_config = {}
     end
+
+    local ok2, c_config = pcall(read_config, cache_config)
 
     if not ok2 then
         log.debug("setup(): No cache config present at", cache_config)
@@ -156,22 +157,22 @@ M.setup = function(config)
 end
 
 M.get_global_settings = function()
-    log.trace("get_global_settings()")
+    log.debug("get_global_settings()")
     return HarpoonConfig.global_settings
 end
 
 M.get_term_config = function()
-    log.trace("get_term_config()")
+    log.debug("get_term_config()")
     return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].term
 end
 
 M.get_mark_config = function()
-    -- log.trace("get_mark_config()")
+    log.debug("get_mark_config()")
     return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].mark
 end
 
 M.get_menu_config = function()
-    log.trace("get_menu_config()")
+    log.debug("get_menu_config()")
     return HarpoonConfig.menu or {}
 end
 

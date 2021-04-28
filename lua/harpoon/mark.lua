@@ -19,7 +19,8 @@ local function emit_changed()
         return
     end
 
-    for _, cb in pairs(callbacks) do
+    for idx, cb in pairs(callbacks["changed"]) do
+        log.debug(string.format("emit_changed(): Running callback #%d for 'changed'", idx))
         cb()
     end
 end
@@ -36,6 +37,7 @@ local function filter_empty_string(list)
 end
 
 local function get_first_empty_slot()
+    log.debug("_get_first_empty_slot()")
     for idx = 1, M.get_length() do
         local filename = M.get_marked_file_name(idx)
         if filename == "" then
@@ -47,6 +49,7 @@ local function get_first_empty_slot()
 end
 
 local function get_buf_name(id)
+    log.debug("get_buf_name():", id)
     if id == nil then
         return utils.normalize_path(vim.fn.bufname(vim.fn.bufnr()))
     elseif type(id) == "string" then
@@ -72,25 +75,29 @@ local function create_mark(filename)
 end
 
 local function mark_exists(buf_name)
+    log.debug("_mark_exists()")
     for idx = 1, M.get_length() do
         if M.get_marked_file_name(idx) == buf_name then
+            log.trace("_mark_exists(): Mark exists", buf_name)
             return true
         end
     end
 
+    log.trace("_mark_exists(): Mark doesn't exist", buf_name)
     return false
 end
 
 local function validate_buf_name(buf_name)
     if buf_name == "" or buf_name == nil then
-        log.error("Couldn't find a valid file name to mark, sorry.")
+        log.error("validate_buf_name(): Not a valid name for a mark,", buf_name)
         return
     end
 end
 
 M.get_index_of = function(item)
+    log.debug("get_index_of():", item)
     if item == nil then
-        log.error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
+        log.error("get_index_of(): You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
         return
     end
 
@@ -105,6 +112,7 @@ M.get_index_of = function(item)
         return nil
     end
 
+    -- TODO move this to a "harpoon_" prefix?
     if vim.g.manage_a_mark_zero_index then
         item = item + 1
     end
@@ -113,10 +121,12 @@ M.get_index_of = function(item)
         return item
     end
 
+    log.debug("get_index_of(): No item found,", item)
     return nil
 end
 
 M.status = function()
+    log.debug("status()")
     local idx = M.get_index_of(get_buf_name())
 
     if M.valid_index(idx) then
@@ -126,6 +136,7 @@ M.status = function()
 end
 
 M.valid_index = function(idx)
+    log.debug("valid_index():", idx)
     if idx == nil then
         return false
     end
@@ -136,6 +147,7 @@ end
 
 M.add_file = function(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
+    log.debug("add_file():", buf_name)
 
     if M.valid_index(M.get_index_of(buf_name)) then
         -- we don't alter file layout.
@@ -150,8 +162,9 @@ M.add_file = function(file_name_or_buf_id)
     emit_changed()
 end
 
--- dont_emit_on_changed should only be used internally
+-- _emit_on_changed == false should only be used internally
 M.remove_empty_tail = function(_emit_on_changed)
+    log.debug("remove_empty_tail()")
     _emit_on_changed = _emit_on_changed == nil or _emit_on_changed
     local config = harpoon.get_mark_config()
     local found = false
@@ -174,18 +187,22 @@ M.remove_empty_tail = function(_emit_on_changed)
 end
 
 M.store_offset = function()
+    log.debug("store_offset()")
     local ok, res = pcall(function()
         local buf_name = get_buf_name()
         local idx = M.get_index_of(buf_name)
+
         if not M.valid_index(idx) then
             return
         end
 
-        harpoon.get_mark_config().marks[idx].row = vim.fn.line(".")
+        local line = vim.fn.line(".")
+        harpoon.get_mark_config().marks[idx].row = line
+        log.debug("store_offset(): Stored line:", line)
     end)
 
     if not ok then
-        log.warn("store_offset(): pcall failed:", res)
+        log.warn("store_offset(): Could not store offset:", res)
     end
 
     emit_changed()
@@ -214,6 +231,7 @@ end
 
 --- ENTERPRISE PROGRAMMING
 M.get_marked_file = function(idxOrName)
+    log.debug("get_marked_file():", idxOrName)
     if type(idxOrName) == "string" then
         idxOrName = M.get_index_of(idxOrName)
     end
@@ -222,10 +240,12 @@ end
 
 M.get_marked_file_name = function(idx)
     local mark = harpoon.get_mark_config().marks[idx]
+    log.debug("get_marked_file_name():", mark and mark.filename)
     return mark and mark.filename
 end
 
 M.get_length = function()
+    log.debug("get_length()")
     return table.maxn(harpoon.get_mark_config().marks)
 end
 
@@ -270,6 +290,9 @@ M.to_quickfix_list = function()
 end
 
 M.set_mark_list = function(new_list)
+    log.debug("set_mark_list()")
+    log.trace("set_mark_list(): new_list", new_list)
+
     local config = harpoon.get_mark_config()
 
     for k, v in pairs(new_list) do
@@ -306,16 +329,19 @@ M.toggle_file = function(file_name_or_buf_id)
 end
 
 M.get_current_index = function()
+    log.debug("get_current_index()")
     return M.get_index_of(vim.fn.bufname(vim.fn.bufnr()))
 end
 
 M.on = function(event, cb)
+    log.debug("on():", event)
     if not callbacks[event] then
         log.debug("on(): no callbacks yet for", event)
         callbacks[event] = {}
     end
 
     table.insert(callbacks[event], cb)
+    log.trace(callbacks)
 end
 
 return M

@@ -19,7 +19,7 @@ local function set_log_level()
         end
     end
 
-    return "warn" -- default, if user hasn't set
+    return "warn" -- default, if user hasn't set to one from log_levels
 end
 
 M.log = require("plenary.log").new({
