@@ -11,7 +11,7 @@ end
 
 local function set_log_level()
     local log_levels = { "trace", "debug", "info", "warning", "error", "fatal" }
-    local log_level = vim.g.harpoon_log_level
+    local log_level = vim.g.harpoon_log_level or vim.env.HARPOON_LOG
 
     for _, level in pairs(log_levels) do
         if level == log_level then

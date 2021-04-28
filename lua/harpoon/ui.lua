@@ -35,11 +35,13 @@ local function create_window()
 end
 
 local function get_menu_items()
+    log.debug("_get_menu_items()")
     local lines = vim.api.nvim_buf_get_lines(Harpoon_bufh, 0, -1, true)
     local indices = {}
 
     for idx = 1, #lines do
         local space_location = string.find(lines[idx], " ")
+        log.trace("_get_menu_items():", idx, space_location)
 
         if space_location ~= nil then
             table.insert(indices, string.sub(lines[idx], space_location + 1))

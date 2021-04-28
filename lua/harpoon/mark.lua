@@ -10,22 +10,24 @@ local callbacks = {}
 -- I am trying to avoid over engineering the whole thing.  We will likely only
 -- need one event emitted
 local function emit_changed()
+    log.debug("_emit_changed()")
     if harpoon.get_global_settings().save_on_change then
         harpoon.save()
     end
 
     if not callbacks["changed"] then
-        log.debug("emit_changed(): no callbacks for 'changed', returning")
+        log.debug("_emit_changed(): no callbacks for 'changed', returning")
         return
     end
 
     for idx, cb in pairs(callbacks["changed"]) do
-        log.debug(string.format("emit_changed(): Running callback #%d for 'changed'", idx))
+        log.debug(string.format("_emit_changed(): Running callback #%d for 'changed'", idx))
         cb()
     end
 end
 
 local function filter_empty_string(list)
+    log.debug("_filter_empty_string()")
     local next = {}
     for idx = 1, #list do
         if list[idx] ~= "" then
@@ -49,7 +51,7 @@ local function get_first_empty_slot()
 end
 
 local function get_buf_name(id)
-    log.debug("get_buf_name():", id)
+    log.debug("_get_buf_name():", id)
     if id == nil then
         return utils.normalize_path(vim.fn.bufname(vim.fn.bufnr()))
     elseif type(id) == "string" then
@@ -68,6 +70,12 @@ end
 
 local function create_mark(filename)
     local cursor_pos = vim.fn.getcurpos()
+    log.debug(string.format(
+        "_create_mark(): Creating mark at row: %d, col: %d for %s",
+        cursor_pos[2],
+        cursor_pos[4],
+        filename
+    ))
     return {
         filename = filename,
         row = cursor_pos[2],
@@ -89,8 +97,9 @@ local function mark_exists(buf_name)
 end
 
 local function validate_buf_name(buf_name)
+    log.debug("_validate_buf_name():", buf_name)
     if buf_name == "" or buf_name == nil then
-        log.error("validate_buf_name(): Not a valid name for a mark,", buf_name)
+        log.error("_validate_buf_name(): Not a valid name for a mark,", buf_name)
         return
     end
 end
@@ -113,7 +122,7 @@ M.get_index_of = function(item)
         return nil
     end
 
-    -- TODO move this to a "harpoon_" prefix?
+    -- TODO move this to a "harpoon_" prefix or global config?
     if vim.g.manage_a_mark_zero_index then
         item = item + 1
     end
@@ -343,7 +352,7 @@ M.on = function(event, cb)
     end
 
     table.insert(callbacks[event], cb)
-    log.trace(callbacks)
+    log.trace("on(): All callbacks:", callbacks)
 end
 
 return M

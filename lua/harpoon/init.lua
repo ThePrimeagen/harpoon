@@ -55,6 +55,7 @@ local function merge_tables(...)
 end
 
 local function ensure_correct_config(config)
+    log.debug("_ensure_correct_config()")
     local projects = config.projects
     if projects[vim.loop.cwd()] == nil then
         log.trace("ensure_correct_config(): No config found for:", vim.loop.cwd())
@@ -96,6 +97,9 @@ local function ensure_correct_config(config)
 end
 
 local function expand_dir(config)
+    log.debug("_expand_dir()")
+    log.trace("_expand_dir(): Config pre-expansion:", config)
+
     local projects = config.projects or {}
     for k in pairs(projects) do
         local expanded_path = Path.new(k):expand()
@@ -105,6 +109,7 @@ local function expand_dir(config)
         end
     end
 
+    log.trace("_expand_dir(): Config post-expansion:", config)
     return config
 end
 
