@@ -5,7 +5,7 @@ local M = {}
 local terminals = {}
 
 local function create_terminal()
-    log.debug("_create_terminal()")
+    log.trace("_create_terminal()")
     local current_id = vim.fn.bufnr()
 
     vim.cmd(":terminal")
@@ -32,7 +32,7 @@ function getCmd(idx)
 end
 
 local function find_terminal(idx)
-    log.debug("_find_terminal(): Terminal:", idx)
+    log.trace("_find_terminal(): Terminal:", idx)
     local term_handle = terminals[idx]
     if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
         local buf_id, term_id = create_terminal()
@@ -50,14 +50,14 @@ local function find_terminal(idx)
 end
 
 M.gotoTerminal = function(idx)
-    log.debug("gotoTerminal(): Terminal:", idx)
+    log.info("gotoTerminal(): Terminal:", idx)
     local term_handle = find_terminal(idx)
 
     vim.api.nvim_set_current_buf(term_handle.buf_id)
 end
 
 M.sendCommand = function(idx, cmd, ...)
-    log.debug("sendCommand(): Terminal:", idx)
+    log.info("sendCommand(): Terminal:", idx)
     local term_handle = find_terminal(idx)
 
     if type(cmd) == "number" then

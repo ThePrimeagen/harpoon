@@ -51,11 +51,12 @@ local function merge_tables(...)
     for i = 1, select("#", ...) do
         merge_table_impl(out, select(i, ...))
     end
+    log.trace("_merge_tables(): Output", out)
     return out
 end
 
 local function ensure_correct_config(config)
-    log.debug("_ensure_correct_config()")
+    log.trace("_ensure_correct_config()")
     local projects = config.projects
     if projects[vim.loop.cwd()] == nil then
         log.trace("ensure_correct_config(): No config found for:", vim.loop.cwd())
@@ -97,7 +98,7 @@ local function ensure_correct_config(config)
 end
 
 local function expand_dir(config)
-    log.debug("_expand_dir()")
+    log.trace("_expand_dir()")
     log.trace("_expand_dir(): Config pre-expansion:", config)
 
     local projects = config.projects or {}
@@ -119,7 +120,7 @@ M.save = function()
 end
 
 local function read_config(local_config)
-    log.debug("_read_config():", local_config)
+    log.trace("_read_config():", local_config)
     return vim.fn.json_decode(Path:new(local_config):read())
 end
 

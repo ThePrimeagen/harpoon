@@ -9,7 +9,7 @@ Harpoon_win_id = nil
 Harpoon_bufh = nil
 
 local function create_window()
-    log.debug("_create_window()")
+    log.trace("_create_window()")
     local config = harpoon.get_menu_config()
     local width = config.width or 60
     local height = config.height or 10
@@ -35,7 +35,7 @@ local function create_window()
 end
 
 local function get_menu_items()
-    log.debug("_get_menu_items()")
+    log.trace("_get_menu_items()")
     local lines = vim.api.nvim_buf_get_lines(Harpoon_bufh, 0, -1, true)
     local indices = {}
 
@@ -52,7 +52,7 @@ local function get_menu_items()
 end
 
 M.toggle_quick_menu = function()
-    log.debug("toggle_quick_menu()")
+    log.info("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
         local global_config = harpoon.get_global_settings()
 
@@ -97,7 +97,7 @@ M.on_menu_save = function()
 end
 
 M.nav_file = function(id)
-    log.debug("nav_file(): Navigating to", id)
+    log.info("nav_file(): Navigating to", id)
     local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
         log.debug("nav_file(): No mark exists for id", id)

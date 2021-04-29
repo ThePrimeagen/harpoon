@@ -10,24 +10,24 @@ local callbacks = {}
 -- I am trying to avoid over engineering the whole thing.  We will likely only
 -- need one event emitted
 local function emit_changed()
-    log.debug("_emit_changed()")
+    log.trace("_emit_changed()")
     if harpoon.get_global_settings().save_on_change then
         harpoon.save()
     end
 
     if not callbacks["changed"] then
-        log.debug("_emit_changed(): no callbacks for 'changed', returning")
+        log.trace("_emit_changed(): no callbacks for 'changed', returning")
         return
     end
 
     for idx, cb in pairs(callbacks["changed"]) do
-        log.debug(string.format("_emit_changed(): Running callback #%d for 'changed'", idx))
+        log.trace(string.format("_emit_changed(): Running callback #%d for 'changed'", idx))
         cb()
     end
 end
 
 local function filter_empty_string(list)
-    log.debug("_filter_empty_string()")
+    log.trace("_filter_empty_string()")
     local next = {}
     for idx = 1, #list do
         if list[idx] ~= "" then
@@ -39,7 +39,7 @@ local function filter_empty_string(list)
 end
 
 local function get_first_empty_slot()
-    log.debug("_get_first_empty_slot()")
+    log.trace("_get_first_empty_slot()")
     for idx = 1, M.get_length() do
         local filename = M.get_marked_file_name(idx)
         if filename == "" then
@@ -51,7 +51,7 @@ local function get_first_empty_slot()
 end
 
 local function get_buf_name(id)
-    log.debug("_get_buf_name():", id)
+    log.trace("_get_buf_name():", id)
     if id == nil then
         return utils.normalize_path(vim.fn.bufname(vim.fn.bufnr()))
     elseif type(id) == "string" then
@@ -84,7 +84,7 @@ local function create_mark(filename)
 end
 
 local function mark_exists(buf_name)
-    log.debug("_mark_exists()")
+    log.trace("_mark_exists()")
     for idx = 1, M.get_length() do
         if M.get_marked_file_name(idx) == buf_name then
             log.trace("_mark_exists(): Mark exists", buf_name)
@@ -97,7 +97,7 @@ local function mark_exists(buf_name)
 end
 
 local function validate_buf_name(buf_name)
-    log.debug("_validate_buf_name():", buf_name)
+    log.trace("_validate_buf_name():", buf_name)
     if buf_name == "" or buf_name == nil then
         log.error("_validate_buf_name(): Not a valid name for a mark,", buf_name)
         return
@@ -157,7 +157,7 @@ end
 
 M.add_file = function(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
-    log.debug("add_file():", buf_name)
+    log.info("add_file():", buf_name)
 
     if M.valid_index(M.get_index_of(buf_name)) then
         -- we don't alter file layout.
@@ -231,12 +231,12 @@ M.rm_file = function(file_name_or_buf_id)
     harpoon.get_mark_config().marks[idx] = create_mark("")
     M.remove_empty_tail(false)
     emit_changed()
-    log.debug("rm_file(): Removed mark at id", idx)
+    log.info("rm_file(): Removed mark at id", idx)
 end
 
 M.clear_all = function()
     harpoon.get_mark_config().marks = {}
-    log.debug("clear_all(): Clearing all marks.")
+    log.info("clear_all(): Clearing all marks.")
     emit_changed()
 end
 
@@ -265,7 +265,7 @@ M.set_current_at = function(idx)
     local buf_name = get_buf_name()
     local current_idx = M.get_index_of(buf_name)
 
-    log.debug("set_current_at(): Setting id", idx, buf_name)
+    log.info("set_current_at(): Setting id", idx, buf_name)
 
     -- Remove it if it already exists
     if M.valid_index(current_idx) then
@@ -324,18 +324,18 @@ end
 M.toggle_file = function(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
 
-    log.debug("toggle_file():", buf_name)
+    log.info("toggle_file():", buf_name)
 
     validate_buf_name(buf_name)
 
     if (mark_exists(buf_name)) then
         M.rm_file(buf_name)
         print("Mark removed")
-        log.trace("toggle_file(): Mark removed")
+        log.debug("toggle_file(): Mark removed")
     else
         M.add_file(buf_name)
         print("Mark added")
-        log.trace("toggle_file(): Mark added")
+        log.debug("toggle_file(): Mark added")
     end
 end
 
