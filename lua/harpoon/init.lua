@@ -98,7 +98,6 @@ local function ensure_correct_config(config)
 end
 
 local function expand_dir(config)
-    log.trace("_expand_dir()")
     log.trace("_expand_dir(): Config pre-expansion:", config)
 
     local projects = config.projects or {}
