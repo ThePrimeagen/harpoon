@@ -169,7 +169,7 @@ function M.close_notification(bufnr)
 end
 
 M.nav_next = function()
-    log.debug("nav_next()")
+    log.info("nav_next()")
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
@@ -186,7 +186,7 @@ M.nav_next = function()
 end
 
 M.nav_prev = function()
-    log.debug("nav_prev()")
+    log.info("nav_prev()")
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 

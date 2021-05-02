@@ -176,5 +176,7 @@ require("harpoon").setup({
 
 ```
 
+## Debugging
+Harpoon writes logs to a `harpoon.log` file that resides in Neovim's cache path. (`:echo stdpath("cache")` to find where that is for you.)
 
-
+By default, logging is enabled for warnings and above. This can be changed by setting `vim.g.harpoon_log_level` variable to one of the following log levels: `trace`, `debug`, `info`, `warn`, `error`, or `fatal`. Note that this would have to be done **before** harpoon's `setup` call. Alternatively, it can be more convenient to launch Neovim with an environment variable, e.g. `> HARPOON_LOG=trace nvim`. In case both, `vim.g` and an environment variable are used, the log level set by the environment variable overrules. Supplying an invalid log level defaults back to warnings.
