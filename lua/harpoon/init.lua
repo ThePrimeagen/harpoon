@@ -28,7 +28,6 @@ local M = {}
     ... high level settings
 }
 --]]
-
 HarpoonConfig = HarpoonConfig or {}
 
 -- tbl_deep_extend does not work the way you would think
@@ -48,7 +47,7 @@ end
 
 local function merge_tables(...)
     local out = {}
-    for i = 1, select("#", ...) do
+    for i = 1, select("#",...) do
         merge_table_impl(out, select(i, ...))
     end
     log.trace("_merge_tables(): Output", out)
@@ -62,10 +61,10 @@ local function ensure_correct_config(config)
         log.trace("ensure_correct_config(): No config found for:", vim.loop.cwd())
         projects[vim.loop.cwd()] = {
             mark = {
-                marks = {},
+                marks = {}
             },
             term = {
-                cmds = {},
+                cmds = {}
             },
         }
     end
@@ -86,7 +85,7 @@ local function ensure_correct_config(config)
         local mark = marks[idx]
         if type(mark) == "string" then
             mark = {
-                filename = mark,
+                filename = mark
             }
             marks[idx] = mark
         end
@@ -145,13 +144,17 @@ M.setup = function(config)
         c_config = {}
     end
 
-    local complete_config = merge_tables({
-        projects = {},
-        global_settings = {
-            ["save_on_toggle"] = false,
-            ["save_on_change"] = true,
+    local complete_config =
+        merge_tables({
+            projects = {},
+            global_settings = {
+                ["save_on_toggle"] = false,
+                ["save_on_change"] = true,
+            },
         },
-    }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
+        expand_dir(c_config),
+        expand_dir(u_config),
+        expand_dir(config))
 
     -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
     -- an object for vim.loop.cwd()
