@@ -1,6 +1,7 @@
 local harpoon = require('harpoon')
 local popup = require('popup')
 local Marked = require('harpoon.mark')
+local log = require("harpoon.dev").log
 
 local M = {}
 
@@ -8,6 +9,7 @@ Harpoon_win_id = nil
 Harpoon_bufh = nil
 
 local function create_window()
+    log.trace("_create_window()")
     local config = harpoon.get_menu_config()
     local width = config.width or 60
     local height = config.height or 10
@@ -33,11 +35,13 @@ local function create_window()
 end
 
 local function get_menu_items()
+    log.trace("_get_menu_items()")
     local lines = vim.api.nvim_buf_get_lines(Harpoon_bufh, 0, -1, true)
     local indices = {}
 
     for idx = 1, #lines do
         local space_location = string.find(lines[idx], ' ')
+        log.debug("_get_menu_items():", idx, space_location)
 
         if space_location ~= nil then
             table.insert(indices, string.sub(lines[idx], space_location + 1))
@@ -47,11 +51,10 @@ local function get_menu_items()
     return indices
 end
 
-local save_changes = function()
-    Marked.set_mark_list(get_menu_items())
-end
+
 
 M.toggle_quick_menu = function()
+    log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
         local global_config = harpoon.get_global_settings()
 
@@ -91,12 +94,15 @@ M.toggle_quick_menu = function()
 end
 
 M.on_menu_save = function()
-    save_changes()
+    log.trace("on_menu_save()")
+    Marked.set_mark_list(get_menu_items())
 end
 
 M.nav_file = function(id)
+    log.trace("nav_file(): Navigating to", id)
     local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
+        log.debug("nav_file(): No mark exists for id", id)
         return
     end
 
@@ -105,8 +111,9 @@ M.nav_file = function(id)
     local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
 
     vim.api.nvim_set_current_buf(buf_id)
-    if set_row and mark.row then
+    if set_row and mark.row and mark.col then
         vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
+        log.debug(string.format("nav_file(): Setting cursor to row: %d, col: %d", mark.row, mark.col))
     end
 end
 
@@ -157,6 +164,7 @@ function M.close_notification(bufnr)
 end
 
 M.nav_next = function()
+    log.trace("nav_next()")
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
@@ -173,6 +181,7 @@ M.nav_next = function()
 end
 
 M.nav_prev = function()
+    log.trace("nav_prev()")
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
