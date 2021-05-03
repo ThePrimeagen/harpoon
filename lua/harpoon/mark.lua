@@ -100,6 +100,7 @@ local function validate_buf_name(buf_name)
     log.trace("_validate_buf_name():", buf_name)
     if buf_name == "" or buf_name == nil then
         log.error("_validate_buf_name(): Not a valid name for a mark,", buf_name)
+        error("Couldn't find a valid file name to mark, sorry.")
         return
     end
 end
@@ -107,7 +108,8 @@ end
 M.get_index_of = function(item)
     log.debug("get_index_of():", item)
     if item == nil then
-        log.error("get_index_of(): You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
+        log.error("get_index_of(): Function has been supplied with a nil value.")
+        error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
         return
     end
 

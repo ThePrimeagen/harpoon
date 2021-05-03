@@ -72,12 +72,12 @@ local function ensure_correct_config(config)
     local proj = projects[vim.loop.cwd()]
     if proj.mark == nil then
         log.trace("ensure_correct_config(): No marks found for", vim.loop.cwd())
-        proj.mark = { marks = {} }
+        proj.mark = {marks = {}}
     end
 
     if proj.term == nil then
         log.trace("ensure_correct_config(): No terminal commands found for", vim.loop.cwd())
-        proj.term = { cmds = {} }
+        proj.term = {cmds = {}}
     end
 
     local marks = proj.mark.marks

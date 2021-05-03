@@ -111,14 +111,9 @@ M.nav_file = function(id)
     local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
 
     vim.api.nvim_set_current_buf(buf_id)
-    if set_row and mark.row then
-        local ok, err = pcall(vim.cmd, string.format(":call cursor(%d, %d)", mark.row, mark.col))
-        if not ok then
-            log.warn(
-                string.format("nav_file(): Could not set cursor to row: %d, col: %d", mark.row, mark.col),
-                err
-            )
-        end
+    if set_row and mark.row and mark.col then
+        vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
+        log.trace(string.format("nav_file(): Setting cursor to row: %d, col: %d", mark.row, mark.col))
     end
 end
 
