@@ -46,11 +46,11 @@ local function merge_table_impl(t1, t2)
 end
 
 local function merge_tables(...)
+    log.trace("_merge_tables()")
     local out = {}
     for i = 1, select("#",...) do
         merge_table_impl(out, select(i, ...))
     end
-    log.trace("_merge_tables(): Output", out)
     return out
 end
 
@@ -58,7 +58,7 @@ local function ensure_correct_config(config)
     log.trace("_ensure_correct_config()")
     local projects = config.projects
     if projects[vim.loop.cwd()] == nil then
-        log.trace("ensure_correct_config(): No config found for:", vim.loop.cwd())
+        log.debug("ensure_correct_config(): No config found for:", vim.loop.cwd())
         projects[vim.loop.cwd()] = {
             mark = {
                 marks = {}
@@ -71,12 +71,12 @@ local function ensure_correct_config(config)
 
     local proj = projects[vim.loop.cwd()]
     if proj.mark == nil then
-        log.trace("ensure_correct_config(): No marks found for", vim.loop.cwd())
+        log.debug("ensure_correct_config(): No marks found for", vim.loop.cwd())
         proj.mark = {marks = {}}
     end
 
     if proj.term == nil then
-        log.trace("ensure_correct_config(): No terminal commands found for", vim.loop.cwd())
+        log.debug("ensure_correct_config(): No terminal commands found for", vim.loop.cwd())
         proj.term = {cmds = {}}
     end
 
@@ -113,7 +113,7 @@ local function expand_dir(config)
 end
 
 M.save = function()
-    log.debug("save(): Saving cache config to", cache_config)
+    log.trace("save(): Saving cache config to", cache_config)
     Path:new(cache_config):write(vim.fn.json_encode(HarpoonConfig), "w")
 end
 
@@ -124,7 +124,7 @@ end
 
 -- 1. saved.  Where do we save?
 M.setup = function(config)
-    log.debug("setup(): Setting up...")
+    log.trace("setup(): Setting up...")
 
     if not config then
         config = {}
@@ -159,26 +159,26 @@ M.setup = function(config)
     ensure_correct_config(complete_config)
 
     HarpoonConfig = complete_config
-    log.trace("setup(): Complete config", HarpoonConfig)
+    log.debug("setup(): Complete config", HarpoonConfig)
 end
 
 M.get_global_settings = function()
-    log.debug("get_global_settings()")
+    log.trace("get_global_settings()")
     return HarpoonConfig.global_settings
 end
 
 M.get_term_config = function()
-    log.debug("get_term_config()")
+    log.trace("get_term_config()")
     return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].term
 end
 
 M.get_mark_config = function()
-    log.debug("get_mark_config()")
+    log.trace("get_mark_config()")
     return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].mark
 end
 
 M.get_menu_config = function()
-    log.debug("get_menu_config()")
+    log.trace("get_menu_config()")
     return HarpoonConfig.menu or {}
 end
 

@@ -41,7 +41,7 @@ local function get_menu_items()
 
     for idx = 1, #lines do
         local space_location = string.find(lines[idx], ' ')
-        log.trace("_get_menu_items():", idx, space_location)
+        log.debug("_get_menu_items():", idx, space_location)
 
         if space_location ~= nil then
             table.insert(indices, string.sub(lines[idx], space_location + 1))
@@ -54,7 +54,7 @@ end
 
 
 M.toggle_quick_menu = function()
-    log.info("toggle_quick_menu()")
+    log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
         local global_config = harpoon.get_global_settings()
 
@@ -94,12 +94,12 @@ M.toggle_quick_menu = function()
 end
 
 M.on_menu_save = function()
-    log.debug("on_menu_save()")
+    log.trace("on_menu_save()")
     Marked.set_mark_list(get_menu_items())
 end
 
 M.nav_file = function(id)
-    log.info("nav_file(): Navigating to", id)
+    log.trace("nav_file(): Navigating to", id)
     local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
         log.debug("nav_file(): No mark exists for id", id)
@@ -113,7 +113,7 @@ M.nav_file = function(id)
     vim.api.nvim_set_current_buf(buf_id)
     if set_row and mark.row and mark.col then
         vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
-        log.trace(string.format("nav_file(): Setting cursor to row: %d, col: %d", mark.row, mark.col))
+        log.debug(string.format("nav_file(): Setting cursor to row: %d, col: %d", mark.row, mark.col))
     end
 end
 
@@ -164,7 +164,7 @@ function M.close_notification(bufnr)
 end
 
 M.nav_next = function()
-    log.info("nav_next()")
+    log.trace("nav_next()")
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
@@ -181,7 +181,7 @@ M.nav_next = function()
 end
 
 M.nav_prev = function()
-    log.info("nav_prev()")
+    log.trace("nav_prev()")
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
