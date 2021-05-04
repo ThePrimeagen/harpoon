@@ -1,0 +1,26 @@
+name: Format
+
+on: [push, pull_request]
+
+jobs:
+    format:
+        name: Stylua
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: date +%W > weekly
+
+            - name: Restore cache
+              id: cache
+              uses: actions/cache@v2
+              with:
+                path: |
+                  ~/.cargo/bin
+                key: ${{ runner.os }}-cargo-${{ hashFiles('weekly') }}
+
+            - name: Install
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: cargo install stylua
+
+            - name: Format
+              run: stylua --check lua/ --config-path=.stylua.toml

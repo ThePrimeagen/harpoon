@@ -1,5 +1,4 @@
 local harpoon = require("harpoon")
-local Path = require("plenary.path")
 local log = require("harpoon.dev").log
 
 local M = {}
@@ -28,8 +27,20 @@ local function create_terminal()
     return buf_id, term_id
 end
 
-function getCmd(idx)
-    return
+M.getCmd = function(idx)
+    log.trace("getCmd()")
+    local cmd
+    if type(idx) == "number" then
+        cmd = harpoon.get_term_config().cmds[idx]
+    else
+        log.error("getCmd(): Index is expected to be a number.")
+    end
+
+    if cmd then
+        return cmd
+    else
+        error("Command does not exist for that id.")
+    end
 end
 
 local function find_terminal(idx)
