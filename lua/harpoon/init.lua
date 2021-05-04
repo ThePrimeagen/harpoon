@@ -48,7 +48,7 @@ end
 local function merge_tables(...)
     log.trace("_merge_tables()")
     local out = {}
-    for i = 1, select("#",...) do
+    for i = 1, select("#", ...) do
         merge_table_impl(out, select(i, ...))
     end
     return out
@@ -61,10 +61,10 @@ local function ensure_correct_config(config)
         log.debug("ensure_correct_config(): No config found for:", vim.loop.cwd())
         projects[vim.loop.cwd()] = {
             mark = {
-                marks = {}
+                marks = {},
             },
             term = {
-                cmds = {}
+                cmds = {},
             },
         }
     end
@@ -72,12 +72,12 @@ local function ensure_correct_config(config)
     local proj = projects[vim.loop.cwd()]
     if proj.mark == nil then
         log.debug("ensure_correct_config(): No marks found for", vim.loop.cwd())
-        proj.mark = {marks = {}}
+        proj.mark = { marks = {} }
     end
 
     if proj.term == nil then
         log.debug("ensure_correct_config(): No terminal commands found for", vim.loop.cwd())
-        proj.term = {cmds = {}}
+        proj.term = { cmds = {} }
     end
 
     local marks = proj.mark.marks
@@ -85,7 +85,7 @@ local function ensure_correct_config(config)
         local mark = marks[idx]
         if type(mark) == "string" then
             mark = {
-                filename = mark
+                filename = mark,
             }
             marks[idx] = mark
         end
@@ -144,15 +144,13 @@ M.setup = function(config)
         c_config = {}
     end
 
-    local complete_config =
-        merge_tables(
-            {projects = {} , global_settings = {
-                ["save_on_toggle"] = false,
-                ["save_on_change"] = true,
-            }},
-            expand_dir(c_config),
-            expand_dir(u_config),
-            expand_dir(config))
+    local complete_config = merge_tables({
+        projects = {},
+        global_settings = {
+            ["save_on_toggle"] = false,
+            ["save_on_change"] = true,
+        },
+    }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 
     -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
     -- an object for vim.loop.cwd()
@@ -191,4 +189,3 @@ end
 M.setup()
 
 return M
-

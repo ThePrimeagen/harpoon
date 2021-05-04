@@ -1,6 +1,6 @@
-local harpoon = require('harpoon')
-local popup = require('popup')
-local Marked = require('harpoon.mark')
+local harpoon = require("harpoon")
+local popup = require("popup")
+local Marked = require("harpoon.mark")
 local log = require("harpoon.dev").log
 
 local M = {}
@@ -13,12 +13,12 @@ local function create_window()
     local config = harpoon.get_menu_config()
     local width = config.width or 60
     local height = config.height or 10
-    local borderchars = config.borderchars or { '─', '│', '─', '│', '╭', '╮', '╯', '╰' }
+    local borderchars = config.borderchars or { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
     local bufnr = vim.api.nvim_create_buf(false, false)
 
     local Harpoon_win_id, win = popup.create(bufnr, {
-        title = 'Harpoon',
-        highlight = 'HarpoonWindow',
+        title = "Harpoon",
+        highlight = "HarpoonWindow",
         line = math.floor(((vim.o.lines - height) / 2) - 1),
         col = math.floor((vim.o.columns - width) / 2),
         minwidth = width,
@@ -26,7 +26,7 @@ local function create_window()
         borderchars = borderchars,
     })
 
-    vim.api.nvim_win_set_option(win.border.win_id, 'winhl', 'Normal:HarpoonBorder')
+    vim.api.nvim_win_set_option(win.border.win_id, "winhl", "Normal:HarpoonBorder")
 
     return {
         bufnr = bufnr,
@@ -40,7 +40,7 @@ local function get_menu_items()
     local indices = {}
 
     for idx = 1, #lines do
-        local space_location = string.find(lines[idx], ' ')
+        local space_location = string.find(lines[idx], " ")
         log.debug("_get_menu_items():", idx, space_location)
 
         if space_location ~= nil then
@@ -51,15 +51,13 @@ local function get_menu_items()
     return indices
 end
 
-
-
 M.toggle_quick_menu = function()
     log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
         local global_config = harpoon.get_global_settings()
 
         if global_config.save_on_toggle then
-            require('harpoon.ui').on_menu_save()
+            require("harpoon.ui").on_menu_save()
         end
 
         vim.api.nvim_win_close(Harpoon_win_id, true)
@@ -119,14 +117,14 @@ end
 
 function M.location_window(options)
     local default_options = {
-        relative = 'editor',
-        style = 'minimal',
+        relative = "editor",
+        style = "minimal",
         width = 30,
         height = 15,
         row = 2,
         col = 2,
     }
-    options = vim.tbl_extend('keep', options, default_options)
+    options = vim.tbl_extend("keep", options, default_options)
 
     local bufnr = options.bufnr or vim.fn.nvim_create_buf(false, true)
     local win_id = vim.fn.nvim_open_win(bufnr, true, options)
@@ -147,15 +145,15 @@ function M.notification(text)
         width = 20,
         height = 2,
         row = 1,
-        col = win_width - 21
+        col = win_width - 21,
     })
 
-    vim.api.nvim_buf_set_lines(info.bufnr, 0, 5, false, {"!!! Notification", text})
+    vim.api.nvim_buf_set_lines(info.bufnr, 0, 5, false, { "!!! Notification", text })
     vim.api.nvim_set_current_win(prev_win)
 
     return {
         bufnr = info.bufnr,
-        win_id = info.win_id
+        win_id = info.win_id,
     }
 end
 
@@ -168,13 +166,13 @@ M.nav_next = function()
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
-    if current_index  == nil then
+    if current_index == nil then
         current_index = 1
     else
         current_index = current_index + 1
     end
 
-    if (current_index > number_of_items)  then
+    if current_index > number_of_items then
         current_index = 1
     end
     M.nav_file(current_index)
@@ -185,13 +183,13 @@ M.nav_prev = function()
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
-    if current_index  == nil then
+    if current_index == nil then
         current_index = number_of_items
     else
         current_index = current_index - 1
     end
 
-    if (current_index < 1)  then
+    if current_index < 1 then
         current_index = number_of_items
     end
 
@@ -199,4 +197,3 @@ M.nav_prev = function()
 end
 
 return M
-

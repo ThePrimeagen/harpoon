@@ -1,4 +1,4 @@
-local harpoon = require('harpoon')
+local harpoon = require("harpoon")
 local Path = require("plenary.path")
 local log = require("harpoon.dev").log
 
@@ -11,7 +11,7 @@ local function create_terminal()
 
     vim.cmd(":terminal")
     local buf_id = vim.fn.bufnr()
-    local term_id  = vim.b.terminal_job_id
+    local term_id = vim.b.terminal_job_id
 
     if term_id == nil then
         log.error("_create_terminal(): term_id is nil")
@@ -21,7 +21,7 @@ local function create_terminal()
 
     -- Make sure the term buffer has "hidden" set so it doesn't get thrown
     -- away and cause an error
-    vim.api.nvim_buf_set_option(buf_id, 'bufhidden', 'hide')
+    vim.api.nvim_buf_set_option(buf_id, "bufhidden", "hide")
 
     -- Resets the buffer back to the old one
     vim.api.nvim_set_current_buf(current_id)
@@ -43,7 +43,7 @@ local function find_terminal(idx)
 
         term_handle = {
             buf_id = buf_id,
-            term_id = term_id
+            term_id = term_id,
         }
         terminals[idx] = term_handle
     end
