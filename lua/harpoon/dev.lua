@@ -6,7 +6,7 @@
 local M = {}
 
 M.reload = function()
-    require("plenary.reload").reload_module("harpoon");
+    require("plenary.reload").reload_module("harpoon")
 end
 
 local function set_log_level()

@@ -113,10 +113,10 @@ M.get_index_of = function(item)
         return
     end
 
-    if type(item) == 'string' then
+    if type(item) == "string" then
         local relative_item = utils.normalize_path(item)
         for idx = 1, M.get_length() do
-           if M.get_marked_file_name(idx) == relative_item then
+            if M.get_marked_file_name(idx) == relative_item then
                 return idx
             end
         end
@@ -171,7 +171,7 @@ M.add_file = function(file_name_or_buf_id)
     local found_idx = get_first_empty_slot()
     harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
     M.remove_empty_tail(false)
-    emit_changed();
+    emit_changed()
 end
 
 -- _emit_on_changed == false should only be used internally
@@ -328,7 +328,7 @@ M.toggle_file = function(file_name_or_buf_id)
 
     validate_buf_name(buf_name)
 
-    if (mark_exists(buf_name)) then
+    if mark_exists(buf_name) then
         M.rm_file(buf_name)
         print("Mark removed")
         log.debug("toggle_file(): Mark removed")
@@ -356,5 +356,3 @@ M.on = function(event, cb)
 end
 
 return M
-
-
