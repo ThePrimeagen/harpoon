@@ -1,6 +1,7 @@
 local Path = require("plenary.path")
 local utils = require("harpoon.utils")
-local log = require("harpoon.dev").log
+local Dev = require("harpoon.dev")
+local log = Dev.log
 
 local config_path = vim.fn.stdpath("config")
 local data_path = vim.fn.stdpath("data")
@@ -158,6 +159,7 @@ M.setup = function(config)
 
     HarpoonConfig = complete_config
     log.debug("setup(): Complete config", HarpoonConfig)
+    log.trace("setup(): log_key", Dev.get_log_key())
 end
 
 M.get_global_settings = function()
