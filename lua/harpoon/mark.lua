@@ -21,7 +21,10 @@ local function emit_changed()
     end
 
     for idx, cb in pairs(callbacks["changed"]) do
-        log.trace(string.format("_emit_changed(): Running callback #%d for 'changed'", idx))
+        log.trace(string.format(
+            "_emit_changed(): Running callback #%d for 'changed'",
+            idx
+        ))
         cb()
     end
 end
@@ -208,7 +211,11 @@ M.store_offset = function()
         end
 
         local cursor_pos = vim.fn.getcurpos()
-        log.debug(string.format("store_offset(): Stored row: %d, col: %d", cursor_pos[2], cursor_pos[3]))
+        log.debug(string.format(
+            "store_offset(): Stored row: %d, col: %d",
+            cursor_pos[2],
+            cursor_pos[3]
+        ))
         harpoon.get_mark_config().marks[idx].row = cursor_pos[2]
         harpoon.get_mark_config().marks[idx].col = cursor_pos[3]
     end)

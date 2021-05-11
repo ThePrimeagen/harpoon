@@ -27,22 +27,6 @@ local function create_terminal()
     return buf_id, term_id
 end
 
-M.getCmd = function(idx)
-    log.trace("getCmd()")
-    local cmd
-    if type(idx) == "number" then
-        cmd = harpoon.get_term_config().cmds[idx]
-    else
-        log.error("getCmd(): Index is expected to be a number.")
-    end
-
-    if cmd then
-        return cmd
-    else
-        error("Command does not exist for that id.")
-    end
-end
-
 local function find_terminal(idx)
     log.trace("_find_terminal(): Terminal:", idx)
     local term_handle = terminals[idx]
