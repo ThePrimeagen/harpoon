@@ -94,6 +94,7 @@ end
 
 M.on_norm_enter = function()
     local idx = vim.fn.line('.')
+    M.toggle_quick_menu()
     M.nav_file(idx)
 end
 
