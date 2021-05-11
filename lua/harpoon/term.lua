@@ -1,5 +1,4 @@
 local harpoon = require("harpoon")
-local Path = require("plenary.path")
 local log = require("harpoon.dev").log
 
 local M = {}
@@ -26,10 +25,6 @@ local function create_terminal()
     -- Resets the buffer back to the old one
     vim.api.nvim_set_current_buf(current_id)
     return buf_id, term_id
-end
-
-function getCmd(idx)
-    return
 end
 
 local function find_terminal(idx)

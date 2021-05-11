@@ -8,6 +8,22 @@ local M = {}
 Harpoon_win_id = nil
 Harpoon_bufh = nil
 
+-- We save before we close because we use the state of the buffer as the list
+-- of items.
+local function close_menu(force_save)
+    force_save = force_save or false
+    local global_config = harpoon.get_global_settings()
+
+    if global_config.save_on_toggle or force_save then
+        require("harpoon.ui").on_menu_save()
+    end
+
+    vim.api.nvim_win_close(Harpoon_win_id, true)
+
+    Harpoon_win_id = nil
+    Harpoon_bufh = nil
+end
+
 local function create_window()
     log.trace("_create_window()")
     local config = harpoon.get_menu_config()
@@ -54,17 +70,7 @@ end
 M.toggle_quick_menu = function()
     log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
-        local global_config = harpoon.get_global_settings()
-
-        if global_config.save_on_toggle then
-            require("harpoon.ui").on_menu_save()
-        end
-
-        vim.api.nvim_win_close(Harpoon_win_id, true)
-
-        Harpoon_win_id = nil
-        Harpoon_bufh = nil
-
+        close_menu()
         return
     end
 
@@ -87,13 +93,14 @@ M.toggle_quick_menu = function()
     vim.api.nvim_buf_set_option(Harpoon_bufh, "filetype", "harpoon")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "buftype", "acwrite")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "bufhidden", "delete")
-    vim.api.nvim_buf_set_keymap(Harpoon_bufh, "n", "<CR>", ":lua require('harpoon.ui').on_norm_enter()<CR>", {})
+    vim.api.nvim_buf_set_keymap(Harpoon_bufh, "n", "<CR>", ":lua require('harpoon.ui').select_menu_item()<CR>", {})
     vim.cmd(string.format("autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()", Harpoon_bufh))
     vim.cmd(string.format("autocmd BufModifiedSet <buffer=%s> set nomodified", Harpoon_bufh))
 end
 
-M.on_norm_enter = function()
+M.select_menu_item = function()
     local idx = vim.fn.line('.')
+    close_menu(true)
     M.nav_file(idx)
 end
 
