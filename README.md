@@ -135,6 +135,8 @@ require("harpoon").setup({
     global_settings = {
         save_on_toggle = false,
         save_on_change = true,
+        nav_last_visited = false,
+        nav_first_in_list = false,
     },
     ... your other configs ...
 })
@@ -146,6 +148,12 @@ require("harpoon").setup({
   enable this option (on by default) harpoon will not save any changes to your
   file.  It is very unreliable to save your harpoon on exit (at least that is
   what I have found).
+* `nav_last_visited` will open up the last file you visited in harpoon upon
+  VimEnter.  If you are using the git-worktree plugin you could listen to the
+  tree switch and execute `require("harpoon.ui").nav_on_open()`
+* `nav_first_in_list` same as `nav_last_visited` except it will open the first
+  item in the list of marks upon VimEnter or if you call
+  `require("harpoon.ui").nav_on_open()`
 
 #### Preconfigured Terminal Commands
 These are project specific commands that you wish to execute on the regular.

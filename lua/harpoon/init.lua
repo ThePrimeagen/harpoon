@@ -154,6 +154,8 @@ M.setup = function(config)
     local complete_config = merge_tables({
         projects = {},
         global_settings = {
+            ["nav_last_visited"] = false,
+            ["nav_first_in_list"] = false,
             ["save_on_toggle"] = false,
             ["save_on_change"] = true,
         },

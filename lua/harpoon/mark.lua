@@ -140,6 +140,20 @@ M.get_index_of = function(item)
     return nil
 end
 
+M.set_last = function()
+    log.trace("set_last()")
+    local mark_idx = M.get_index_of(get_buf_name())
+    if not M.valid_index(mark_idx) then
+        return
+    end
+
+    harpoon.get_mark_config().last = mark_idx
+end
+
+M.get_last = function()
+    return harpoon.get_mark_config().last
+end
+
 M.status = function()
     log.trace("status()")
     local idx = M.get_index_of(get_buf_name())

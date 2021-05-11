@@ -72,6 +72,22 @@ local function get_menu_items()
     return indices
 end
 
+local function navigate(idx)
+    local mark = Marked.get_marked_file(idx)
+    local buf_id = vim.fn.bufnr(mark.filename, true)
+    local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
+
+    vim.api.nvim_set_current_buf(buf_id)
+    if set_row and mark.row and mark.col then
+        vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
+        log.debug(string.format(
+            "nav_file(): Setting cursor to row: %d, col: %d",
+            mark.row,
+            mark.col
+        ))
+    end
+end
+
 M.toggle_quick_menu = function()
     log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
@@ -126,6 +142,37 @@ M.on_menu_save = function()
     Marked.set_mark_list(get_menu_items())
 end
 
+M.nav_on_open = function()
+    local global_config = harpoon.get_global_settings()
+    if global_config.nav_last_visited then
+        M.nav_last_visited()
+        return
+    end
+
+    if global_config.nav_first_in_list then
+        M.nav_first_in_list()
+        return
+    end
+end
+
+M.nav_first_in_list = function()
+    local first = Marked.get_index_of(1)
+    if not first then
+        return
+    end
+
+    navigate(first)
+end
+
+M.nav_last_visited = function()
+    local last_mark = Marked.get_last()
+    if not last_mark then
+        return
+    end
+
+    navigate(last_mark)
+end
+
 M.nav_file = function(id)
     log.trace("nav_file(): Navigating to", id)
     local idx = Marked.get_index_of(id)
@@ -134,19 +181,7 @@ M.nav_file = function(id)
         return
     end
 
-    local mark = Marked.get_marked_file(idx)
-    local buf_id = vim.fn.bufnr(mark.filename, true)
-    local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
-
-    vim.api.nvim_set_current_buf(buf_id)
-    if set_row and mark.row and mark.col then
-        vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
-        log.debug(string.format(
-            "nav_file(): Setting cursor to row: %d, col: %d",
-            mark.row,
-            mark.col
-        ))
-    end
+    navigate(idx)
 end
 
 function M.location_window(options)
