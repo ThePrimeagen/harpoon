@@ -29,7 +29,8 @@ local function create_window()
     local config = harpoon.get_menu_config()
     local width = config.width or 60
     local height = config.height or 10
-    local borderchars = config.borderchars or { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
+    local borderchars = config.borderchars
+        or { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
     local bufnr = vim.api.nvim_create_buf(false, false)
 
     local Harpoon_win_id, win = popup.create(bufnr, {
@@ -42,7 +43,11 @@ local function create_window()
         borderchars = borderchars,
     })
 
-    vim.api.nvim_win_set_option(win.border.win_id, "winhl", "Normal:HarpoonBorder")
+    vim.api.nvim_win_set_option(
+        win.border.win_id,
+        "winhl",
+        "Normal:HarpoonBorder"
+    )
 
     return {
         bufnr = bufnr,
@@ -93,13 +98,25 @@ M.toggle_quick_menu = function()
     vim.api.nvim_buf_set_option(Harpoon_bufh, "filetype", "harpoon")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "buftype", "acwrite")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "bufhidden", "delete")
-    vim.api.nvim_buf_set_keymap(Harpoon_bufh, "n", "<CR>", ":lua require('harpoon.ui').select_menu_item()<CR>", {})
-    vim.cmd(string.format("autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()", Harpoon_bufh))
-    vim.cmd(string.format("autocmd BufModifiedSet <buffer=%s> set nomodified", Harpoon_bufh))
+    vim.api.nvim_buf_set_keymap(
+        Harpoon_bufh,
+        "n",
+        "<CR>",
+        ":lua require('harpoon.ui').select_menu_item()<CR>",
+        {}
+    )
+    vim.cmd(string.format(
+        "autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()",
+        Harpoon_bufh
+    ))
+    vim.cmd(string.format(
+        "autocmd BufModifiedSet <buffer=%s> set nomodified",
+        Harpoon_bufh
+    ))
 end
 
 M.select_menu_item = function()
-    local idx = vim.fn.line('.')
+    local idx = vim.fn.line(".")
     close_menu(true)
     M.nav_file(idx)
 end
@@ -124,7 +141,11 @@ M.nav_file = function(id)
     vim.api.nvim_set_current_buf(buf_id)
     if set_row and mark.row and mark.col then
         vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
-        log.debug(string.format("nav_file(): Setting cursor to row: %d, col: %d", mark.row, mark.col))
+        log.debug(string.format(
+            "nav_file(): Setting cursor to row: %d, col: %d",
+            mark.row,
+            mark.col
+        ))
     end
 end
 
@@ -161,7 +182,13 @@ function M.notification(text)
         col = win_width - 21,
     })
 
-    vim.api.nvim_buf_set_lines(info.bufnr, 0, 5, false, { "!!! Notification", text })
+    vim.api.nvim_buf_set_lines(
+        info.bufnr,
+        0,
+        5,
+        false,
+        { "!!! Notification", text }
+    )
     vim.api.nvim_set_current_win(prev_win)
 
     return {
