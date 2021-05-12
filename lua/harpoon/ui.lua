@@ -139,6 +139,7 @@ M.nav_file = function(id)
     local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
 
     vim.api.nvim_set_current_buf(buf_id)
+    vim.api.nvim_buf_set_option(buf_id, "buflisted", true)
     if set_row and mark.row and mark.col then
         vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
         log.debug(string.format(
