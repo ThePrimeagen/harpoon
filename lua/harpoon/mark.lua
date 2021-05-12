@@ -264,16 +264,17 @@ M.get_marked_file_name = function(idx)
 end
 
 M.get_length = function()
-    log.trace("get_length()")
-    return table.maxn(harpoon.get_mark_config().marks)
+    log.trace("M.get_length()")
+    local length = table.maxn(harpoon.get_mark_config().marks)
+    log.debug("M.get_length():", length)
+    return length
 end
 
 M.set_current_at = function(idx)
-    local config = harpoon.get_mark_config()
     local buf_name = get_buf_name()
-    local current_idx = M.get_index_of(buf_name)
-
     log.trace("set_current_at(): Setting id", idx, buf_name)
+    local config = harpoon.get_mark_config()
+    local current_idx = M.get_index_of(buf_name)
 
     -- Remove it if it already exists
     if M.valid_index(current_idx) then

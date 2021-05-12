@@ -88,8 +88,8 @@ local function ensure_correct_config(config)
     end
 
     local marks = proj.mark.marks
-    for idx = 1, #marks do
-        local mark = marks[idx]
+
+    for idx, mark in pairs(marks) do
         if type(mark) == "string" then
             mark = {
                 filename = mark,
