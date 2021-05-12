@@ -269,11 +269,10 @@ M.get_length = function()
 end
 
 M.set_current_at = function(idx)
-    local config = harpoon.get_mark_config()
     local buf_name = get_buf_name()
-    local current_idx = M.get_index_of(buf_name)
-
     log.trace("set_current_at(): Setting id", idx, buf_name)
+    local config = harpoon.get_mark_config()
+    local current_idx = M.get_index_of(buf_name)
 
     -- Remove it if it already exists
     if M.valid_index(current_idx) then
