@@ -264,10 +264,8 @@ M.get_marked_file_name = function(idx)
 end
 
 M.get_length = function()
-    log.trace("M.get_length()")
-    local length = table.maxn(harpoon.get_mark_config().marks)
-    log.debug("M.get_length():", length)
-    return length
+    log.trace("get_length()")
+    return table.maxn(harpoon.get_mark_config().marks)
 end
 
 M.set_current_at = function(idx)
