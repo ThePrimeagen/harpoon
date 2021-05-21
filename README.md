@@ -27,10 +27,11 @@ to go to the files you want.
 Unlimited terminals and navigation.
 
 ## Installation
-Simply install via your favorite plugin manager.
+Simply install via your favorite plugin manager. (Requires NeoVim >= 0.5.0)
 
 ```vim
 Plug 'nvim-lua/plenary.nvim' " don't forget to add this one if you don't have it yet!
+Plug 'nvim-lua/popup.nvim'
 Plug 'ThePrimeagen/harpoon'
 ```
 
