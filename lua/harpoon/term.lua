@@ -4,11 +4,14 @@ local log = require("harpoon.dev").log
 local M = {}
 local terminals = {}
 
-local function create_terminal()
-    log.trace("_create_terminal()")
+local function create_terminal(create_cmd)
+    if not create_cmd then
+        create_cmd = ":terminal"
+    end
+    log.trace("_create_terminal(): Init:", create_cmd)
     local current_id = vim.fn.bufnr()
 
-    vim.cmd(":terminal")
+    vim.cmd(create_cmd)
     local buf_id = vim.fn.bufnr()
     local term_id = vim.b.terminal_job_id
 
@@ -27,11 +30,11 @@ local function create_terminal()
     return buf_id, term_id
 end
 
-local function find_terminal(idx)
+local function find_terminal(idx, create_cmd)
     log.trace("_find_terminal(): Terminal:", idx)
     local term_handle = terminals[idx]
     if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
-        local buf_id, term_id = create_terminal()
+        local buf_id, term_id = create_terminal(create_cmd)
         if buf_id == nil then
             return
         end
@@ -45,24 +48,27 @@ local function find_terminal(idx)
     return term_handle
 end
 
-M.gotoTerminal = function(idx)
+M.gotoTerminal = function(idx, create_cmd)
     log.trace("gotoTerminal(): Terminal:", idx)
-    local term_handle = find_terminal(idx)
+    local term_handle = find_terminal(idx, create_cmd)
 
     vim.api.nvim_set_current_buf(term_handle.buf_id)
 end
 
-M.sendCommand = function(idx, cmd, ...)
+M.sendCommand = function(idx, cmd, create_cmd)
     log.trace("sendCommand(): Terminal:", idx)
-    local term_handle = find_terminal(idx)
+    local term_handle = find_terminal(idx, create_cmd)
 
     if type(cmd) == "number" then
         cmd = harpoon.get_term_config().cmds[cmd]
     end
+    if type(cmd) == "string" then
+        cmd = {cmd}
+    end
 
     if cmd then
-        log.debug("sendCommand:", cmd)
-        vim.fn.chansend(term_handle.term_id, string.format(cmd, ...))
+        log.debug("sendCommand:", cmd[1])
+        vim.fn.chansend(term_handle.term_id, string.format(unpack(cmd)))
     end
 end
 
