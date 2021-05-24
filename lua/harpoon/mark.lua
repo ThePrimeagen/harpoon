@@ -56,7 +56,7 @@ end
 local function get_buf_name(id)
     log.trace("_get_buf_name():", id)
     if id == nil then
-        return utils.normalize_path(vim.fn.bufname(vim.fn.bufnr()))
+        return utils.normalize_path(vim.fn.bufname())
     elseif type(id) == "string" then
         return utils.normalize_path(id)
     end
@@ -140,9 +140,17 @@ M.get_index_of = function(item)
     return nil
 end
 
-M.status = function()
+M.status = function(bufnr)
     log.trace("status()")
-    local idx = M.get_index_of(get_buf_name())
+    local buf_name
+    if bufnr then
+        buf_name = vim.fn.bufname(bufnr)
+    else
+        buf_name = vim.fn.bufname()
+    end
+
+    local norm_name = utils.normalize_path(buf_name)
+    local idx = M.get_index_of(norm_name)
 
     if M.valid_index(idx) then
         return "M" .. idx
@@ -347,7 +355,7 @@ end
 
 M.get_current_index = function()
     log.trace("get_current_index()")
-    return M.get_index_of(vim.fn.bufname(vim.fn.bufnr()))
+    return M.get_index_of(vim.fn.bufname())
 end
 
 M.on = function(event, cb)
