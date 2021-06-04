@@ -33,7 +33,7 @@ end
 local function find_terminal(args)
     log.trace("_find_terminal(): Terminal:", args)
     if type(args) == "number" then
-        args = { idx=args }
+        args = { idx = args }
     end
     local term_handle = terminals[args.idx]
     if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
