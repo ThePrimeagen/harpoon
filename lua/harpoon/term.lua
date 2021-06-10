@@ -4,11 +4,14 @@ local log = require("harpoon.dev").log
 local M = {}
 local terminals = {}
 
-local function create_terminal()
-    log.trace("_create_terminal()")
+local function create_terminal(create_with)
+    if not create_with then
+        create_with = ":terminal"
+    end
+    log.trace("_create_terminal(): Init:", create_with)
     local current_id = vim.fn.bufnr()
 
-    vim.cmd(":terminal")
+    vim.cmd(create_with)
     local buf_id = vim.fn.bufnr()
     local term_id = vim.b.terminal_job_id
 
@@ -27,11 +30,14 @@ local function create_terminal()
     return buf_id, term_id
 end
 
-local function find_terminal(idx)
-    log.trace("_find_terminal(): Terminal:", idx)
-    local term_handle = terminals[idx]
+local function find_terminal(args)
+    log.trace("_find_terminal(): Terminal:", args)
+    if type(args) == "number" then
+        args = { idx = args }
+    end
+    local term_handle = terminals[args.idx]
     if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
-        local buf_id, term_id = create_terminal()
+        local buf_id, term_id = create_terminal(args.create_with)
         if buf_id == nil then
             return
         end
@@ -40,7 +46,7 @@ local function find_terminal(idx)
             buf_id = buf_id,
             term_id = term_id,
         }
-        terminals[idx] = term_handle
+        terminals[args.idx] = term_handle
     end
     return term_handle
 end
