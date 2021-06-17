@@ -161,8 +161,8 @@ function M.location_window(options)
     }
     options = vim.tbl_extend("keep", options, default_options)
 
-    local bufnr = options.bufnr or vim.fn.nvim_create_buf(false, true)
-    local win_id = vim.fn.nvim_open_win(bufnr, true, options)
+    local bufnr = options.bufnr or vim.api.nvim_create_buf(false, true)
+    local win_id = vim.api.nvim_open_win(bufnr, true, options)
 
     return {
         bufnr = bufnr,

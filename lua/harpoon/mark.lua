@@ -56,7 +56,7 @@ end
 local function get_buf_name(id)
     log.trace("_get_buf_name():", id)
     if id == nil then
-        return utils.normalize_path(vim.fn.bufname())
+        return utils.normalize_path(vim.api.nvim_buf_get_name(0))
     elseif type(id) == "string" then
         return utils.normalize_path(id)
     end
@@ -72,17 +72,17 @@ local function get_buf_name(id)
 end
 
 local function create_mark(filename)
-    local cursor_pos = vim.fn.getcurpos()
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
     log.trace(string.format(
         "_create_mark(): Creating mark at row: %d, col: %d for %s",
+        cursor_pos[1],
         cursor_pos[2],
-        cursor_pos[4],
         filename
     ))
     return {
         filename = filename,
-        row = cursor_pos[2],
-        col = cursor_pos[3],
+        row = cursor_pos[1],
+        col = cursor_pos[2],
     }
 end
 
@@ -144,9 +144,9 @@ M.status = function(bufnr)
     log.trace("status()")
     local buf_name
     if bufnr then
-        buf_name = vim.fn.bufname(bufnr)
+        buf_name = vim.api.nvim_buf_get_name(bufnr)
     else
-        buf_name = vim.fn.bufname()
+        buf_name = vim.api.nvim_buf_get_name(0)
     end
 
     local norm_name = utils.normalize_path(buf_name)
@@ -218,14 +218,14 @@ M.store_offset = function()
             return
         end
 
-        local cursor_pos = vim.fn.getcurpos()
+        local cursor_pos = vim.api.nvim_win_get_cursor(0)
         log.debug(string.format(
             "store_offset(): Stored row: %d, col: %d",
-            cursor_pos[2],
-            cursor_pos[3]
+            cursor_pos[1],
+            cursor_pos[2]
         ))
-        harpoon.get_mark_config().marks[idx].row = cursor_pos[2]
-        harpoon.get_mark_config().marks[idx].col = cursor_pos[3]
+        harpoon.get_mark_config().marks[idx].row = cursor_pos[1]
+        harpoon.get_mark_config().marks[idx].col = cursor_pos[2]
     end)
 
     if not ok then
@@ -313,7 +313,8 @@ M.to_quickfix_list = function()
         }
     end
     log.debug("to_quickfix_list(): qf_list:", qf_list)
-    vim.fn.setqflist(qf_list)
+    -- Does this only work when there is an LSP attached to the buffer?
+    vim.lsp.util.set_qflist(qf_list)
 end
 
 M.set_mark_list = function(new_list)
@@ -355,7 +356,7 @@ end
 
 M.get_current_index = function()
     log.trace("get_current_index()")
-    return M.get_index_of(vim.fn.bufname())
+    return M.get_index_of(vim.api.nvim_buf_get_name(0))
 end
 
 M.on = function(event, cb)
