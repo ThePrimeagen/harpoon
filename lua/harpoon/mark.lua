@@ -313,8 +313,7 @@ M.to_quickfix_list = function()
         }
     end
     log.debug("to_quickfix_list(): qf_list:", qf_list)
-    -- Does this only work when there is an LSP attached to the buffer?
-    vim.lsp.util.set_qflist(qf_list)
+    vim.fn.setqflist(qf_list)
 end
 
 M.set_mark_list = function(new_list)
