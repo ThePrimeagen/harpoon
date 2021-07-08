@@ -9,10 +9,10 @@ local function create_terminal(create_with)
         create_with = ":terminal"
     end
     log.trace("_create_terminal(): Init:", create_with)
-    local current_id = vim.fn.bufnr()
+    local current_id = vim.api.nvim_get_current_buf()
 
     vim.cmd(create_with)
-    local buf_id = vim.fn.bufnr()
+    local buf_id = vim.api.nvim_get_current_buf()
     local term_id = vim.b.terminal_job_id
 
     if term_id == nil then
@@ -68,7 +68,7 @@ M.sendCommand = function(idx, cmd, ...)
 
     if cmd then
         log.debug("sendCommand:", cmd)
-        vim.fn.chansend(term_handle.term_id, string.format(cmd, ...))
+        vim.api.nvim_chan_send(term_handle.term_id, string.format(cmd, ...))
     end
 end
 

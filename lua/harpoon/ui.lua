@@ -105,14 +105,18 @@ M.toggle_quick_menu = function()
         ":lua require('harpoon.ui').select_menu_item()<CR>",
         {}
     )
-    vim.cmd(string.format(
-        "autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()",
-        Harpoon_bufh
-    ))
-    vim.cmd(string.format(
-        "autocmd BufModifiedSet <buffer=%s> set nomodified",
-        Harpoon_bufh
-    ))
+    vim.cmd(
+        string.format(
+            "autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()",
+            Harpoon_bufh
+        )
+    )
+    vim.cmd(
+        string.format(
+            "autocmd BufModifiedSet <buffer=%s> set nomodified",
+            Harpoon_bufh
+        )
+    )
 end
 
 M.select_menu_item = function()
@@ -142,11 +146,13 @@ M.nav_file = function(id)
     vim.api.nvim_buf_set_option(buf_id, "buflisted", true)
     if set_row and mark.row and mark.col then
         vim.cmd(string.format(":call cursor(%d, %d)", mark.row, mark.col))
-        log.debug(string.format(
-            "nav_file(): Setting cursor to row: %d, col: %d",
-            mark.row,
-            mark.col
-        ))
+        log.debug(
+            string.format(
+                "nav_file(): Setting cursor to row: %d, col: %d",
+                mark.row,
+                mark.col
+            )
+        )
     end
 end
 
@@ -161,8 +167,8 @@ function M.location_window(options)
     }
     options = vim.tbl_extend("keep", options, default_options)
 
-    local bufnr = options.bufnr or vim.fn.nvim_create_buf(false, true)
-    local win_id = vim.fn.nvim_open_win(bufnr, true, options)
+    local bufnr = options.bufnr or vim.api.nvim_create_buf(false, true)
+    local win_id = vim.api.nvim_open_win(bufnr, true, options)
 
     return {
         bufnr = bufnr,

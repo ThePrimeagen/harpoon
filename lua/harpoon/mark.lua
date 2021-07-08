@@ -21,10 +21,12 @@ local function emit_changed()
     end
 
     for idx, cb in pairs(callbacks["changed"]) do
-        log.trace(string.format(
-            "_emit_changed(): Running callback #%d for 'changed'",
-            idx
-        ))
+        log.trace(
+            string.format(
+                "_emit_changed(): Running callback #%d for 'changed'",
+                idx
+            )
+        )
         cb()
     end
 end
@@ -56,7 +58,7 @@ end
 local function get_buf_name(id)
     log.trace("_get_buf_name():", id)
     if id == nil then
-        return utils.normalize_path(vim.fn.bufname())
+        return utils.normalize_path(vim.api.nvim_buf_get_name(0))
     elseif type(id) == "string" then
         return utils.normalize_path(id)
     end
@@ -72,17 +74,19 @@ local function get_buf_name(id)
 end
 
 local function create_mark(filename)
-    local cursor_pos = vim.fn.getcurpos()
-    log.trace(string.format(
-        "_create_mark(): Creating mark at row: %d, col: %d for %s",
-        cursor_pos[2],
-        cursor_pos[4],
-        filename
-    ))
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    log.trace(
+        string.format(
+            "_create_mark(): Creating mark at row: %d, col: %d for %s",
+            cursor_pos[1],
+            cursor_pos[2],
+            filename
+        )
+    )
     return {
         filename = filename,
-        row = cursor_pos[2],
-        col = cursor_pos[3],
+        row = cursor_pos[1],
+        col = cursor_pos[2],
     }
 end
 
@@ -102,7 +106,10 @@ end
 local function validate_buf_name(buf_name)
     log.trace("_validate_buf_name():", buf_name)
     if buf_name == "" or buf_name == nil then
-        log.error("_validate_buf_name(): Not a valid name for a mark,", buf_name)
+        log.error(
+            "_validate_buf_name(): Not a valid name for a mark,",
+            buf_name
+        )
         error("Couldn't find a valid file name to mark, sorry.")
         return
     end
@@ -111,8 +118,12 @@ end
 M.get_index_of = function(item)
     log.trace("get_index_of():", item)
     if item == nil then
-        log.error("get_index_of(): Function has been supplied with a nil value.")
-        error("You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx.")
+        log.error(
+            "get_index_of(): Function has been supplied with a nil value."
+        )
+        error(
+            "You have provided a nil value to Harpoon, please provide a string rep of the file or the file idx."
+        )
         return
     end
 
@@ -144,9 +155,9 @@ M.status = function(bufnr)
     log.trace("status()")
     local buf_name
     if bufnr then
-        buf_name = vim.fn.bufname(bufnr)
+        buf_name = vim.api.nvim_buf_get_name(bufnr)
     else
-        buf_name = vim.fn.bufname()
+        buf_name = vim.api.nvim_buf_get_name(0)
     end
 
     local norm_name = utils.normalize_path(buf_name)
@@ -218,14 +229,16 @@ M.store_offset = function()
             return
         end
 
-        local cursor_pos = vim.fn.getcurpos()
-        log.debug(string.format(
-            "store_offset(): Stored row: %d, col: %d",
-            cursor_pos[2],
-            cursor_pos[3]
-        ))
-        harpoon.get_mark_config().marks[idx].row = cursor_pos[2]
-        harpoon.get_mark_config().marks[idx].col = cursor_pos[3]
+        local cursor_pos = vim.api.nvim_win_get_cursor(0)
+        log.debug(
+            string.format(
+                "store_offset(): Stored row: %d, col: %d",
+                cursor_pos[1],
+                cursor_pos[2]
+            )
+        )
+        harpoon.get_mark_config().marks[idx].row = cursor_pos[1]
+        harpoon.get_mark_config().marks[idx].col = cursor_pos[2]
     end)
 
     if not ok then
@@ -355,7 +368,7 @@ end
 
 M.get_current_index = function()
     log.trace("get_current_index()")
-    return M.get_index_of(vim.fn.bufname())
+    return M.get_index_of(vim.api.nvim_buf_get_name(0))
 end
 
 M.on = function(event, cb)
