@@ -72,4 +72,9 @@ M.sendCommand = function(idx, cmd, ...)
     end
 end
 
+M.clear_all = function()
+    log.trace("clear_all(): Clearing all terminals.")
+    terminals = {}
+end
+
 return M
