@@ -81,6 +81,7 @@ M.toggle_quick_menu = function()
 
     local win_info = create_window()
     local contents = {}
+    local global_config = harpoon.get_global_settings()
 
     Harpoon_win_id = win_info.win_id
     Harpoon_bufh = win_info.bufnr
@@ -111,6 +112,14 @@ M.toggle_quick_menu = function()
             Harpoon_bufh
         )
     )
+    if global_config.save_on_change then
+        vim.cmd(
+            string.format(
+                "autocmd TextChanged,TextChangedI <buffer=%s> :lua require('harpoon.ui').on_menu_save()",
+                Harpoon_bufh
+            )
+        )
+    end
     vim.cmd(
         string.format(
             "autocmd BufModifiedSet <buffer=%s> set nomodified",
