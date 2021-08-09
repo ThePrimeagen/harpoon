@@ -72,4 +72,12 @@ M.sendCommand = function(idx, cmd, ...)
     end
 end
 
+M.clear_all = function()
+    log.trace("clear_all(): Clearing all terminals.")
+    for _, term in ipairs(terminals) do
+        vim.api.nvim_buf_delete(term.buf_id, { force = true })
+    end
+    terminals = {}
+end
+
 return M
