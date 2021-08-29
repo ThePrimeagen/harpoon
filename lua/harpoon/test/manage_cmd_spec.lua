@@ -3,7 +3,7 @@ local term = require("harpoon.term")
 
 local function assert_table_equals(tbl1, tbl2)
     if #tbl1 ~= #tbl2 then
-        assert(false, ""..#tbl1.." != "..#tbl2)
+        assert(false, "" .. #tbl1 .. " != " .. #tbl2)
     end
     for i = 1, #tbl1 do
         if tbl1[i] ~= tbl2[i] then
@@ -21,7 +21,7 @@ describe("basic functionalities", function()
         cmds = {}
         harpoon.get_term_config = function()
             return {
-                cmds = cmds
+                cmds = cmds,
             }
         end
         term.emit_changed = function()
@@ -32,7 +32,7 @@ describe("basic functionalities", function()
     it("add_cmd for empty", function()
         term.add_cmd("cmake ..")
         local expected_result = {
-            "cmake .."
+            "cmake ..",
         }
         assert_table_equals(harpoon.get_term_config().cmds, expected_result)
         assert.equals(emitted, true)
@@ -131,10 +131,10 @@ describe("basic functionalities", function()
         term.add_cmd("cmake ..")
         term.add_cmd("make")
         term.add_cmd("ninja")
-        term.set_cmd_list({"make uninstall", "make install",})
+        term.set_cmd_list({ "make uninstall", "make install" })
         local expected_result = {
-          "make uninstall",
-          "make install",
+            "make uninstall",
+            "make install",
         }
         assert_table_equals(expected_result, harpoon.get_term_config().cmds)
     end)

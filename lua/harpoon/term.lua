@@ -58,9 +58,8 @@ local function get_first_empty_slot()
             return idx
         end
     end
-    return M.get_length() + 1;
+    return M.get_length() + 1
 end
-
 
 M.gotoTerminal = function(idx)
     log.trace("gotoTerminal(): Terminal:", idx)
@@ -112,7 +111,7 @@ end
 
 M.add_cmd = function(cmd)
     log.trace("add_cmd()")
-    local found_idx = get_first_empty_slot();
+    local found_idx = get_first_empty_slot()
     harpoon.get_term_config().cmds[found_idx] = cmd
     M.emit_changed()
 end
@@ -128,14 +127,14 @@ M.rm_cmd = function(idx)
 end
 
 M.set_cmd_list = function(new_list)
-  log.trace("set_cmd_list(): New list:", new_list)
-  for k in pairs(harpoon.get_term_config().cmds) do
-    harpoon.get_term_config().cmds[k] = nil
-  end
-  for k, v in pairs(new_list) do
-    harpoon.get_term_config().cmds[k] = v
-  end
-  M.emit_changed()
+    log.trace("set_cmd_list(): New list:", new_list)
+    for k in pairs(harpoon.get_term_config().cmds) do
+        harpoon.get_term_config().cmds[k] = nil
+    end
+    for k, v in pairs(new_list) do
+        harpoon.get_term_config().cmds[k] = v
+    end
+    M.emit_changed()
 end
 
 return M
