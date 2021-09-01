@@ -54,19 +54,7 @@ local function create_window()
 end
 
 local function is_white_space(str)
-    local white_space_chars = {
-        [" "] = true,
-        ["\t"] = true,
-        ["\r"] = true,
-        ["\f"] = true,
-        ["\v"] = true,
-    }
-    for i = 1, string.len(str) do
-        if white_space_chars[string.sub(str, i, i)] == nil then
-            return false
-        end
-    end
-    return true
+  return str:gsub("%s", "") == ""
 end
 
 local function get_menu_items()
@@ -84,7 +72,7 @@ local function get_menu_items()
 end
 
 M.toggle_quick_menu = function()
-    log.trace("toggle_quick_menu()")
+    log.trace("cmd-ui#toggle_quick_menu()")
     if
         Harpoon_cmd_win_id ~= nil
         and vim.api.nvim_win_is_valid(Harpoon_cmd_win_id)
@@ -141,7 +129,7 @@ M.toggle_quick_menu = function()
 end
 
 M.on_menu_save = function()
-    log.trace("on_menu_save()")
+    log.trace("cmd-ui#on_menu_save()")
     term.set_cmd_list(get_menu_items())
 end
 
