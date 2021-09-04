@@ -28,7 +28,7 @@ local function create_window()
     local width = config.width or 60
     local height = config.height or 10
     local borderchars = config.borderchars
-        or { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
+    or { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
     local bufnr = vim.api.nvim_create_buf(false, false)
 
     local Harpoon_cmd_win_id, win = popup.create(bufnr, {
@@ -42,9 +42,9 @@ local function create_window()
     })
 
     vim.api.nvim_win_set_option(
-        win.border.win_id,
-        "winhl",
-        "Normal:HarpoonBorder"
+    win.border.win_id,
+    "winhl",
+    "Normal:HarpoonBorder"
     )
 
     return {
@@ -54,7 +54,7 @@ local function create_window()
 end
 
 local function is_white_space(str)
-  return str:gsub("%s", "") == ""
+    return str:gsub("%s", "") == ""
 end
 
 local function get_menu_items()
@@ -76,61 +76,61 @@ M.toggle_quick_menu = function()
     if
         Harpoon_cmd_win_id ~= nil
         and vim.api.nvim_win_is_valid(Harpoon_cmd_win_id)
-    then
-        close_menu()
-        return
-    end
+        then
+            close_menu()
+            return
+        end
 
-    local win_info = create_window()
-    local contents = {}
-    local global_config = harpoon.get_global_settings()
+        local win_info = create_window()
+        local contents = {}
+        local global_config = harpoon.get_global_settings()
 
-    Harpoon_cmd_win_id = win_info.win_id
-    Harpoon_cmd_bufh = win_info.bufnr
+        Harpoon_cmd_win_id = win_info.win_id
+        Harpoon_cmd_bufh = win_info.bufnr
 
-    for idx, cmd in pairs(harpoon.get_term_config().cmds) do
-        contents[idx] = cmd
-    end
+        for idx, cmd in pairs(harpoon.get_term_config().cmds) do
+            contents[idx] = cmd
+        end
 
-    vim.api.nvim_win_set_option(Harpoon_cmd_win_id, "number", true)
-    vim.api.nvim_buf_set_name(Harpoon_cmd_bufh, "harpoon-cmd-menu")
-    vim.api.nvim_buf_set_lines(Harpoon_cmd_bufh, 0, #contents, false, contents)
-    vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "filetype", "harpoon")
-    vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "buftype", "acwrite")
-    vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "bufhidden", "delete")
-    -- TODO: maybe vim.fn.input() can be used to implement some select_menu_item
-    -- vim.api.nvim_buf_set_keymap(
-    --     Harpoon_cmd_bufh,
-    --     "n",
-    --     "<CR>",
-    --     ":lua require('harpoon.cmd-ui').select_menu_item()<CR>",
-    --     {}
-    -- )
-    vim.cmd(
-        string.format(
-            "autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.cmd-ui').on_menu_save()",
-            Harpoon_cmd_bufh
-        )
-    )
-    if global_config.save_on_change then
+        vim.api.nvim_win_set_option(Harpoon_cmd_win_id, "number", true)
+        vim.api.nvim_buf_set_name(Harpoon_cmd_bufh, "harpoon-cmd-menu")
+        vim.api.nvim_buf_set_lines(Harpoon_cmd_bufh, 0, #contents, false, contents)
+        vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "filetype", "harpoon")
+        vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "buftype", "acwrite")
+        vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "bufhidden", "delete")
+        -- TODO: maybe vim.fn.input() can be used to implement some select_menu_item
+        -- vim.api.nvim_buf_set_keymap(
+        --     Harpoon_cmd_bufh,
+        --     "n",
+        --     "<CR>",
+        --     ":lua require('harpoon.cmd-ui').select_menu_item()<CR>",
+        --     {}
+        -- )
         vim.cmd(
+        string.format(
+        "autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.cmd-ui').on_menu_save()",
+        Harpoon_cmd_bufh
+        )
+        )
+        if global_config.save_on_change then
+            vim.cmd(
             string.format(
-                "autocmd TextChanged,TextChangedI <buffer=%s> :lua require('harpoon.cmd-ui').on_menu_save()",
-                Harpoon_cmd_bufh
+            "autocmd TextChanged,TextChangedI <buffer=%s> :lua require('harpoon.cmd-ui').on_menu_save()",
+            Harpoon_cmd_bufh
             )
+            )
+        end
+        vim.cmd(
+        string.format(
+        "autocmd BufModifiedSet <buffer=%s> set nomodified",
+        Harpoon_cmd_bufh
+        )
         )
     end
-    vim.cmd(
-        string.format(
-            "autocmd BufModifiedSet <buffer=%s> set nomodified",
-            Harpoon_cmd_bufh
-        )
-    )
-end
 
-M.on_menu_save = function()
-    log.trace("cmd-ui#on_menu_save()")
-    term.set_cmd_list(get_menu_items())
-end
+    M.on_menu_save = function()
+        log.trace("cmd-ui#on_menu_save()")
+        term.set_cmd_list(get_menu_items())
+    end
 
-return M
+    return M
