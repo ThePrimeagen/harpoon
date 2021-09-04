@@ -58,12 +58,12 @@ end
 local function ensure_correct_config(config)
     log.trace("_ensure_correct_config()")
     local projects = config.projects
-    if projects[vim.loop.cwd()] == nil then
+    if projects[utils.mark_config_key()] == nil then
         log.debug(
             "ensure_correct_config(): No config found for:",
-            vim.loop.cwd()
+            utils.mark_config_key()
         )
-        projects[vim.loop.cwd()] = {
+        projects[utils.mark_config_key()] = {
             mark = {
                 marks = {},
             },
@@ -73,16 +73,19 @@ local function ensure_correct_config(config)
         }
     end
 
-    local proj = projects[vim.loop.cwd()]
+    local proj = projects[utils.mark_config_key()]
     if proj.mark == nil then
-        log.debug("ensure_correct_config(): No marks found for", vim.loop.cwd())
+        log.debug(
+            "ensure_correct_config(): No marks found for",
+            utils.mark_config_key()
+        )
         proj.mark = { marks = {} }
     end
 
     if proj.term == nil then
         log.debug(
             "ensure_correct_config(): No terminal commands found for",
-            vim.loop.cwd()
+            utils.mark_config_key()
         )
         proj.term = { cmds = {} }
     end
@@ -230,12 +233,12 @@ end
 
 function M.get_term_config()
     log.trace("get_term_config()")
-    return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].term
+    return ensure_correct_config(HarpoonConfig).projects[utils.project_key].term
 end
 
 function M.get_mark_config()
     log.trace("get_mark_config()")
-    return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].mark
+    return ensure_correct_config(HarpoonConfig).projects[utils.mark_config_key()].mark
 end
 
 function M.get_menu_config()
