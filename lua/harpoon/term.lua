@@ -1,5 +1,6 @@
 local harpoon = require("harpoon")
 local log = require("harpoon.dev").log
+local global_config = harpoon.get_global_settings()
 
 local M = {}
 local terminals = {}
@@ -74,6 +75,10 @@ M.sendCommand = function(idx, cmd, ...)
 
     if type(cmd) == "number" then
         cmd = harpoon.get_term_config().cmds[cmd]
+    end
+
+    if global_config.enter_on_sendcmd then
+      cmd = cmd .. "\n"
     end
 
     if cmd then

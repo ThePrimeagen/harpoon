@@ -137,6 +137,7 @@ require("harpoon").setup({
     global_settings = {
         save_on_toggle = false,
         save_on_change = true,
+        enter_on_sendcmd = false,
     },
     ... your other configs ...
 })
@@ -148,6 +149,8 @@ require("harpoon").setup({
   enable this option (on by default) harpoon will not save any changes to your
   file.  It is very unreliable to save your harpoon on exit (at least that is
   what I have found).
+* `enter_on_sendcmd` will set harpoon to run the command immediately as it's
+    passed to the terminal when calling `sendCommand`.
 
 #### Preconfigured Terminal Commands
 These are project specific commands that you wish to execute on the regular.
