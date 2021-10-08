@@ -99,6 +99,8 @@ M.toggle_quick_menu = function()
     vim.api.nvim_buf_set_option(Harpoon_bufh, "filetype", "harpoon")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "buftype", "acwrite")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "bufhidden", "delete")
+    vim.api.nvim_buf_set_keymap(Harpoon_bufh, "n", "q", ":q<CR>", { silent = true })
+    vim.api.nvim_buf_set_keymap(Harpoon_bufh, "n", "<ESC>", ":q<CR>", { silent = true })
     vim.api.nvim_buf_set_keymap(
         Harpoon_bufh,
         "n",
