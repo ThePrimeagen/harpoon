@@ -78,7 +78,7 @@ M.sendCommand = function(idx, cmd, ...)
     end
 
     if global_config.enter_on_sendcmd then
-      cmd = cmd .. "\n"
+        cmd = cmd .. "\n"
     end
 
     if cmd then

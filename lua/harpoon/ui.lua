@@ -102,6 +102,20 @@ M.toggle_quick_menu = function()
     vim.api.nvim_buf_set_keymap(
         Harpoon_bufh,
         "n",
+        "q",
+        ":lua require('harpoon.ui').toggle_quick_menu()<CR>",
+        { silent = true }
+    )
+    vim.api.nvim_buf_set_keymap(
+        Harpoon_bufh,
+        "n",
+        "<ESC>",
+        ":lua require('harpoon.ui').toggle_quick_menu()<CR>",
+        { silent = true }
+    )
+    vim.api.nvim_buf_set_keymap(
+        Harpoon_bufh,
+        "n",
         "<CR>",
         ":lua require('harpoon.ui').select_menu_item()<CR>",
         {}
@@ -125,6 +139,9 @@ M.toggle_quick_menu = function()
             "autocmd BufModifiedSet <buffer=%s> set nomodified",
             Harpoon_bufh
         )
+    )
+    vim.cmd(
+        "autocmd BufLeave <buffer> ++nested ++once :silent lua require('harpoon.ui').toggle_quick_menu()"
     )
 end
 

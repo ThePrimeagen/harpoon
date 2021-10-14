@@ -78,6 +78,8 @@ You can simply edit this list as if it were a document in vim.  `:wq` to save
 the new edits or `:q` to ignore the edits.  There is to save upon call to
 toggle if you prefer that way.
 
+You can also exit the list with `q` or `<ESC>`, which will call `toggle_quick_menu()` again.
+
 ### Terminal Navigation
 #### Motivation for terminals in neovim
 I want to use the terminal since I can gF and <c-w>gF to any errors arising
