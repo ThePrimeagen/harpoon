@@ -183,8 +183,10 @@ M.add_file = function(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
     log.trace("add_file():", buf_name)
 
-    if M.valid_index(M.get_index_of(buf_name)) then
+    local buf_idx = M.get_index_of(buf_name)
+    if M.valid_index(buf_idx) then
         -- we don't alter file layout.
+        print("File", buf_name, "already exists in slot", buf_idx)
         return
     end
 
@@ -194,6 +196,8 @@ M.add_file = function(file_name_or_buf_id)
     harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
     M.remove_empty_tail(false)
     emit_changed()
+
+    print("File", buf_name, "added to slot", found_idx)
 end
 
 -- _emit_on_changed == false should only be used internally
