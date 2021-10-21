@@ -120,6 +120,13 @@ lua require("harpoon.term").sendCommand(1, 1)
 lua require("harpoon.term").sendCommand(1, "ls -la")
 ```
 
+#### Dynamic commands to terminal
+This feature adds ability to change commands while working inside a project. 
+Just call the following function to edit commands inside the list
+```lua
+lua require('harpoon.ui-cmd').toggle_quick_menu()
+```
+
 ### Setup
 Setup should be called once.
 
