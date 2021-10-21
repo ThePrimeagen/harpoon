@@ -17,12 +17,12 @@ local M = {}
             term = {
                 cmds = {
                 }
-                ... is there antyhnig that could be options?
+                ... is there anything that could be options?
             },
             mark = {
                 marks = {
                 }
-                ... is there antyhnig that could be options?
+                ... is there anything that could be options?
             }
         }
     },
