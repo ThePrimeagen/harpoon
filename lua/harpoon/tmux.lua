@@ -6,6 +6,14 @@ local utils = require("harpoon.utils")
 local M = {}
 local tmux_windows = {}
 
+if global_config.tmux_autoclose_windows then
+    vim.cmd([[
+        augroup HARPOON_TMUX
+        autocmd!
+        autocmd VimLeave * :lua require('harpoon.tmux').clear_all()
+    ]])
+end
+
 local function create_terminal()
     log.trace("tmux: _create_terminal())")
 
