@@ -124,7 +124,7 @@ lua require("harpoon.term").sendCommand(1, "ls -la")
 This feature adds ability to change commands while working inside a project. 
 Just call the following function to edit commands inside the list
 ```lua
-lua require('harpoon.ui-cmd').toggle_quick_menu()
+lua require('harpoon.cmd-ui').toggle_quick_menu()
 ```
 
 ### Setup
