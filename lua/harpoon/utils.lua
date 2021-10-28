@@ -4,7 +4,9 @@ local Job = require("plenary.job")
 
 local M = {}
 
-M.project_key = vim.loop.cwd()
+local project_key = vim.loop.cwd()
+M.project_key = project_key
+M.branch_key = vim.loop.cwd()
 M.data_path = data_path
 
 function M.mark_config_key()
@@ -12,7 +14,7 @@ function M.mark_config_key()
 end
 
 function M.normalize_path(item)
-    return Path:new(item):make_relative(M.project_key)
+    return Path:new(item):make_relative(M.branch_key)
 end
 
 function M.get_os_command_output(cmd, cwd)
