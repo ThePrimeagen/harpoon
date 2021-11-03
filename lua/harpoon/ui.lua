@@ -1,5 +1,5 @@
 local harpoon = require("harpoon")
-local popup = require("popup")
+local popup = require("plenary.popup")
 local Marked = require("harpoon.mark")
 local log = require("harpoon.dev").log
 
