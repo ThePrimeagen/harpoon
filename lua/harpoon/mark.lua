@@ -115,6 +115,18 @@ local function validate_buf_name(buf_name)
     end
 end
 
+local function filter_filetype()
+    local current_filetype = vim.bo.filetype
+    local excluded_filetypes = harpoon.get_global_settings().excluded_filetypes
+    for filetype = 1, #excluded_filetypes do
+        if(current_filetype == excluded_filetypes[filetype] or current_filetype == "harpoon") then
+            log.error('filter_filetype(): This filetype cannot be added or is included in the "excluded_filetypes" option')
+            error('This filetype cannot be added or is included in the "excluded_filetypes" option')
+            return
+        end
+    end
+end
+
 M.get_index_of = function(item)
     log.trace("get_index_of():", item)
     if item == nil then
@@ -180,6 +192,7 @@ M.valid_index = function(idx)
 end
 
 M.add_file = function(file_name_or_buf_id)
+    filter_filetype();
     local buf_name = get_buf_name(file_name_or_buf_id)
     log.trace("add_file():", buf_name)
 
@@ -290,10 +303,12 @@ M.get_length = function()
 end
 
 M.set_current_at = function(idx)
+    filter_filetype()
     local buf_name = get_buf_name()
     log.trace("set_current_at(): Setting id", idx, buf_name)
     local config = harpoon.get_mark_config()
     local current_idx = M.get_index_of(buf_name)
+
 
     -- Remove it if it already exists
     if M.valid_index(current_idx) then

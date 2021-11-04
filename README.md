@@ -146,6 +146,7 @@ require("harpoon").setup({
         save_on_toggle = false,
         save_on_change = true,
         enter_on_sendcmd = false,
+        excluded_filetypes = {"harpoon"}
     },
     ... your other configs ...
 })
@@ -159,6 +160,7 @@ require("harpoon").setup({
   what I have found).
 * `enter_on_sendcmd` will set harpoon to run the command immediately as it's
     passed to the terminal when calling `sendCommand`.
+* `excluded_filetypes` filetypes that you want to prevent from adding to the harpoon list menu.
 
 #### Preconfigured Terminal Commands
 These are project specific commands that you wish to execute on the regular.
