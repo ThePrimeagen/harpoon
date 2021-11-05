@@ -146,7 +146,7 @@ require("harpoon").setup({
         save_on_toggle = false,
         save_on_change = true,
         enter_on_sendcmd = false,
-        excluded_filetypes = {"harpoon"}
+        excluded_filetypes = { "harpoon" }
     },
     ... your other configs ...
 })
