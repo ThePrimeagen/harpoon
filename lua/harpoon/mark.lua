@@ -125,16 +125,14 @@ local function filter_filetype()
         return
     end
 
-    for filetype = 1, #excluded_filetypes do
-        if current_filetype == excluded_filetypes[filetype] then
-            log.error(
-                'filter_filetype(): This filetype cannot be added or is included in the "excluded_filetypes" option'
-            )
-            error(
-                'This filetype cannot be added or is included in the "excluded_filetypes" option'
-            )
-            return
-        end
+    if vim.tbl_contains(excluded_filetypes, current_filetype) then
+        log.error(
+            'filter_filetype(): This filetype cannot be added or is included in the "excluded_filetypes" option'
+        )
+        error(
+            'This filetype cannot be added or is included in the "excluded_filetypes" option'
+        )
+        return
     end
 end
 
