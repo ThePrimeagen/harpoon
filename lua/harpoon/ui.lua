@@ -1,6 +1,7 @@
 local harpoon = require("harpoon")
 local popup = require("plenary.popup")
 local Marked = require("harpoon.mark")
+local utils = require("harpoon.utils")
 local log = require("harpoon.dev").log
 
 local M = {}
@@ -60,12 +61,9 @@ local function get_menu_items()
     local lines = vim.api.nvim_buf_get_lines(Harpoon_bufh, 0, -1, true)
     local indices = {}
 
-    for idx = 1, #lines do
-        local space_location = string.find(lines[idx], " ")
-        log.debug("_get_menu_items():", idx, space_location)
-
-        if space_location ~= nil then
-            table.insert(indices, string.sub(lines[idx], space_location + 1))
+    for _, line in pairs(lines) do
+        if not utils.is_white_space(line) then
+            table.insert(indices, line)
         end
     end
 
@@ -91,9 +89,10 @@ M.toggle_quick_menu = function()
         if file == "" then
             file = "(empty)"
         end
-        contents[idx] = string.format("%d %s", idx, file)
+        contents[idx] = string.format("%s", file)
     end
 
+    vim.api.nvim_win_set_option(Harpoon_win_id, "number", true)
     vim.api.nvim_buf_set_name(Harpoon_bufh, "harpoon-menu")
     vim.api.nvim_buf_set_lines(Harpoon_bufh, 0, #contents, false, contents)
     vim.api.nvim_buf_set_option(Harpoon_bufh, "filetype", "harpoon")

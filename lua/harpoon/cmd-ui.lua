@@ -1,5 +1,6 @@
 local harpoon = require("harpoon")
 local popup = require("plenary.popup")
+local utils = require("harpoon.utils")
 local log = require("harpoon.dev").log
 local term = require("harpoon.term")
 
@@ -53,17 +54,13 @@ local function create_window()
     }
 end
 
-local function is_white_space(str)
-    return str:gsub("%s", "") == ""
-end
-
 local function get_menu_items()
     log.trace("_get_menu_items()")
     local lines = vim.api.nvim_buf_get_lines(Harpoon_cmd_bufh, 0, -1, true)
     local indices = {}
 
     for _, line in pairs(lines) do
-        if not is_white_space(line) then
+        if not utils.is_white_space(line) then
             table.insert(indices, line)
         end
     end

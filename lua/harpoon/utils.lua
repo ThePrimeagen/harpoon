@@ -6,6 +6,9 @@ local M = {
     normalize_path = function(item)
         return Path:new(item):make_relative(vim.loop.cwd())
     end,
+    is_white_space = function(str)
+        return str:gsub("%s", "") == ""
+    end,
 }
 
 return M
