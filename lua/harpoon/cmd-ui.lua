@@ -109,14 +109,13 @@ M.toggle_quick_menu = function()
         ":lua require('harpoon.cmd-ui').toggle_quick_menu()<CR>",
         { silent = true }
     )
-    -- TODO: maybe vim.fn.input() can be used to implement some select_menu_item
-    -- vim.api.nvim_buf_set_keymap(
-    --     Harpoon_cmd_bufh,
-    --     "n",
-    --     "<CR>",
-    --     ":lua require('harpoon.cmd-ui').select_menu_item()<CR>",
-    --     {}
-    -- )
+    vim.api.nvim_buf_set_keymap(
+        Harpoon_cmd_bufh,
+        "n",
+        "<CR>",
+        ":lua require('harpoon.cmd-ui').select_menu_item()<CR>",
+        {}
+    )
     vim.cmd(
         string.format(
             "autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.cmd-ui').on_menu_save()",
@@ -137,6 +136,20 @@ M.toggle_quick_menu = function()
             Harpoon_cmd_bufh
         )
     )
+end
+
+M.select_menu_item = function()
+    log.trace("cmd-ui#select_menu_item()")
+    local cmd = vim.fn.line(".")
+    close_menu(true)
+    local answer = vim.fn.input("Terminal index (default to 1): ")
+    if answer == "" then
+        answer = "1"
+    end
+    local idx = tonumber(answer)
+    if idx then
+        term.sendCommand(idx, cmd)
+    end
 end
 
 M.on_menu_save = function()
