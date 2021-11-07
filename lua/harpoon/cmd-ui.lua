@@ -95,6 +95,20 @@ M.toggle_quick_menu = function()
     vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "filetype", "harpoon")
     vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "buftype", "acwrite")
     vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "bufhidden", "delete")
+    vim.api.nvim_buf_set_keymap(
+        Harpoon_cmd_bufh,
+        "n",
+        "q",
+        ":lua require('harpoon.cmd-ui').toggle_quick_menu()<CR>",
+        { silent = true }
+    )
+    vim.api.nvim_buf_set_keymap(
+        Harpoon_cmd_bufh,
+        "n",
+        "<ESC>",
+        ":lua require('harpoon.cmd-ui').toggle_quick_menu()<CR>",
+        { silent = true }
+    )
     -- TODO: maybe vim.fn.input() can be used to implement some select_menu_item
     -- vim.api.nvim_buf_set_keymap(
     --     Harpoon_cmd_bufh,
