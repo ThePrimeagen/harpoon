@@ -35,6 +35,9 @@ local M = {
 
         return result
     end,
+    is_white_space = function(str)
+        return str:gsub("%s", "") == ""
+    end,
 }
 
 return M

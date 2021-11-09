@@ -158,6 +158,7 @@ M.setup = function(config)
             ["save_on_change"] = true,
             ["enter_on_sendcmd"] = false,
             ["tmux_autoclose_windows"] = false,
+            ["excluded_filetypes"] = { "harpoon" },
         },
     }, expand_dir(
         c_config

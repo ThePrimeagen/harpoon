@@ -32,7 +32,6 @@ Simply install via your favorite plugin manager.
 
 ```vim
 Plug 'nvim-lua/plenary.nvim' " don't forget to add this one if you don't have it yet!
-Plug 'nvim-lua/popup.nvim'
 Plug 'ThePrimeagen/harpoon'
 ```
 
@@ -124,7 +123,7 @@ lua require("harpoon.term").sendCommand(1, "ls -la")
 This feature adds ability to change commands while working inside a project. 
 Just call the following function to edit commands inside the list
 ```lua
-lua require('harpoon.ui-cmd').toggle_quick_menu()
+lua require('harpoon.cmd-ui').toggle_quick_menu()
 ```
 
 ### Setup
@@ -147,6 +146,7 @@ require("harpoon").setup({
         save_on_toggle = false,
         save_on_change = true,
         enter_on_sendcmd = false,
+        excluded_filetypes = { "harpoon" }
     },
     ... your other configs ...
 })
@@ -160,6 +160,7 @@ require("harpoon").setup({
   what I have found).
 * `enter_on_sendcmd` will set harpoon to run the command immediately as it's
     passed to the terminal when calling `sendCommand`.
+* `excluded_filetypes` filetypes that you want to prevent from adding to the harpoon list menu.
 
 #### Preconfigured Terminal Commands
 These are project specific commands that you wish to execute on the regular.

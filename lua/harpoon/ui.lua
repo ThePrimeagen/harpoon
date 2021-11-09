@@ -1,6 +1,7 @@
 local harpoon = require("harpoon")
-local popup = require("popup")
+local popup = require("plenary.popup")
 local Marked = require("harpoon.mark")
+local utils = require("harpoon.utils")
 local log = require("harpoon.dev").log
 
 local M = {}
@@ -60,12 +61,9 @@ local function get_menu_items()
     local lines = vim.api.nvim_buf_get_lines(Harpoon_bufh, 0, -1, true)
     local indices = {}
 
-    for idx = 1, #lines do
-        local space_location = string.find(lines[idx], " ")
-        log.debug("_get_menu_items():", idx, space_location)
-
-        if space_location ~= nil then
-            table.insert(indices, string.sub(lines[idx], space_location + 1))
+    for _, line in pairs(lines) do
+        if not utils.is_white_space(line) then
+            table.insert(indices, line)
         end
     end
 
@@ -91,9 +89,10 @@ M.toggle_quick_menu = function()
         if file == "" then
             file = "(empty)"
         end
-        contents[idx] = string.format("%d %s", idx, file)
+        contents[idx] = string.format("%s", file)
     end
 
+    vim.api.nvim_win_set_option(Harpoon_win_id, "number", true)
     vim.api.nvim_buf_set_name(Harpoon_bufh, "harpoon-menu")
     vim.api.nvim_buf_set_lines(Harpoon_bufh, 0, #contents, false, contents)
     vim.api.nvim_buf_set_option(Harpoon_bufh, "filetype", "harpoon")
@@ -103,33 +102,33 @@ M.toggle_quick_menu = function()
         Harpoon_bufh,
         "n",
         "q",
-        ":lua require('harpoon.ui').toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         Harpoon_bufh,
         "n",
         "<ESC>",
-        ":lua require('harpoon.ui').toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         Harpoon_bufh,
         "n",
         "<CR>",
-        ":lua require('harpoon.ui').select_menu_item()<CR>",
+        "<Cmd>lua require('harpoon.ui').select_menu_item()<CR>",
         {}
     )
     vim.cmd(
         string.format(
-            "autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()",
+            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon.ui').on_menu_save()",
             Harpoon_bufh
         )
     )
     if global_config.save_on_change then
         vim.cmd(
             string.format(
-                "autocmd TextChanged,TextChangedI <buffer=%s> :lua require('harpoon.ui').on_menu_save()",
+                "autocmd TextChanged,TextChangedI <buffer=%s> lua require('harpoon.ui').on_menu_save()",
                 Harpoon_bufh
             )
         )
@@ -141,7 +140,7 @@ M.toggle_quick_menu = function()
         )
     )
     vim.cmd(
-        "autocmd BufLeave <buffer> ++nested ++once :silent lua require('harpoon.ui').toggle_quick_menu()"
+        "autocmd BufLeave <buffer> ++nested ++once silent lua require('harpoon.ui').toggle_quick_menu()"
     )
 end
 
