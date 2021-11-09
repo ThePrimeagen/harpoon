@@ -102,33 +102,33 @@ M.toggle_quick_menu = function()
         Harpoon_bufh,
         "n",
         "q",
-        ":lua require('harpoon.ui').toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         Harpoon_bufh,
         "n",
         "<ESC>",
-        ":lua require('harpoon.ui').toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         Harpoon_bufh,
         "n",
         "<CR>",
-        ":lua require('harpoon.ui').select_menu_item()<CR>",
+        "<Cmd>lua require('harpoon.ui').select_menu_item()<CR>",
         {}
     )
     vim.cmd(
         string.format(
-            "autocmd BufWriteCmd <buffer=%s> :lua require('harpoon.ui').on_menu_save()",
+            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon.ui').on_menu_save()",
             Harpoon_bufh
         )
     )
     if global_config.save_on_change then
         vim.cmd(
             string.format(
-                "autocmd TextChanged,TextChangedI <buffer=%s> :lua require('harpoon.ui').on_menu_save()",
+                "autocmd TextChanged,TextChangedI <buffer=%s> lua require('harpoon.ui').on_menu_save()",
                 Harpoon_bufh
             )
         )
@@ -140,7 +140,7 @@ M.toggle_quick_menu = function()
         )
     )
     vim.cmd(
-        "autocmd BufLeave <buffer> ++nested ++once :silent lua require('harpoon.ui').toggle_quick_menu()"
+        "autocmd BufLeave <buffer> ++nested ++once silent lua require('harpoon.ui').toggle_quick_menu()"
     )
 end
 
