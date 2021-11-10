@@ -50,7 +50,7 @@ local function mark_config_key()
     if HarpoonConfig.mark_branch then
         return utils.branch_key()
     else
-        return utils.project_key
+        return utils.project_key()
     end
 end
 
@@ -72,9 +72,7 @@ local function ensure_correct_config(config)
             mark_config_key()
         )
         projects[mark_config_key()] = {
-            mark = {
-                marks = {},
-            },
+            mark = { marks = {} },
             term = {
                 cmds = {},
             },
@@ -102,9 +100,7 @@ local function ensure_correct_config(config)
 
     for idx, mark in pairs(marks) do
         if type(mark) == "string" then
-            mark = {
-                filename = mark,
-            }
+            mark = { filename = mark }
             marks[idx] = mark
         end
 
@@ -197,7 +193,7 @@ function M.refresh_projects_b4update()
         cache_config
     )
     -- save current runtime version of our project config for merging back in later
-    local cwd = vim.loop.cwd()
+    local cwd = mark_config_key()
     local current_p_config = {
         projects = {
             [cwd] = ensure_correct_config(HarpoonConfig).projects[cwd],
@@ -241,7 +237,7 @@ end
 
 function M.get_term_config()
     log.trace("get_term_config()")
-    return ensure_correct_config(HarpoonConfig).projects[utils.project_key].term
+    return ensure_correct_config(HarpoonConfig).projects[utils.project_key()].term
 end
 
 function M.get_mark_config()
