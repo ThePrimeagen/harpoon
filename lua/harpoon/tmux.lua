@@ -144,7 +144,7 @@ end
 M.clear_all = function()
     log.trace("tmux: clear_all(): Clearing all tmux windows.")
 
-    for _, window in ipairs(tmux_windows) do
+    for _, window in pairs(tmux_windows) do
         -- Delete the current tmux window
         local _, _, _ = utils.get_os_command_output({
             "tmux",
