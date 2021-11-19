@@ -183,12 +183,22 @@ end
 
 M.get_term_config = function()
     log.trace("get_term_config()")
-    return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].term
+    if HarpoonConfig.global_project == nil then
+        term_project = vim.loop.cwd()
+    else
+        term_project = HarpoonConfig.global_project
+    end
+    return ensure_correct_config(HarpoonConfig).projects[term_project].term
 end
 
 M.get_mark_config = function()
     log.trace("get_mark_config()")
-    return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].mark
+    if HarpoonConfig.global_project == nil then
+        mark_project = vim.loop.cwd()
+    else
+        mark_project = HarpoonConfig.global_project
+    end
+    return ensure_correct_config(HarpoonConfig).projects[mark_project].mark
 end
 
 M.get_menu_config = function()
