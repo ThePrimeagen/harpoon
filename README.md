@@ -120,7 +120,7 @@ lua require("harpoon.term").sendCommand(1, "ls -la")
 ```
 
 #### Dynamic commands to terminal
-This feature adds ability to change commands while working inside a project. 
+This feature adds ability to change commands while working inside a project.
 Just call the following function to edit commands inside the list
 ```lua
 lua require('harpoon.cmd-ui').toggle_quick_menu()
@@ -148,6 +148,7 @@ require("harpoon").setup({
         enter_on_sendcmd = false,
         excluded_filetypes = { "harpoon" }
     },
+    global_project = nil,
     ... your other configs ...
 })
 ```
@@ -161,6 +162,7 @@ require("harpoon").setup({
 * `enter_on_sendcmd` will set harpoon to run the command immediately as it's
     passed to the terminal when calling `sendCommand`.
 * `excluded_filetypes` filetypes that you want to prevent from adding to the harpoon list menu.
+* `global_project` path for the project directory, if set all marks will be saved in its scope.
 
 #### Preconfigured Terminal Commands
 These are project specific commands that you wish to execute on the regular.
