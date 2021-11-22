@@ -59,10 +59,7 @@ local function ensure_correct_config(config)
     log.trace("_ensure_correct_config()")
     local projects = config.projects
     if projects[vim.loop.cwd()] == nil then
-        log.debug(
-            "ensure_correct_config(): No config found for:",
-            vim.loop.cwd()
-        )
+        log.debug("ensure_correct_config(): No config found for:", vim.loop.cwd())
         projects[vim.loop.cwd()] = {
             mark = {
                 marks = {},
@@ -80,10 +77,7 @@ local function ensure_correct_config(config)
     end
 
     if proj.term == nil then
-        log.debug(
-            "ensure_correct_config(): No terminal commands found for",
-            vim.loop.cwd()
-        )
+        log.debug("ensure_correct_config(): No terminal commands found for", vim.loop.cwd())
         proj.term = { cmds = {} }
     end
 
@@ -159,13 +153,7 @@ M.setup = function(config)
             ["enter_on_sendcmd"] = false,
             ["excluded_filetypes"] = { "harpoon" },
         },
-    }, expand_dir(
-        c_config
-    ), expand_dir(
-        u_config
-    ), expand_dir(
-        config
-    ))
+    }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 
     -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
     -- an object for vim.loop.cwd()
