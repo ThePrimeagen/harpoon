@@ -51,8 +51,13 @@ local generate_new_finder = function()
 end
 
 local delete_harpoon_mark = function(prompt_bufnr)
-    local confirmation = vim.fn.input(string.format("Delete current mark? [y/n]: "))
-    if string.len(confirmation) == 0 or string.sub(string.lower(confirmation), 0, 1) ~= "y" then
+    local confirmation = vim.fn.input(
+        string.format("Delete current mark? [y/n]: ")
+    )
+    if
+        string.len(confirmation) == 0
+        or string.sub(string.lower(confirmation), 0, 1) ~= "y"
+    then
         print(string.format("Didn't delete mark"))
         return
     end
