@@ -23,6 +23,7 @@ local generate_new_finder = function()
     return finders.new_table({
         results = filter_empty_string(harpoon.get_mark_config().marks),
         entry_maker = function(entry)
+            local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
             local displayer = entry_display.create({
                 separator = " - ",
                 items = {
@@ -34,7 +35,7 @@ local generate_new_finder = function()
             local make_display = function(entry)
                 return displayer({
                     tostring(entry.index),
-                    entry.filename,
+                    line,
                 })
             end
             local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
