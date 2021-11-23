@@ -51,6 +51,8 @@ local function terminal_exists(window_id)
         "list-windows",
     }, vim.loop.cwd())
 
+    -- This has to be done this way because tmux has-session does not give
+    -- updated results
     for _, line in pairs(window_list) do
         local window_info = utils.split_string(line, "@")[1]
 
@@ -80,6 +82,7 @@ local function find_terminal(args)
         local window_id = create_terminal()
 
         if window_id == nil then
+            error("Failed to find and create tmux window.")
             return
         end
 
@@ -107,7 +110,7 @@ M.gotoTerminal = function(idx)
     log.trace("tmux: gotoTerminal(): Window:", idx)
     local window_handle = find_terminal(idx)
 
-    local _, _, _ = utils.get_os_command_output({
+    utils.get_os_command_output({
         "tmux",
         "select-window",
         "-t",
@@ -146,7 +149,7 @@ M.clear_all = function()
 
     for _, window in pairs(tmux_windows) do
         -- Delete the current tmux window
-        local _, _, _ = utils.get_os_command_output({
+        utils.get_os_command_output({
             "tmux",
             "kill-window",
             "-t",

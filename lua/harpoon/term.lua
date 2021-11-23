@@ -40,6 +40,7 @@ local function find_terminal(args)
     if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
         local buf_id, term_id = create_terminal(args.create_with)
         if buf_id == nil then
+            error("Failed to find and create terminal.")
             return
         end
 

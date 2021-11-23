@@ -160,13 +160,7 @@ M.setup = function(config)
             ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
         },
-    }, expand_dir(
-        c_config
-    ), expand_dir(
-        u_config
-    ), expand_dir(
-        config
-    ))
+    }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 
     -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
     -- an object for vim.loop.cwd()
