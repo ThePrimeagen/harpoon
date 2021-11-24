@@ -190,3 +190,19 @@ more convenient to launch Neovim with an environment variable, e.g. `>
 HARPOON_LOG=trace nvim`. In case both, `vim.g` and an environment variable are
 used, the log level set by the environment variable overrules. Supplying an
 invalid log level defaults back to warnings.
+
+## Telescope
+
+### Setup
+
+Add thet followingt to your config:
+```lua
+require("telescope").load_extension('harpoon')
+```
+
+### Launch
+
+Call the following to launch the telescope window
+```lua
+:Telescope harpoon marks
+```
