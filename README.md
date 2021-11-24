@@ -126,6 +126,22 @@ Just call the following function to edit commands inside the list
 lua require('harpoon.cmd-ui').toggle_quick_menu()
 ```
 
+#### Tmux Integration
+Harpoon also supports all terminal operations (see above) with tmux terminals. 
+The configuration for using tmux is exactly the same as the config for using nvim 
+terminals. To use tmux terminals instead of nvim terminals, simply replace 
+`harpoon.term` with `harpoon.tmux` in your require statement.
+
+For example:
+
+```lua
+-- goes to the first tmux window
+lua require("harpoon.tmux").gotoTerminal(1)
+
+-- sends a command to the first tmux window
+lua require("harpoon.tmux").sendCommand(1, "ls -la")
+```
+
 ### Setup
 Setup should be called once.
 
@@ -146,6 +162,7 @@ require("harpoon").setup({
         save_on_toggle = false,
         save_on_change = true,
         enter_on_sendcmd = false,
+        tmux_autoclose_windows = false,
         excluded_filetypes = { "harpoon" }
     },
     ... your other configs ...
@@ -160,6 +177,8 @@ require("harpoon").setup({
   what I have found).
 * `enter_on_sendcmd` will set harpoon to run the command immediately as it's
     passed to the terminal when calling `sendCommand`.
+* `tmux_autoclose_windows` will close any tmux windows harpoon that harpoon creates
+    when you close Neovim.
 * `excluded_filetypes` filetypes that you want to prevent from adding to the harpoon list menu.
 
 #### Preconfigured Terminal Commands

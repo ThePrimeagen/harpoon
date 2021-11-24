@@ -9,7 +9,7 @@ local function create_terminal(create_with)
     if not create_with then
         create_with = ":terminal"
     end
-    log.trace("_create_terminal(): Init:", create_with)
+    log.trace("term: _create_terminal(): Init:", create_with)
     local current_id = vim.api.nvim_get_current_buf()
 
     vim.cmd(create_with)
@@ -32,7 +32,7 @@ local function create_terminal(create_with)
 end
 
 local function find_terminal(args)
-    log.trace("_find_terminal(): Terminal:", args)
+    log.trace("term: _find_terminal(): Terminal:", args)
     if type(args) == "number" then
         args = { idx = args }
     end
@@ -40,6 +40,7 @@ local function find_terminal(args)
     if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
         local buf_id, term_id = create_terminal(args.create_with)
         if buf_id == nil then
+            error("Failed to find and create terminal.")
             return
         end
 
@@ -63,14 +64,14 @@ local function get_first_empty_slot()
 end
 
 M.gotoTerminal = function(idx)
-    log.trace("gotoTerminal(): Terminal:", idx)
+    log.trace("term: gotoTerminal(): Terminal:", idx)
     local term_handle = find_terminal(idx)
 
     vim.api.nvim_set_current_buf(term_handle.buf_id)
 end
 
 M.sendCommand = function(idx, cmd, ...)
-    log.trace("sendCommand(): Terminal:", idx)
+    log.trace("term: sendCommand(): Terminal:", idx)
     local term_handle = find_terminal(idx)
 
     if type(cmd) == "number" then
@@ -88,7 +89,7 @@ M.sendCommand = function(idx, cmd, ...)
 end
 
 M.clear_all = function()
-    log.trace("clear_all(): Clearing all terminals.")
+    log.trace("term: clear_all(): Clearing all terminals.")
     for _, term in ipairs(terminals) do
         vim.api.nvim_buf_delete(term.buf_id, { force = true })
     end

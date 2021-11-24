@@ -17,12 +17,12 @@ local M = {}
             term = {
                 cmds = {
                 }
-                ... is there antyhnig that could be options?
+                ... is there anything that could be options?
             },
             mark = {
                 marks = {
                 }
-                ... is there antyhnig that could be options?
+                ... is there anything that could be options?
             }
         }
     },
@@ -157,6 +157,7 @@ M.setup = function(config)
             ["save_on_toggle"] = false,
             ["save_on_change"] = true,
             ["enter_on_sendcmd"] = false,
+            ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
