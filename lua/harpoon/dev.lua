@@ -5,7 +5,7 @@
 -- :nmap <leader>rr :lua require("harpoon.dev").reload()<CR>
 local M = {}
 
-M.reload = function()
+function M.reload()
     require("plenary.reload").reload_module("harpoon")
 end
 
@@ -41,7 +41,7 @@ for _, v in pairs(log_levels) do
     override(v)
 end
 
-M.get_log_key = function()
+function M.get_log_key()
     return log_key
 end
 

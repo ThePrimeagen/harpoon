@@ -106,7 +106,7 @@ local function get_first_empty_slot()
     return M.get_length() + 1
 end
 
-M.gotoTerminal = function(idx)
+function M.gotoTerminal(idx)
     log.trace("tmux: gotoTerminal(): Window:", idx)
     local window_handle = find_terminal(idx)
 
@@ -118,7 +118,7 @@ M.gotoTerminal = function(idx)
     }, vim.loop.cwd())
 end
 
-M.sendCommand = function(idx, cmd, ...)
+function M.sendCommand(idx, cmd, ...)
     log.trace("tmux: sendCommand(): Window:", idx)
     local window_handle = find_terminal(idx)
 
@@ -144,7 +144,7 @@ M.sendCommand = function(idx, cmd, ...)
     end
 end
 
-M.clear_all = function()
+function M.clear_all()
     log.trace("tmux: clear_all(): Clearing all tmux windows.")
 
     for _, window in pairs(tmux_windows) do
@@ -160,33 +160,33 @@ M.clear_all = function()
     tmux_windows = {}
 end
 
-M.get_length = function()
+function M.get_length()
     log.trace("_get_length()")
     return table.maxn(harpoon.get_term_config().cmds)
 end
 
-M.valid_index = function(idx)
+function M.valid_index(idx)
     if idx == nil or idx > M.get_length() or idx <= 0 then
         return false
     end
     return true
 end
 
-M.emit_changed = function()
+function M.emit_changed()
     log.trace("_emit_changed()")
     if harpoon.get_global_settings().save_on_change then
         harpoon.save()
     end
 end
 
-M.add_cmd = function(cmd)
+function M.add_cmd(cmd)
     log.trace("add_cmd()")
     local found_idx = get_first_empty_slot()
     harpoon.get_term_config().cmds[found_idx] = cmd
     M.emit_changed()
 end
 
-M.rm_cmd = function(idx)
+function M.rm_cmd(idx)
     log.trace("rm_cmd()")
     if not M.valid_index(idx) then
         log.debug("rm_cmd(): no cmd exists for index", idx)
@@ -196,7 +196,7 @@ M.rm_cmd = function(idx)
     M.emit_changed()
 end
 
-M.set_cmd_list = function(new_list)
+function M.set_cmd_list(new_list)
     log.trace("set_cmd_list(): New list:", new_list)
     for k in pairs(harpoon.get_term_config().cmds) do
         harpoon.get_term_config().cmds[k] = nil
