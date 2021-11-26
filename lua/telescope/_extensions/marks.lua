@@ -5,6 +5,7 @@ local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local previewers = require("telescope.previewers")
 local sorters = require("telescope.sorters")
+local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 local harpoon_mark = require("harpoon.mark")
 
@@ -98,8 +99,8 @@ return function(opts)
     pickers.new(opts, {
         prompt_title = "harpoon marks",
         finder = generate_new_finder(),
-        sorter = sorters.get_fuzzy_file(),
-        previewer = previewers.vim_buffer_cat.new({}),
+        sorter = conf.generic_sorter(opts),
+        previewer = conf.grep_previewer(opts),
         attach_mappings = function(_, map)
             map("i", "<c-d>", delete_harpoon_mark)
             map("n", "<c-d>", delete_harpoon_mark)
