@@ -71,8 +71,7 @@ lua require("harpoon.term").gotoTerminal(1)             -- navigates to term 1
 ### Commands to Terminals
 commands can be sent to any terminal
 ```lua
-" This will send to terminal 1 either the predefined command 1 in the terminal
-" config or "ls -la"
+lua require("harpoon.term").sendCommand(1, "ls -La")    -- sends ls -La to tmux window 1
 ```
 further more commands can be stored for later quick
 ```lua
@@ -86,7 +85,7 @@ by simply switching `'term' with 'tmux'` like so
 
 ```lua
 lua require("harpoon.tmux").gotoTerminal(1)             -- goes to the first tmux window
-lua require("harpoon.tmux").sendCommand(1, "ls -la")    -- sends ls -La to tmux window 1
+lua require("harpoon.tmux").sendCommand(1, "ls -La")    -- sends ls -La to tmux window 1
 lua require("harpoon.tmux").sendCommand(1, 1)           -- sends command 1 to tmux window 1
 ```
 
@@ -131,16 +130,16 @@ global_settings = {
 ### Preconfigured Terminal Commands
 to preconfigure terminal commands for later use
 ```lua
-    projects = {
-        -- Yes $HOME works
-        ["$HOME/personal/vim-with-me/server"] = {
-            term = {
-                cmds = {
-                    "./env && npx ts-node src/index.ts"
-                }
+projects = {
+    -- Yes $HOME works
+    ["$HOME/personal/vim-with-me/server"] = {
+        term = {
+            cmds = {
+                "./env && npx ts-node src/index.ts"
             }
         }
     }
+}
 ```
 
 ## ⇁ Logging
