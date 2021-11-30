@@ -214,7 +214,7 @@ invalid log level defaults back to warnings.
 
 ### Setup
 
-Add thet followingt to your config:
+Add the following to your config:
 ```lua
 require("telescope").load_extension('harpoon')
 ```
