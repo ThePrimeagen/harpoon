@@ -58,10 +58,14 @@ This will mark the file and add it to the end of the mark list.
 
 #### Navigate to file
 To navigate to any of the marked files simply call the navigation function with
-which index.
+which index. There are also functions you can call to navigate to the next or
+previous marks in the marks list.
 
 ```lua
 :lua require("harpoon.ui").nav_file(3) -- This will navigate to file 3
+
+:lua require("harpoon.ui").nav_next() -- This will navigate to the next mark
+:lua require("harpoon.ui").nav_prev() -- This will navigate to the previous mark
 ```
 
 #### Manipulating current marks
