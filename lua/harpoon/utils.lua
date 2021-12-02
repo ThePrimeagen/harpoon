@@ -6,11 +6,11 @@ local M = {}
 
 M.data_path = data_path
 
-function M.normalize_path (item)
+function M.normalize_path(item)
     return Path:new(item):make_relative(vim.loop.cwd())
 end
 
-function M.get_os_command_output (cmd, cwd)
+function M.get_os_command_output(cmd, cwd)
     if type(cmd) ~= "table" then
         print("Harpoon: [get_os_command_output]: cmd has to be a table")
         return {}
@@ -30,7 +30,7 @@ function M.get_os_command_output (cmd, cwd)
     return stdout, ret, stderr
 end
 
-function M.split_string (str, delimiter)
+function M.split_string(str, delimiter)
     local result = {}
     for match in (str .. delimiter):gmatch("(.-)" .. delimiter) do
         table.insert(result, match)
@@ -38,7 +38,7 @@ function M.split_string (str, delimiter)
     return result
 end
 
-function M.is_white_space (str)
+function M.is_white_space(str)
     return str:gsub("%s", "") == ""
 end
 
