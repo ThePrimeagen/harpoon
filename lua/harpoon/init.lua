@@ -179,16 +179,18 @@ M.get_global_settings = function()
     return HarpoonConfig.global_settings
 end
 
-
 -- refresh all projects from disk, except our current one
 M.refresh_projects_b4update = function()
-    log.trace("refresh_projects_b4update(): refreshing other projects", cache_config)
+    log.trace(
+        "refresh_projects_b4update(): refreshing other projects",
+        cache_config
+    )
     -- save current runtime version of our project config for merging back in later
     local cwd = vim.loop.cwd()
     local current_p_config = {
         projects = {
-            [cwd] =  ensure_correct_config(HarpoonConfig).projects[cwd]
-        }
+            [cwd] = ensure_correct_config(HarpoonConfig).projects[cwd],
+        },
     }
 
     -- erase all projects from global config, will be loaded back from disk
@@ -199,7 +201,10 @@ M.refresh_projects_b4update = function()
     local ok2, c_config = pcall(read_config, cache_config)
 
     if not ok2 then
-        log.debug("refresh_projects_b4update(): No cache config present at", cache_config)
+        log.debug(
+            "refresh_projects_b4update(): No cache config present at",
+            cache_config
+        )
         c_config = {}
     end
     -- don't override non-project config in HarpoonConfig later
@@ -211,7 +216,8 @@ M.refresh_projects_b4update = function()
     local complete_config = merge_tables(
         HarpoonConfig,
         expand_dir(c_config),
-        expand_dir(current_p_config))
+        expand_dir(current_p_config)
+    )
 
     -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
     -- an object for vim.loop.cwd()
