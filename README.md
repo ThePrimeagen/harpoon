@@ -60,6 +60,11 @@ you also can switch to any mark without bringing up the menu, use the below with
 ```lua
 :lua require("harpoon.ui").nav_file(3)                  -- navigates to file 3
 ```
+you can also cycle the list in both directions
+```lua
+:lua require("harpoon.ui").nav_next()                   -- navigates to next mark
+:lua require("harpoon.ui").nav_prev()                   -- navigates to previous mark
+```
 
 ### Terminal Navigation
 this works like file navigation except that if there is no terminal at the specified index
