@@ -120,6 +120,9 @@ local function expand_dir(config)
 end
 
 function M.save()
+    -- first refresh from disk everything but our project
+    M.refresh_projects_b4update()
+
     log.trace("save(): Saving cache config to", cache_config)
     Path:new(cache_config):write(vim.fn.json_encode(HarpoonConfig), "w")
 end
@@ -174,6 +177,55 @@ end
 function M.get_global_settings()
     log.trace("get_global_settings()")
     return HarpoonConfig.global_settings
+end
+
+-- refresh all projects from disk, except our current one
+function M.refresh_projects_b4update()
+    log.trace(
+        "refresh_projects_b4update(): refreshing other projects",
+        cache_config
+    )
+    -- save current runtime version of our project config for merging back in later
+    local cwd = vim.loop.cwd()
+    local current_p_config = {
+        projects = {
+            [cwd] = ensure_correct_config(HarpoonConfig).projects[cwd],
+        },
+    }
+
+    -- erase all projects from global config, will be loaded back from disk
+    HarpoonConfig.projects = nil
+
+    -- this reads a stale version of our project but up-to-date versions
+    -- of all other projects
+    local ok2, c_config = pcall(read_config, cache_config)
+
+    if not ok2 then
+        log.debug(
+            "refresh_projects_b4update(): No cache config present at",
+            cache_config
+        )
+        c_config = {}
+    end
+    -- don't override non-project config in HarpoonConfig later
+    c_config = { projects = c_config.projects }
+
+    -- erase our own project, will be merged in from current_p_config later
+    c_config.projects[cwd] = nil
+
+    local complete_config = merge_tables(
+        HarpoonConfig,
+        expand_dir(c_config),
+        expand_dir(current_p_config)
+    )
+
+    -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
+    -- an object for vim.loop.cwd()
+    ensure_correct_config(complete_config)
+
+    HarpoonConfig = complete_config
+    log.debug("refresh_projects_b4update(): Complete config", HarpoonConfig)
+    log.trace("refresh_projects_b4update(): log_key", Dev.get_log_key())
 end
 
 function M.get_term_config()
