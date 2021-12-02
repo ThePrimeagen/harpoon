@@ -9,4 +9,4 @@
 * ackshual tests.
 * interactive menu
 * cycle
-
+* make setup() callable more than once and just layer in the commands

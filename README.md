@@ -1,231 +1,175 @@
-# WARNING
-This is not fully baked, though used by several people.  If you experience any
-issues, see some improvement you think would be amazing, or just have some
-feedback for harpoon (or me), make a ticket!
+<div align="center">
+
+# Harpoon
+##### Getting you where you want with the fewest keystrokes.
+
+[![Lua](https://img.shields.io/badge/Lua-blue.svg?style=for-the-badge&logo=lua)](http://www.lua.org)
+[![Neovim](https://img.shields.io/badge/Neovim%200.5+-green.svg?style=for-the-badge&logo=neovim)](https://neovim.io)
+</div>
 
 ![Harpoon](harpoon.png)
--- Image provided by Liberty_DevCap
+-- image provided by **Liberty_DevCap**
 
-# harpoon
-The goal of Harpoon is to get you where you want with the fewest keystrokes.
 
-## The Problem
-You work on code.  The code base is medium, large, tiny, whatever.  You find
-yourself frequenting a small set of files (maybe it depends on task) and you
-are tired of using a fuzzy finder, :bnext/prev, alternate file doesn't quite
-cut it, etc etc.
+## ⇁  WIP
+This is not fully baked, though used by several people. If you experience any
+issues, see some improvement you think would be amazing, or just have some
+feedback for harpoon (or me), make an issue!
 
-## The Other Problem
-You want to execute some project specific commands or have any number of
+
+## ⇁ The Problems:
+1. You're working on a codebase. medium, large, tiny, whatever. You find
+yourself frequenting a small set of files and you are tired of using a fuzzy finder, 
+`:bnext` & `:bprev` are getting too repetitive, alternate file doesn't quite cut it, etc etc.
+1. You want to execute some project specific commands or have any number of
 persistent terminals that can be easily navigated to.
 
-## The Solution
-The ability to specify, or on the fly, mark and create persisting key strokes
+
+## ⇁  The Solutions:
+1. The ability to specify, or on the fly, mark and create persisting key strokes
 to go to the files you want.
+1. Unlimited terminals and navigation.
 
-## The Other Solution
-Unlimited terminals and navigation.
 
-## Installation
-### Requires Neovim version 0.5.0+
-Simply install via your favorite plugin manager.
-
+## ⇁ Installation
+* neovim 0.5.0+ required
+* install using your favorite plugin manager (`vim-plug` in this example)
 ```vim
 Plug 'nvim-lua/plenary.nvim' " don't forget to add this one if you don't have it yet!
 Plug 'ThePrimeagen/harpoon'
 ```
 
-## Harpooning
-There are two modes of harpoon.  File navigation and terminal navigation.
-Setup of harpoon configuration is at the bottom since its for more advanced use
-cases.
+## ⇁ Harpooning
+here we'll explain how to wield the power of the harpoon:
 
-### File Navigation
-#### Mark a file
-Marking a file is similar to vim global marks, but differ in a few key ways.
 
-* They auto update their position
-* They are unique _per project_.
-* They can be hand edited vs replaced (swapping is easier)
-
-To mark a file simply call the following lua function
-
+### Marks
+you mark files you want to revisit later on
 ```lua
 :lua require("harpoon.mark").add_file()
 ```
 
-This will mark the file and add it to the end of the mark list.
-
-#### Navigate to file
-To navigate to any of the marked files simply call the navigation function with
-which index. There are also functions you can call to navigate to the next or
-previous marks in the marks list.
-
-```lua
-:lua require("harpoon.ui").nav_file(3) -- This will navigate to file 3
-
-:lua require("harpoon.ui").nav_next() -- This will navigate to the next mark
-:lua require("harpoon.ui").nav_prev() -- This will navigate to the previous mark
-```
-
-#### Manipulating current marks
-There is a quick menu that will allow for you to edit your marks.  You can hand
-edit the name, its position within the list, or remove it from the list.  To
-bring up the quick list execute the following lua command.
-
+### File Navigation
+view all project marks with:
 ```lua
 :lua require("harpoon.ui").toggle_quick_menu()
 ```
+you can go up and down the list, enter, delete or reorder. `q` and `<ESC>` exit and save the menu
 
-You can simply edit this list as if it were a document in vim.  `:wq` to save
-the new edits or `:q` to ignore the edits.  There is to save upon call to
-toggle if you prefer that way.
-
-You can also exit the list with `q` or `<ESC>`, which will call `toggle_quick_menu()` again.
+you also can switch to any mark without bringing up the menu, use the below with the desired mark index
+```lua
+:lua require("harpoon.ui").nav_file(3)                  -- navigates to file 3
+```
+you can also cycle the list in both directions
+```lua
+:lua require("harpoon.ui").nav_next()                   -- navigates to next mark
+:lua require("harpoon.ui").nav_prev()                   -- navigates to previous mark
+```
 
 ### Terminal Navigation
-#### Motivation for terminals in neovim
-I want to use the terminal since I can gF and <c-w>gF to any errors arising
-from execution that are within the terminal that are not appropriate for
-something like dispatch. (not just running tests but perhaps a server that runs
-for X amount of time before crashing).
-
-I want the terminal to be persistent and I can return to one of many terminals
-with some finger wizardry and reparse any of the execution information that was
-not necessarily error related.
-
-I would like to have commands that can be tied to terminals and sent them
-without much thinking. Some sort of middle ground between vim-test and just
-typing them into a terminal (configuring netflix's television project isn't
-quite building and there are tons of ways to configure).
-
-#### Navigating to a terminal
-To navigate to a terminal simply provide an index and it will go.  If there is
-no terminal in that index or the terminal has been closed by some means,
-harpoon will create a new terminal at that location.
-
+this works like file navigation except that if there is no terminal at the specified index
+a new terminal is created.
 ```lua
-lua require("harpoon.term").gotoTerminal(1)
+lua require("harpoon.term").gotoTerminal(1)             -- navigates to term 1
 ```
 
-You can provide as high of a number as you would like.  There  is no terminal
-count limitation though I personally find anything beyond two oft confusing.
-
-#### Commands to terminal
-Sometimes you wish to send commands to terminals that have been preconfigured
-for a project.  To make this work properly you must predefine a command or hard
-code it as part of the send process.
-
+### Commands to Terminals
+commands can be sent to any terminal
 ```lua
-" This will send to terminal 1 either the predefined command 1 in the terminal
-" config or "ls -la"
-lua require("harpoon.term").sendCommand(1, 1)
-lua require("harpoon.term").sendCommand(1, "ls -la")
+lua require("harpoon.term").sendCommand(1, "ls -La")    -- sends ls -La to tmux window 1
+```
+further more commands can be stored for later quick
+```lua
+lua require('harpoon.cmd-ui').toggle_quick_menu()       -- shows the commands menu
+lua require("harpoon.term").sendCommand(1, 1)           -- sends command 1 to term 1
 ```
 
-#### Dynamic commands to terminal
-This feature adds ability to change commands while working inside a project. 
-Just call the following function to edit commands inside the list
-```lua
-lua require('harpoon.cmd-ui').toggle_quick_menu()
-```
-
-#### Tmux Integration
-Harpoon also supports all terminal operations (see above) with tmux terminals. 
-The configuration for using tmux is exactly the same as the config for using nvim 
-terminals. To use tmux terminals instead of nvim terminals, simply replace 
-`harpoon.term` with `harpoon.tmux` in your require statement.
-
-For example:
+### Tmux Support
+tmux is supported out of the box and can be used as a drop-in replacement to normal terminals
+by simply switching `'term' with 'tmux'` like so
 
 ```lua
--- goes to the first tmux window
-lua require("harpoon.tmux").gotoTerminal(1)
-
--- sends a command to the first tmux window
-lua require("harpoon.tmux").sendCommand(1, "ls -la")
+lua require("harpoon.tmux").gotoTerminal(1)             -- goes to the first tmux window
+lua require("harpoon.tmux").sendCommand(1, "ls -La")    -- sends ls -La to tmux window 1
+lua require("harpoon.tmux").sendCommand(1, 1)           -- sends command 1 to tmux window 1
 ```
 
-### Setup
-Setup should be called once.
-
-#### TODO: Make this callable more than once and just layer in the commands
-Yes... A todo in a readme.  Deal with it.
-
-#### The Configuration File
-You can configure harpoon via lua in your rc.  Here is a simple example that
-will add a specific command to a project.
-
-##### Global Settings
-
-```lua
-Here is the set of global settings and their default values.
-
-require("harpoon").setup({
-    global_settings = {
-        save_on_toggle = false,
-        save_on_change = true,
-        enter_on_sendcmd = false,
-        tmux_autoclose_windows = false,
-        excluded_filetypes = { "harpoon" }
-    },
-    ... your other configs ...
-})
-```
-
-* `save_on_toggle` will set the marks upon calling `toggle` on the ui, instead
-  of require `:w`.
-* `save_on_change` will save the harpoon file upon every change.  If you don't
-  enable this option (on by default) harpoon will not save any changes to your
-  file.  It is very unreliable to save your harpoon on exit (at least that is
-  what I have found).
-* `enter_on_sendcmd` will set harpoon to run the command immediately as it's
-    passed to the terminal when calling `sendCommand`.
-* `tmux_autoclose_windows` will close any tmux windows harpoon that harpoon creates
-    when you close Neovim.
-* `excluded_filetypes` filetypes that you want to prevent from adding to the harpoon list menu.
-
-#### Preconfigured Terminal Commands
-These are project specific commands that you wish to execute on the regular.
-
-```lua
-require("harpoon").setup({
-    projects = {
-        -- Yes $HOME works
-        ["$HOME/personal/vim-with-me/server"] = {
-            term = {
-                cmds = {
-                    "./env && npx ts-node src/index.ts"
-                }
-            }
-        },
-```
-
-## Debugging
-Harpoon writes logs to a `harpoon.log` file that resides in Neovim's cache
-path. (`:echo stdpath("cache")` to find where that is for you.)
-
-By default, logging is enabled for warnings and above. This can be changed by
-setting `vim.g.harpoon_log_level` variable to one of the following log levels:
-`trace`, `debug`, `info`, `warn`, `error`, or `fatal`. Note that this would
-have to be done **before** harpoon's `setup` call. Alternatively, it can be
-more convenient to launch Neovim with an environment variable, e.g. `>
-HARPOON_LOG=trace nvim`. In case both, `vim.g` and an environment variable are
-used, the log level set by the environment variable overrules. Supplying an
-invalid log level defaults back to warnings.
-
-## Telescope
-
-### Setup
-
-Add thet followingt to your config:
+### Telescope Support
+1st register harpoon as a telescope extension
 ```lua
 require("telescope").load_extension('harpoon')
 ```
-
-### Launch
-
-Call the following to launch the telescope window
-```lua
+currently only marks are supported in telescope
+```
 :Telescope harpoon marks
 ```
+
+## ⇁ Configuration
+if configuring harpoon is desired it must be done through harpoons setup function
+```lua
+require("harpoon").setup({ ... })
+```
+
+### Global Settings
+here are all the available global settings with their default values
+```lua
+global_settings = {
+    -- sets the marks upon calling `toggle` on the ui, instead of require `:w`.
+    save_on_toggle = false,
+
+    -- saves the harpoon file upon every change. disabling is unrecommended.
+    save_on_change = true,
+
+    -- sets harpoon to run the command immediately as it's passed to the terminal when calling `sendCommand`.
+    enter_on_sendcmd = false,
+
+    -- closes any tmux windows harpoon that harpoon creates when you close Neovim.
+    tmux_autoclose_windows = false,
+
+    -- filetypes that you want to prevent from adding to the harpoon list menu.
+    excluded_filetypes = { "harpoon" }
+}
+```
+
+
+### Preconfigured Terminal Commands
+to preconfigure terminal commands for later use
+```lua
+projects = {
+    -- Yes $HOME works
+    ["$HOME/personal/vim-with-me/server"] = {
+        term = {
+            cmds = {
+                "./env && npx ts-node src/index.ts"
+            }
+        }
+    }
+}
+```
+
+## ⇁ Logging
+- logs are written to `harpoon.log` within the nvim cache path (`:echo stdpath("cache")`)
+- available log levels are `trace`, `debug`, `info`, `warn`, `error`, or `fatal`. `warn` is default
+- log level can be set with `vim.g.harpoon_log_level` (must be **before** `setup()`)
+- launching nvim with `HARPOON_LOG=debug nvim` takes precedence over `vim.g.harpoon_log_level`.
+- invalid values default back to `warn`.
+
+## ⇁ Others
+#### How do Harpoon marks differ from vim global marks
+they seve a similar purpose however harpoon marks differs in a few key ways:
+1. They auto update their position within the file
+1. They are saved _per project_.
+1. They can be hand edited vs replaced (swapping is easier)
+
+#### The Motivation behind Harpoon terminals
+1. I want to use the terminal since I can gF and <c-w>gF to any errors arising
+from execution that are within the terminal that are not appropriate for
+something like dispatch. (not just running tests but perhaps a server that runs
+for X amount of time before crashing).
+1. I want the terminal to be persistent and I can return to one of many terminals
+with some finger wizardry and reparse any of the execution information that was
+not necessarily error related.
+1. I would like to have commands that can be tied to terminals and sent them
+without much thinking. Some sort of middle ground between vim-test and just
+typing them into a terminal (configuring netflix's television project isn't
+quite building and there are tons of ways to configure).

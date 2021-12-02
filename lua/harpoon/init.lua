@@ -119,7 +119,7 @@ local function expand_dir(config)
     return config
 end
 
-M.save = function()
+function M.save()
     -- first refresh from disk everything but our project
     M.refresh_projects_b4update()
 
@@ -133,7 +133,7 @@ local function read_config(local_config)
 end
 
 -- 1. saved.  Where do we save?
-M.setup = function(config)
+function M.setup(config)
     log.trace("setup(): Setting up...")
 
     if not config then
@@ -174,13 +174,13 @@ M.setup = function(config)
     log.trace("setup(): log_key", Dev.get_log_key())
 end
 
-M.get_global_settings = function()
+function M.get_global_settings()
     log.trace("get_global_settings()")
     return HarpoonConfig.global_settings
 end
 
 -- refresh all projects from disk, except our current one
-M.refresh_projects_b4update = function()
+function M.refresh_projects_b4update()
     log.trace(
         "refresh_projects_b4update(): refreshing other projects",
         cache_config
@@ -228,23 +228,23 @@ M.refresh_projects_b4update = function()
     log.trace("refresh_projects_b4update(): log_key", Dev.get_log_key())
 end
 
-M.get_term_config = function()
+function M.get_term_config()
     log.trace("get_term_config()")
     return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].term
 end
 
-M.get_mark_config = function()
+function M.get_mark_config()
     log.trace("get_mark_config()")
     return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].mark
 end
 
-M.get_menu_config = function()
+function M.get_menu_config()
     log.trace("get_menu_config()")
     return HarpoonConfig.menu or {}
 end
 
 -- should only be called for debug purposes
-M.print_config = function()
+function M.print_config()
     print(vim.inspect(HarpoonConfig))
 end
 
