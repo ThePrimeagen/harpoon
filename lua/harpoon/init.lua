@@ -205,7 +205,7 @@ function M.refresh_projects_b4update()
             "refresh_projects_b4update(): No cache config present at",
             cache_config
         )
-        c_config = {}
+        c_config = { projects = {} }
     end
     -- don't override non-project config in HarpoonConfig later
     c_config = { projects = c_config.projects }
