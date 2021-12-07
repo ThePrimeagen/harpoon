@@ -9,7 +9,7 @@ local function create_terminal(create_with)
     if not create_with then
         create_with = ":terminal"
     end
-    log.trace("_create_terminal(): Init:", create_with)
+    log.trace("term: _create_terminal(): Init:", create_with)
     local current_id = vim.api.nvim_get_current_buf()
 
     vim.cmd(create_with)
@@ -32,7 +32,7 @@ local function create_terminal(create_with)
 end
 
 local function find_terminal(args)
-    log.trace("_find_terminal(): Terminal:", args)
+    log.trace("term: _find_terminal(): Terminal:", args)
     if type(args) == "number" then
         args = { idx = args }
     end
@@ -40,6 +40,7 @@ local function find_terminal(args)
     if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
         local buf_id, term_id = create_terminal(args.create_with)
         if buf_id == nil then
+            error("Failed to find and create terminal.")
             return
         end
 
@@ -62,15 +63,15 @@ local function get_first_empty_slot()
     return M.get_length() + 1
 end
 
-M.gotoTerminal = function(idx)
-    log.trace("gotoTerminal(): Terminal:", idx)
+function M.gotoTerminal(idx)
+    log.trace("term: gotoTerminal(): Terminal:", idx)
     local term_handle = find_terminal(idx)
 
     vim.api.nvim_set_current_buf(term_handle.buf_id)
 end
 
-M.sendCommand = function(idx, cmd, ...)
-    log.trace("sendCommand(): Terminal:", idx)
+function M.sendCommand(idx, cmd, ...)
+    log.trace("term: sendCommand(): Terminal:", idx)
     local term_handle = find_terminal(idx)
 
     if type(cmd) == "number" then
@@ -87,41 +88,41 @@ M.sendCommand = function(idx, cmd, ...)
     end
 end
 
-M.clear_all = function()
-    log.trace("clear_all(): Clearing all terminals.")
+function M.clear_all()
+    log.trace("term: clear_all(): Clearing all terminals.")
     for _, term in ipairs(terminals) do
         vim.api.nvim_buf_delete(term.buf_id, { force = true })
     end
     terminals = {}
 end
 
-M.get_length = function()
+function M.get_length()
     log.trace("_get_length()")
     return table.maxn(harpoon.get_term_config().cmds)
 end
 
-M.valid_index = function(idx)
+function M.valid_index(idx)
     if idx == nil or idx > M.get_length() or idx <= 0 then
         return false
     end
     return true
 end
 
-M.emit_changed = function()
+function M.emit_changed()
     log.trace("_emit_changed()")
     if harpoon.get_global_settings().save_on_change then
         harpoon.save()
     end
 end
 
-M.add_cmd = function(cmd)
+function M.add_cmd(cmd)
     log.trace("add_cmd()")
     local found_idx = get_first_empty_slot()
     harpoon.get_term_config().cmds[found_idx] = cmd
     M.emit_changed()
 end
 
-M.rm_cmd = function(idx)
+function M.rm_cmd(idx)
     log.trace("rm_cmd()")
     if not M.valid_index(idx) then
         log.debug("rm_cmd(): no cmd exists for index", idx)
@@ -131,7 +132,7 @@ M.rm_cmd = function(idx)
     M.emit_changed()
 end
 
-M.set_cmd_list = function(new_list)
+function M.set_cmd_list(new_list)
     log.trace("set_cmd_list(): New list:", new_list)
     for k in pairs(harpoon.get_term_config().cmds) do
         harpoon.get_term_config().cmds[k] = nil
