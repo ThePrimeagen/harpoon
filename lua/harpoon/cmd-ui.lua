@@ -68,7 +68,7 @@ local function get_menu_items()
     return indices
 end
 
-function M.toggle_quick_menu()
+M.toggle_quick_menu = function()
     log.trace("cmd-ui#toggle_quick_menu()")
     if
         Harpoon_cmd_win_id ~= nil
@@ -138,7 +138,7 @@ function M.toggle_quick_menu()
     )
 end
 
-function M.select_menu_item()
+M.select_menu_item = function()
     log.trace("cmd-ui#select_menu_item()")
     local cmd = vim.fn.line(".")
     close_menu(true)
@@ -152,7 +152,7 @@ function M.select_menu_item()
     end
 end
 
-function M.on_menu_save()
+M.on_menu_save = function()
     log.trace("cmd-ui#on_menu_save()")
     term.set_cmd_list(get_menu_items())
 end

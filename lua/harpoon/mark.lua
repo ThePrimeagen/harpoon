@@ -136,7 +136,7 @@ local function filter_filetype()
     end
 end
 
-function M.get_index_of(item)
+M.get_index_of = function(item)
     log.trace("get_index_of():", item)
     if item == nil then
         log.error(
@@ -172,7 +172,7 @@ function M.get_index_of(item)
     return nil
 end
 
-function M.status(bufnr)
+M.status = function(bufnr)
     log.trace("status()")
     local buf_name
     if bufnr then
@@ -190,7 +190,7 @@ function M.status(bufnr)
     return ""
 end
 
-function M.valid_index(idx)
+M.valid_index = function(idx)
     log.trace("valid_index():", idx)
     if idx == nil then
         return false
@@ -200,7 +200,7 @@ function M.valid_index(idx)
     return file_name ~= nil and file_name ~= ""
 end
 
-function M.add_file(file_name_or_buf_id)
+M.add_file = function(file_name_or_buf_id)
     filter_filetype()
     local buf_name = get_buf_name(file_name_or_buf_id)
     log.trace("add_file():", buf_name)
@@ -219,7 +219,7 @@ function M.add_file(file_name_or_buf_id)
 end
 
 -- _emit_on_changed == false should only be used internally
-function M.remove_empty_tail(_emit_on_changed)
+M.remove_empty_tail = function(_emit_on_changed)
     log.trace("remove_empty_tail()")
     _emit_on_changed = _emit_on_changed == nil or _emit_on_changed
     local config = harpoon.get_mark_config()
@@ -242,7 +242,7 @@ function M.remove_empty_tail(_emit_on_changed)
     end
 end
 
-function M.store_offset()
+M.store_offset = function()
     log.trace("store_offset()")
     local ok, res = pcall(function()
         local buf_name = get_buf_name()
@@ -270,7 +270,7 @@ function M.store_offset()
     emit_changed()
 end
 
-function M.rm_file(file_name_or_buf_id)
+M.rm_file = function(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
     local idx = M.get_index_of(buf_name)
     log.trace("rm_file(): Removing mark at id", idx)
@@ -285,14 +285,14 @@ function M.rm_file(file_name_or_buf_id)
     emit_changed()
 end
 
-function M.clear_all()
+M.clear_all = function()
     harpoon.get_mark_config().marks = {}
     log.trace("clear_all(): Clearing all marks.")
     emit_changed()
 end
 
 --- ENTERPRISE PROGRAMMING
-function M.get_marked_file(idxOrName)
+M.get_marked_file = function(idxOrName)
     log.trace("get_marked_file():", idxOrName)
     if type(idxOrName) == "string" then
         idxOrName = M.get_index_of(idxOrName)
@@ -300,18 +300,18 @@ function M.get_marked_file(idxOrName)
     return harpoon.get_mark_config().marks[idxOrName]
 end
 
-function M.get_marked_file_name(idx)
+M.get_marked_file_name = function(idx)
     local mark = harpoon.get_mark_config().marks[idx]
     log.trace("get_marked_file_name():", mark and mark.filename)
     return mark and mark.filename
 end
 
-function M.get_length()
+M.get_length = function()
     log.trace("get_length()")
     return table.maxn(harpoon.get_mark_config().marks)
 end
 
-function M.set_current_at(idx)
+M.set_current_at = function(idx)
     filter_filetype()
     local buf_name = get_buf_name()
     log.trace("set_current_at(): Setting id", idx, buf_name)
@@ -334,7 +334,7 @@ function M.set_current_at(idx)
     emit_changed()
 end
 
-function M.to_quickfix_list()
+M.to_quickfix_list = function()
     log.trace("to_quickfix_list(): Sending marks to quickfix list.")
     local config = harpoon.get_mark_config()
     local file_list = filter_empty_string(config.marks)
@@ -352,7 +352,7 @@ function M.to_quickfix_list()
     vim.fn.setqflist(qf_list)
 end
 
-function M.set_mark_list(new_list)
+M.set_mark_list = function(new_list)
     log.trace("set_mark_list(): New list:", new_list)
 
     local config = harpoon.get_mark_config()
@@ -372,7 +372,7 @@ function M.set_mark_list(new_list)
     emit_changed()
 end
 
-function M.toggle_file(file_name_or_buf_id)
+M.toggle_file = function(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
     log.trace("toggle_file():", buf_name)
 
@@ -389,12 +389,12 @@ function M.toggle_file(file_name_or_buf_id)
     end
 end
 
-function M.get_current_index()
+M.get_current_index = function()
     log.trace("get_current_index()")
     return M.get_index_of(vim.api.nvim_buf_get_name(0))
 end
 
-function M.on(event, cb)
+M.on = function(event, cb)
     log.trace("on():", event)
     if not callbacks[event] then
         log.debug("on(): no callbacks yet for", event)

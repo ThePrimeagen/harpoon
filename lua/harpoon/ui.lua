@@ -70,7 +70,7 @@ local function get_menu_items()
     return indices
 end
 
-function M.toggle_quick_menu()
+M.toggle_quick_menu = function()
     log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
         close_menu()
@@ -144,18 +144,18 @@ function M.toggle_quick_menu()
     )
 end
 
-function M.select_menu_item()
+M.select_menu_item = function()
     local idx = vim.fn.line(".")
     close_menu(true)
     M.nav_file(idx)
 end
 
-function M.on_menu_save()
+M.on_menu_save = function()
     log.trace("on_menu_save()")
     Marked.set_mark_list(get_menu_items())
 end
 
-function M.nav_file(id)
+M.nav_file = function(id)
     log.trace("nav_file(): Navigating to", id)
     local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
@@ -233,7 +233,7 @@ function M.close_notification(bufnr)
     vim.api.nvim_buf_delete(bufnr)
 end
 
-function M.nav_next()
+M.nav_next = function()
     log.trace("nav_next()")
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
@@ -250,7 +250,7 @@ function M.nav_next()
     M.nav_file(current_index)
 end
 
-function M.nav_prev()
+M.nav_prev = function()
     log.trace("nav_prev()")
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()

@@ -17,12 +17,12 @@ local M = {}
             term = {
                 cmds = {
                 }
-                ... is there anything that could be options?
+                ... is there antyhnig that could be options?
             },
             mark = {
                 marks = {
                 }
-                ... is there anything that could be options?
+                ... is there antyhnig that could be options?
             }
         }
     },
@@ -119,10 +119,7 @@ local function expand_dir(config)
     return config
 end
 
-function M.save()
-    -- first refresh from disk everything but our project
-    M.refresh_projects_b4update()
-
+M.save = function()
     log.trace("save(): Saving cache config to", cache_config)
     Path:new(cache_config):write(vim.fn.json_encode(HarpoonConfig), "w")
 end
@@ -133,7 +130,7 @@ local function read_config(local_config)
 end
 
 -- 1. saved.  Where do we save?
-function M.setup(config)
+M.setup = function(config)
     log.trace("setup(): Setting up...")
 
     if not config then
@@ -160,10 +157,15 @@ function M.setup(config)
             ["save_on_toggle"] = false,
             ["save_on_change"] = true,
             ["enter_on_sendcmd"] = false,
-            ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
         },
-    }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
+    }, expand_dir(
+        c_config
+    ), expand_dir(
+        u_config
+    ), expand_dir(
+        config
+    ))
 
     -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
     -- an object for vim.loop.cwd()
@@ -174,61 +176,12 @@ function M.setup(config)
     log.trace("setup(): log_key", Dev.get_log_key())
 end
 
-function M.get_global_settings()
+M.get_global_settings = function()
     log.trace("get_global_settings()")
     return HarpoonConfig.global_settings
 end
 
--- refresh all projects from disk, except our current one
-function M.refresh_projects_b4update()
-    log.trace(
-        "refresh_projects_b4update(): refreshing other projects",
-        cache_config
-    )
-    -- save current runtime version of our project config for merging back in later
-    local cwd = vim.loop.cwd()
-    local current_p_config = {
-        projects = {
-            [cwd] = ensure_correct_config(HarpoonConfig).projects[cwd],
-        },
-    }
-
-    -- erase all projects from global config, will be loaded back from disk
-    HarpoonConfig.projects = nil
-
-    -- this reads a stale version of our project but up-to-date versions
-    -- of all other projects
-    local ok2, c_config = pcall(read_config, cache_config)
-
-    if not ok2 then
-        log.debug(
-            "refresh_projects_b4update(): No cache config present at",
-            cache_config
-        )
-        c_config = { projects = {} }
-    end
-    -- don't override non-project config in HarpoonConfig later
-    c_config = { projects = c_config.projects }
-
-    -- erase our own project, will be merged in from current_p_config later
-    c_config.projects[cwd] = nil
-
-    local complete_config = merge_tables(
-        HarpoonConfig,
-        expand_dir(c_config),
-        expand_dir(current_p_config)
-    )
-
-    -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
-    -- an object for vim.loop.cwd()
-    ensure_correct_config(complete_config)
-
-    HarpoonConfig = complete_config
-    log.debug("refresh_projects_b4update(): Complete config", HarpoonConfig)
-    log.trace("refresh_projects_b4update(): log_key", Dev.get_log_key())
-end
-
-function M.get_term_config()
+M.get_term_config = function()
     log.trace("get_term_config()")
     if HarpoonConfig.global_project == nil then
         term_project = vim.loop.cwd()
@@ -238,7 +191,7 @@ function M.get_term_config()
     return ensure_correct_config(HarpoonConfig).projects[term_project].term
 end
 
-function M.get_mark_config()
+M.get_mark_config = function()
     log.trace("get_mark_config()")
     if HarpoonConfig.global_project == nil then
         mark_project = vim.loop.cwd()
@@ -248,13 +201,13 @@ function M.get_mark_config()
     return ensure_correct_config(HarpoonConfig).projects[mark_project].mark
 end
 
-function M.get_menu_config()
+M.get_menu_config = function()
     log.trace("get_menu_config()")
     return HarpoonConfig.menu or {}
 end
 
 -- should only be called for debug purposes
-function M.print_config()
+M.print_config = function()
     print(vim.inspect(HarpoonConfig))
 end
 
