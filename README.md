@@ -54,7 +54,7 @@ view all project marks with:
 ```lua
 :lua require("harpoon.ui").toggle_quick_menu()
 ```
-you can go up and down the list, enter, delete or reorder. `q` and `<ESC>` exit and save the menu
+you can go up and down the list, enter, delete or reorder. `q`, `<ESC>` and `<C-c>` exit and save the menu
 
 you also can switch to any mark without bringing up the menu, use the below with the desired mark index
 ```lua
