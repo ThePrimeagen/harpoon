@@ -9,6 +9,10 @@ local M = {}
 Harpoon_win_id = nil
 Harpoon_bufh = nil
 
+local state = {
+    list_by_label = {}
+}
+
 -- We save before we close because we use the state of the buffer as the list
 -- of items.
 local function close_menu(force_save)
@@ -63,11 +67,45 @@ local function get_menu_items()
 
     for _, line in pairs(lines) do
         if not utils.is_white_space(line) then
-            table.insert(indices, line)
+            local item = state.list_by_label[line]
+            if (item ~= nil) then
+                table.insert(indices, item.path)
+            else
+                table.insert(indices, line)
+            end
         end
     end
 
     return indices
+end
+
+-- This method will be moved to the readme as an example once the PR is not a DRAFT
+local create_label = function(file)
+    local parts = vim.split(file, "/")
+    local c = 0
+    local n = #parts
+
+    local mapped_parts = {}
+
+    for k, part in ipairs(parts) do
+        c = c + 1
+        local mapped = part
+
+        if c <= n - 2 then
+            if part:find("test") then
+                mapped = "test"
+            else
+                mapped = ''
+                -- mapped = string.lower(string.sub(part, 1, 1))
+            end
+        end
+
+        if not utils.is_white_space(mapped) then
+            table.insert(mapped_parts, mapped)
+        end
+    end
+
+    return table.concat(mapped_parts, "/")
 end
 
 function M.toggle_quick_menu()
@@ -86,10 +124,18 @@ function M.toggle_quick_menu()
 
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file_name(idx)
+        local path = string.format("%s", file)
+        local label = create_label(file)
+        local item = {
+            path = path,
+            label = label,
+        }
+        state.list_by_label[label] = item
+
         if file == "" then
             file = "(empty)"
         end
-        contents[idx] = string.format("%s", file)
+        contents[idx] = label
     end
 
     vim.api.nvim_win_set_option(Harpoon_win_id, "number", true)
