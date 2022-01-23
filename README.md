@@ -94,6 +94,12 @@ lua require("harpoon.tmux").sendCommand(1, "ls -La")    -- sends ls -La to tmux 
 lua require("harpoon.tmux").sendCommand(1, 1)           -- sends command 1 to tmux window 1
 ```
 
+`sendCommand` and `goToTerminal` also accept any valid [tmux pane identifier](https://man7.org/linux/man-pages/man1/tmux.1.html#COMMANDS).
+```lua
+lua require("harpoon.tmux").gotoTerminal("{down-of}")   -- focus the pane directly below
+lua require("harpoon.tmux").sendCommand("%3", "ls")     -- send a command to the pane with id '%3'
+```
+
 ### Telescope Support
 1st register harpoon as a telescope extension
 ```lua
