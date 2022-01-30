@@ -30,6 +30,18 @@ function M.get_os_command_output(cmd, cwd)
     return stdout, ret, stderr
 end
 
+function M.remove_contiguous_duplicates(list)
+    local result = {}
+    local previous
+    for key, value in ipairs(list) do
+        if value ~= previous then
+            table.insert(result, value)
+            previous = value
+        end
+    end
+    return result
+end
+
 function M.split_string(str, delimiter)
     local result = {}
     for match in (str .. delimiter):gmatch("(.-)" .. delimiter) do

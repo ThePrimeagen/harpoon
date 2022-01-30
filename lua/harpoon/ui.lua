@@ -2,6 +2,7 @@ local harpoon = require("harpoon")
 local popup = require("plenary.popup")
 local Marked = require("harpoon.mark")
 local utils = require("harpoon.utils")
+local formatters = require("harpoon.formatters")
 local log = require("harpoon.dev").log
 
 local M = {}
@@ -79,35 +80,6 @@ local function get_menu_items()
     return indices
 end
 
--- This method will be moved to the readme as an example once the PR is not a DRAFT
-local create_label = function(file)
-    local parts = vim.split(file, "/")
-    local c = 0
-    local n = #parts
-
-    local mapped_parts = {}
-
-    for k, part in ipairs(parts) do
-        c = c + 1
-        local mapped = part
-
-        if c <= n - 2 then
-            if part:find("test") then
-                mapped = "test"
-            else
-                mapped = ''
-                -- mapped = string.lower(string.sub(part, 1, 1))
-            end
-        end
-
-        if not utils.is_white_space(mapped) then
-            table.insert(mapped_parts, mapped)
-        end
-    end
-
-    return table.concat(mapped_parts, "/")
-end
-
 function M.toggle_quick_menu()
     log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
@@ -119,13 +91,16 @@ function M.toggle_quick_menu()
     local contents = {}
     local global_config = harpoon.get_global_settings()
 
+    local formatter_method = global_config.formatter and global_config.formatter.method
+    local formatter = formatters[formatter_method](global_config.formatter.payload)
+
     Harpoon_win_id = win_info.win_id
     Harpoon_bufh = win_info.bufnr
 
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file_name(idx)
         local path = string.format("%s", file)
-        local label = create_label(file)
+        local label = formatter and formatter(file) or file
         local item = {
             path = path,
             label = label,
