@@ -162,7 +162,7 @@ function M.setup(config)
             ["enter_on_sendcmd"] = false,
             ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
-            ["formatter"] = 'default',
+            ["formatter"] = "default",
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 

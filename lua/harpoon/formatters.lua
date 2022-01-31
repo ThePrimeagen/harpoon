@@ -17,7 +17,7 @@ function M.keep_only_last_two_parts(payload)
 
         local mapped_parts = {}
 
-        for k, part in ipairs(parts) do
+        for _, part in ipairs(parts) do
             c = c + 1
             local mapped = part
 
@@ -26,9 +26,9 @@ function M.keep_only_last_two_parts(payload)
             -- Or those in the include list
             if c <= n - 2 then
                 local part_to_replace = nil
-                if type(include) == 'string' then
+                if type(include) == "string" then
                     part_to_replace = part:find(include) and include
-                elseif type(include) == 'table' then
+                elseif type(include) == "table" then
                     for _, value in ipairs(include) do
                         if part:find(value) then
                             part_to_replace = value
@@ -37,7 +37,7 @@ function M.keep_only_last_two_parts(payload)
                     end
                 end
 
-                mapped = part_to_replace ~= nil and part_to_replace or ''
+                mapped = part_to_replace ~= nil and part_to_replace or ""
             end
 
             if not utils.is_white_space(mapped) then
@@ -46,8 +46,9 @@ function M.keep_only_last_two_parts(payload)
         end
 
         return table.concat(
-            utils.remove_contiguous_duplicates(mapped_parts)
-        , "/")
+            utils.remove_contiguous_duplicates(mapped_parts),
+            "/"
+        )
     end
 end
 
@@ -60,7 +61,7 @@ function M.minify_full_path_and_keep_last_two_parts(payload)
 
         local mapped_parts = {}
 
-        for k, part in ipairs(parts) do
+        for _, part in ipairs(parts) do
             c = c + 1
             local mapped = part
 
@@ -69,9 +70,9 @@ function M.minify_full_path_and_keep_last_two_parts(payload)
             -- and minify other parts
             if c <= n - 2 then
                 local part_to_replace = nil
-                if type(include) == 'string' then
+                if type(include) == "string" then
                     part_to_replace = part:find(include) and include
-                elseif type(include) == 'table' then
+                elseif type(include) == "table" then
                     for _, value in ipairs(include) do
                         if part:find(value) then
                             part_to_replace = value
@@ -80,7 +81,7 @@ function M.minify_full_path_and_keep_last_two_parts(payload)
                     end
                 end
 
-                mapped = part_to_replace ~= nil and part_to_replace 
+                mapped = part_to_replace ~= nil and part_to_replace
                     or string.lower(string.sub(part, 1, 1))
             end
 
@@ -89,7 +90,7 @@ function M.minify_full_path_and_keep_last_two_parts(payload)
             end
         end
 
-        return table.concat( mapped_parts , "/")
+        return table.concat(mapped_parts, "/")
     end
 end
 

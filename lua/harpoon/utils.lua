@@ -33,7 +33,7 @@ end
 function M.remove_contiguous_duplicates(list)
     local result = {}
     local previous
-    for key, value in ipairs(list) do
+    for _, value in ipairs(list) do
         if value ~= previous then
             table.insert(result, value)
             previous = value

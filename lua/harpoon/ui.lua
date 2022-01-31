@@ -11,7 +11,7 @@ Harpoon_win_id = nil
 Harpoon_bufh = nil
 
 local state = {
-    list_by_label = {}
+    list_by_label = {},
 }
 
 -- We save before we close because we use the state of the buffer as the list
@@ -69,7 +69,7 @@ local function get_menu_items()
     for _, line in pairs(lines) do
         if not utils.is_white_space(line) then
             local item = state.list_by_label[line]
-            if (item ~= nil) then
+            if item ~= nil then
                 table.insert(indices, item.path)
             else
                 table.insert(indices, line)
@@ -91,10 +91,12 @@ function M.toggle_quick_menu()
     local contents = {}
     local global_config = harpoon.get_global_settings()
 
-    local formatter_method = global_config.formatter and global_config.formatter.method
-    local formatter = formatters[formatter_method] and formatters[formatter_method](
-        global_config.formatter and global_config.formatter.payload or {}
-    )
+    local formatter_method = global_config.formatter
+        and global_config.formatter.method
+    local formatter = formatters[formatter_method]
+        and formatters[formatter_method](
+            global_config.formatter and global_config.formatter.payload or {}
+        )
 
     Harpoon_win_id = win_info.win_id
     Harpoon_bufh = win_info.bufnr
@@ -103,15 +105,15 @@ function M.toggle_quick_menu()
         local file = Marked.get_marked_file_name(idx)
         local path = string.format("%s", file)
         local label = formatter and formatter(file) or file
+        if label == "" then
+            label = "(empty)"
+        end
         local item = {
             path = path,
             label = label,
         }
         state.list_by_label[label] = item
 
-        if file == "" then
-            file = "(empty)"
-        end
         contents[idx] = label
     end
 
