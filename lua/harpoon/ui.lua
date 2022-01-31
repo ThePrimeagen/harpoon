@@ -92,7 +92,9 @@ function M.toggle_quick_menu()
     local global_config = harpoon.get_global_settings()
 
     local formatter_method = global_config.formatter and global_config.formatter.method
-    local formatter = formatters[formatter_method](global_config.formatter.payload)
+    local formatter = formatters[formatter_method] and formatters[formatter_method](
+        global_config.formatter and global_config.formatter.payload or {}
+    )
 
     Harpoon_win_id = win_info.win_id
     Harpoon_bufh = win_info.bufnr

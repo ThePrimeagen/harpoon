@@ -128,9 +128,68 @@ global_settings = {
 
     -- filetypes that you want to prevent from adding to the harpoon list menu.
     excluded_filetypes = { "harpoon" }
+
+    -- formats the file path
+    formatter = { "method" = "default" }
 }
 ```
 
+#### Format file paths
+
+It is possible to specify the built-in file path formatter
+
+There are 3 types of formatters available:
+
+** default **
+The path to the file is not modified
+
+```lua
+require('harpoon').setup{
+    global_settings = {
+        formatter = {
+            method = 'default'
+        }
+    }
+}
+```
+
+** keep_only_last_two_parts **
+
+Preserves the parent folder and the file name. It also supports an array of strings to include. For instance, if you want to include folders with the string "test", every folder with that string will be also rendered, but it replaces the folder name with the keyword.
+
+A result of using this formatter would be: "test/side-bar/component.tsx"
+
+```lua
+require('harpoon').setup{
+    global_settings = {
+        formatter = {
+            method = 'minify_full_path_and_keep_last_two_parts',
+            payload = {
+                include = {'test'}
+            }
+        }
+    }
+}
+```
+
+** minify_full_path_and_keep_last_two_parts **
+
+Preserves the parent folder and the file name. It shows the first character of the ancestor folders. It supports an array of strings to include. For instance, if you want to include folders with the string "test", every folder with that string will be also rendered, but it replaces the folder name with the keyword.
+
+A result of using this formatter would be: "a/e/f/test/a/m/side-bar/component.tsx"
+
+```lua
+require('harpoon').setup{
+    global_settings = {
+        formatter = {
+            method = 'minify_full_path_and_keep_last_two_parts',
+            payload = {
+                include = {'test'}
+            }
+        }
+    }
+}
+```
 
 ### Preconfigured Terminal Commands
 to preconfigure terminal commands for later use
