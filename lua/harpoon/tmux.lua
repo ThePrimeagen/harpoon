@@ -67,6 +67,12 @@ end
 local function find_terminal(args)
     log.trace("tmux: _find_terminal(): Window:", args)
 
+    if type(args) == "string" then
+        -- assume args is a valid tmux target identifier
+        -- if invalid, the error returned by tmux will be thrown
+        return { window_id = args }
+    end
+
     if type(args) == "number" then
         args = { idx = args }
     end
@@ -87,7 +93,7 @@ local function find_terminal(args)
         end
 
         window_handle = {
-            window_id = window_id,
+            window_id = "%" .. window_id,
         }
 
         tmux_windows[args.idx] = window_handle
@@ -110,12 +116,16 @@ function M.gotoTerminal(idx)
     log.trace("tmux: gotoTerminal(): Window:", idx)
     local window_handle = find_terminal(idx)
 
-    utils.get_os_command_output({
+    local _, ret, stderr = utils.get_os_command_output({
         "tmux",
-        "select-window",
+        "select-pane",
         "-t",
-        "%" .. window_handle.window_id,
+        window_handle.window_id,
     }, vim.loop.cwd())
+
+    if ret ~= 0 then
+        error("Failed to go to terminal." .. stderr[1])
+    end
 end
 
 function M.sendCommand(idx, cmd, ...)
@@ -133,14 +143,17 @@ function M.sendCommand(idx, cmd, ...)
     if cmd then
         log.debug("sendCommand:", cmd)
 
-        -- Send the command to the given tmux window (creates it if it doesn't exist)
-        local _, _, _ = utils.get_os_command_output({
+        local _, ret, stderr = utils.get_os_command_output({
             "tmux",
             "send-keys",
             "-t",
-            "%" .. window_handle.window_id,
+            window_handle.window_id,
             string.format(cmd, ...),
         }, vim.loop.cwd())
+
+        if ret ~= 0 then
+            error("Failed to send command. " .. stderr[1])
+        end
     end
 end
 
@@ -153,7 +166,7 @@ function M.clear_all()
             "tmux",
             "kill-window",
             "-t",
-            "%" .. window.window_id,
+            window.window_id,
         }, vim.loop.cwd())
     end
 
