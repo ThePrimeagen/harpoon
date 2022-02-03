@@ -46,6 +46,14 @@ local function merge_table_impl(t1, t2)
     end
 end
 
+local function mark_config_key()
+    if HarpoonConfig.mark_branch then
+        return utils.branch_key()
+    else
+        return utils.project_key()
+    end
+end
+
 local function merge_tables(...)
     log.trace("_merge_tables()")
     local out = {}
@@ -58,31 +66,32 @@ end
 local function ensure_correct_config(config)
     log.trace("_ensure_correct_config()")
     local projects = config.projects
-    if projects[vim.loop.cwd()] == nil then
+    if projects[mark_config_key()] == nil then
         log.debug(
             "ensure_correct_config(): No config found for:",
-            vim.loop.cwd()
+            mark_config_key()
         )
-        projects[vim.loop.cwd()] = {
-            mark = {
-                marks = {},
-            },
+        projects[mark_config_key()] = {
+            mark = { marks = {} },
             term = {
                 cmds = {},
             },
         }
     end
 
-    local proj = projects[vim.loop.cwd()]
+    local proj = projects[mark_config_key()]
     if proj.mark == nil then
-        log.debug("ensure_correct_config(): No marks found for", vim.loop.cwd())
+        log.debug(
+            "ensure_correct_config(): No marks found for",
+            mark_config_key()
+        )
         proj.mark = { marks = {} }
     end
 
     if proj.term == nil then
         log.debug(
             "ensure_correct_config(): No terminal commands found for",
-            vim.loop.cwd()
+            mark_config_key()
         )
         proj.term = { cmds = {} }
     end
@@ -91,9 +100,7 @@ local function ensure_correct_config(config)
 
     for idx, mark in pairs(marks) do
         if type(mark) == "string" then
-            mark = {
-                filename = mark,
-            }
+            mark = { filename = mark }
             marks[idx] = mark
         end
 
@@ -186,7 +193,7 @@ function M.refresh_projects_b4update()
         cache_config
     )
     -- save current runtime version of our project config for merging back in later
-    local cwd = vim.loop.cwd()
+    local cwd = mark_config_key()
     local current_p_config = {
         projects = {
             [cwd] = ensure_correct_config(HarpoonConfig).projects[cwd],
@@ -230,12 +237,12 @@ end
 
 function M.get_term_config()
     log.trace("get_term_config()")
-    return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].term
+    return ensure_correct_config(HarpoonConfig).projects[utils.project_key()].term
 end
 
 function M.get_mark_config()
     log.trace("get_mark_config()")
-    return ensure_correct_config(HarpoonConfig).projects[vim.loop.cwd()].mark
+    return ensure_correct_config(HarpoonConfig).projects[mark_config_key()].mark
 end
 
 function M.get_menu_config()

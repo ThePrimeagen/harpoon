@@ -6,8 +6,20 @@ local M = {}
 
 M.data_path = data_path
 
+function M.project_key()
+    return vim.loop.cwd()
+end
+
+function M.branch_key()
+    return string.gsub(
+        vim.loop.cwd() .. "-" .. vim.fn.system("git branch --show-current"),
+        "\n",
+        ""
+    )
+end
+
 function M.normalize_path(item)
-    return Path:new(item):make_relative(vim.loop.cwd())
+    return Path:new(item):make_relative(M.project_key())
 end
 
 function M.get_os_command_output(cmd, cwd)
