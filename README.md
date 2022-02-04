@@ -19,7 +19,7 @@ feedback for harpoon (or me), make an issue!
 
 ## ⇁ The Problems:
 1. You're working on a codebase. medium, large, tiny, whatever. You find
-yourself frequenting a small set of files and you are tired of using a fuzzy finder, 
+yourself frequenting a small set of files and you are tired of using a fuzzy finder,
 `:bnext` & `:bprev` are getting too repetitive, alternate file doesn't quite cut it, etc etc.
 1. You want to execute some project specific commands or have any number of
 persistent terminals that can be easily navigated to.
@@ -133,7 +133,10 @@ global_settings = {
     tmux_autoclose_windows = false,
 
     -- filetypes that you want to prevent from adding to the harpoon list menu.
-    excluded_filetypes = { "harpoon" }
+    excluded_filetypes = { "harpoon" },
+
+    -- set marks specific to each git branch
+    mark_branch = false,
 }
 ```
 
