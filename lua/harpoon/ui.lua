@@ -80,6 +80,19 @@ local function get_menu_items()
     return indices
 end
 
+local function get_formatter()
+    local global_config = harpoon.get_global_settings()
+
+    local formatter_method = global_config.formatter
+        and global_config.formatter.method or 'default'
+    local formatter = formatters[formatter_method]
+        and formatters[formatter_method](
+            global_config.formatter and global_config.formatter.payload or {}
+        ) or formatters['default']()
+
+    return formatter
+end
+
 function M.toggle_quick_menu()
     log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
@@ -91,12 +104,7 @@ function M.toggle_quick_menu()
     local contents = {}
     local global_config = harpoon.get_global_settings()
 
-    local formatter_method = global_config.formatter
-        and global_config.formatter.method
-    local formatter = formatters[formatter_method]
-        and formatters[formatter_method](
-            global_config.formatter and global_config.formatter.payload or {}
-        )
+    local formatter = get_formatter()
 
     Harpoon_win_id = win_info.win_id
     Harpoon_bufh = win_info.bufnr
@@ -104,7 +112,7 @@ function M.toggle_quick_menu()
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file_name(idx)
         local path = string.format("%s", file)
-        local label = formatter and formatter(file) or file
+        local label = formatter(file)
         if label == "" then
             label = "(empty)"
         end
