@@ -162,7 +162,7 @@ projects = {
 
 ## ⇁ Others
 #### How do Harpoon marks differ from vim global marks
-they serve a similar purpose however harpoon marks differs in a few key ways:
+they serve a similar purpose however harpoon marks differ in a few key ways:
 1. They auto update their position within the file
 1. They are saved _per project_.
 1. They can be hand edited vs replaced (swapping is easier)
