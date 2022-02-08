@@ -70,7 +70,10 @@ local function find_terminal(args)
     if type(args) == "string" then
         -- assume args is a valid tmux target identifier
         -- if invalid, the error returned by tmux will be thrown
-        return { window_id = args }
+        return {
+            window_id = args,
+            pane = true,
+        }
     end
 
     if type(args) == "number" then
@@ -118,7 +121,7 @@ function M.gotoTerminal(idx)
 
     local _, ret, stderr = utils.get_os_command_output({
         "tmux",
-        "select-window",
+        window_handle.pane and "select-pane" or "select-window",
         "-t",
         window_handle.window_id,
     }, vim.loop.cwd())
