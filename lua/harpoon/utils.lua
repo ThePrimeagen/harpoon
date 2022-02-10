@@ -11,11 +11,20 @@ function M.project_key()
 end
 
 function M.branch_key()
-    return string.gsub(
-        vim.loop.cwd() .. "-" .. vim.fn.system("git branch --show-current"),
-        "\n",
-        ""
-    )
+    -- `git branch --show-current` requires Git v2.22.0+ so going with more
+    -- widely available command
+    local branch = M.get_os_command_output({
+        "git",
+        "rev-parse",
+        "--abbrev-ref",
+        "HEAD",
+    })[1]
+
+    if branch then
+        return vim.loop.cwd() .. "-" .. branch
+    else
+        return M.project_key()
+    end
 end
 
 function M.normalize_path(item)
