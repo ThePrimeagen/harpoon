@@ -179,3 +179,16 @@ not necessarily error related.
 without much thinking. Some sort of middle ground between vim-test and just
 typing them into a terminal (configuring netflix's television project isn't
 quite building and there are tons of ways to configure).
+
+#### Use a dynamic width for the Harpoon popup menu
+Sometimes the default width of `60` is not wide enough.
+The following example demonstrates how to configure a custom width by setting
+the menu's width relative to the current window's width.
+
+```lua
+require("harpoon").setup({
+    menu = {
+        width = vim.api.nvim_win_get_width(0) - 4,
+    }
+})
+```
