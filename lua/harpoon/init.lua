@@ -46,8 +46,9 @@ local function merge_table_impl(t1, t2)
     end
 end
 
-local function mark_config_key()
-    if HarpoonConfig.mark_branch then
+local function mark_config_key(global_settings)
+    global_settings = global_settings or M.get_global_settings()
+    if global_settings.mark_branch then
         return utils.branch_key()
     else
         return utils.project_key()
@@ -66,12 +67,10 @@ end
 local function ensure_correct_config(config)
     log.trace("_ensure_correct_config()")
     local projects = config.projects
-    if projects[mark_config_key()] == nil then
-        log.debug(
-            "ensure_correct_config(): No config found for:",
-            mark_config_key()
-        )
-        projects[mark_config_key()] = {
+    local mark_key = mark_config_key(config.global_settings)
+    if projects[mark_key] == nil then
+        log.debug("ensure_correct_config(): No config found for:", mark_key)
+        projects[mark_key] = {
             mark = { marks = {} },
             term = {
                 cmds = {},
@@ -79,19 +78,16 @@ local function ensure_correct_config(config)
         }
     end
 
-    local proj = projects[mark_config_key()]
+    local proj = projects[mark_key]
     if proj.mark == nil then
-        log.debug(
-            "ensure_correct_config(): No marks found for",
-            mark_config_key()
-        )
+        log.debug("ensure_correct_config(): No marks found for", mark_key)
         proj.mark = { marks = {} }
     end
 
     if proj.term == nil then
         log.debug(
             "ensure_correct_config(): No terminal commands found for",
-            mark_config_key()
+            mark_key
         )
         proj.term = { cmds = {} }
     end
@@ -169,6 +165,7 @@ function M.setup(config)
             ["enter_on_sendcmd"] = false,
             ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
+            ["mark_branch"] = false,
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 
