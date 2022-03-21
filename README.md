@@ -8,7 +8,7 @@
 </div>
 
 ![Harpoon](harpoon.png)
--- image provided by **Liberty_DevCap**
+-- image provided by **Bob Rust**
 
 
 ## ⇁  WIP
