@@ -195,3 +195,9 @@ require("harpoon").setup({
     }
 })
 ```
+
+## ⇁ Social
+For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.  
+* [Discord](https://discord.gg/theprimeagen)
+* [Twitch](https://www.twitch.tv/theprimeagen)
+* [Twitter](https://twitter.com/ThePrimeagen)
