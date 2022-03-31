@@ -73,15 +73,6 @@ a new terminal is created.
 lua require("harpoon.term").gotoTerminal(1)             -- navigates to term 1
 ```
 
-Once you switch to a terminal you can always switch back to neovim, this is a
-little bash script that will switch to the window which is running neovim.
-
-In your `tmux.conf` (or anywhere you have keybinds), add this
-```bash
-bind-key -r G run-shell "path-to-harpoon/harpoon/scripts/tmux/switch-back-to-nvim"
-```
-
-
 ### Commands to Terminals
 commands can be sent to any terminal
 ```lua
@@ -107,6 +98,14 @@ lua require("harpoon.tmux").sendCommand(1, 1)           -- sends command 1 to tm
 ```lua
 lua require("harpoon.tmux").gotoTerminal("{down-of}")   -- focus the pane directly below
 lua require("harpoon.tmux").sendCommand("%3", "ls")     -- send a command to the pane with id '%3'
+```
+
+Once you switch to a tmux window you can always switch back to neovim, this is a
+little bash script that will switch to the window which is running neovim.
+
+In your `tmux.conf` (or anywhere you have keybinds), add this
+```bash
+bind-key -r G run-shell "path-to-harpoon/harpoon/scripts/tmux/switch-back-to-nvim"
 ```
 
 ### Telescope Support
