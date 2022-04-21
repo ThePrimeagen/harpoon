@@ -7,7 +7,22 @@ local M = {}
 M.data_path = data_path
 
 function M.project_key()
-    return vim.loop.cwd()
+    -- get the base dir if found, if not, return cwd
+    local global_settings = HarpoonConfig.global_settings
+    local baseDirs = global_settings.base_dirs
+    local cwd = vim.loop.cwd()
+
+    if (baseDirs) then
+        for _, baseDir in pairs(baseDirs) do
+            local childDir = Path:new(cwd):make_relative(baseDir)
+            if (baseDir == "" or childDir == cwd) then
+            else
+                return baseDir
+            end
+        end
+    end
+
+    return cwd
 end
 
 function M.branch_key()

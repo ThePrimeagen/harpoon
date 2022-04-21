@@ -34,6 +34,11 @@ HarpoonConfig = HarpoonConfig or {}
 -- tbl_deep_extend does not work the way you would think
 local function merge_table_impl(t1, t2)
     for k, v in pairs(t2) do
+        if (k == 'base_dirs') then
+            -- we want the base_dirs from t2 (user config) to overwrite t1
+            -- eg if a base dir is removed from user config
+            t1[k] = v
+        end
         if type(v) == "table" then
             if type(t1[k]) == "table" then
                 merge_table_impl(t1[k], v)
@@ -160,6 +165,7 @@ function M.setup(config)
     local complete_config = merge_tables({
         projects = {},
         global_settings = {
+            ["base_dirs"] = {},
             ["save_on_toggle"] = false,
             ["save_on_change"] = true,
             ["enter_on_sendcmd"] = false,
@@ -168,6 +174,9 @@ function M.setup(config)
             ["mark_branch"] = false,
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
+
+    -- make global settings available so the utils module can use it at this point
+    HarpoonConfig.global_settings = complete_config.global_settings
 
     -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
     -- an object for vim.loop.cwd()

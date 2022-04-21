@@ -145,6 +145,11 @@ global_settings = {
 
     -- set marks specific to each git branch inside git repository
     mark_branch = false,
+
+    -- all marks that belong under a base directory will be shown in the harpoon menu for that base directory
+    -- this feature does not work if mark_branch is true
+    -- to clear the list of base_dirs, specify an empty table (do not remove the base_dirs key entirely)
+    base_dirs = { }
 }
 ```
 
