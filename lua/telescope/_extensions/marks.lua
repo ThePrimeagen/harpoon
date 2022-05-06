@@ -1,11 +1,8 @@
-local action_set = require("telescope.actions.set")
 local action_state = require("telescope.actions.state")
 local action_utils = require("telescope.actions.utils")
 local entry_display = require("telescope.pickers.entry_display")
 local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
-local previewers = require("telescope.previewers")
-local sorters = require("telescope.sorters")
 local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 local harpoon_mark = require("harpoon.mark")
@@ -34,13 +31,12 @@ local generate_new_finder = function()
                     { remaining = true },
                 },
             })
-            local make_display = function(entry)
+            local make_display = function()
                 return displayer({
                     tostring(entry.index),
                     line,
                 })
             end
-            local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
             return {
                 value = entry,
                 ordinal = line,
@@ -75,9 +71,10 @@ local delete_harpoon_mark = function(prompt_bufnr)
         end)
         return results
     end
+
     local selections = get_selections()
-    for _, selection in ipairs(selections) do
-        harpoon_mark.rm_file(selection.filename)
+    for _, current_selection in ipairs(selections) do
+        harpoon_mark.rm_file(current_selection.filename)
     end
 
     local current_picker = action_state.get_current_picker(prompt_bufnr)
@@ -107,8 +104,9 @@ return function(opts)
         attach_mappings = function(_, map)
             map("i", "<c-d>", delete_harpoon_mark)
             map("n", "<c-d>", delete_harpoon_mark)
-            map("i", "<c-p>", move_mark_up)
-            map("n", "<c-p>", move_mark_up)
+            -- TODO: implement move_mark_up
+            -- map("i", "<c-p>", move_mark_up)
+            -- map("n", "<c-p>", move_mark_up)
             map("i", "<c-n>", move_mark_down)
             map("n", "<c-n>", move_mark_down)
             return true
