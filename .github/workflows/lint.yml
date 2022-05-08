@@ -15,4 +15,4 @@ jobs:
                   sudo luarocks install luacheck
 
             - name: Lint
-              run: luacheck lua/harpoon
+              run: luacheck lua/ --globals vim
