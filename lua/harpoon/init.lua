@@ -46,12 +46,21 @@ local function merge_table_impl(t1, t2)
     end
 end
 
+local function get_project_key(global_settings)
+    global_settings = global_settings or M.get_global_settings()
+    if global_settings.global_project then
+        return global_settings.global_project
+    else
+        return utils.project_key()
+    end
+end
+
 local function mark_config_key(global_settings)
     global_settings = global_settings or M.get_global_settings()
     if global_settings.mark_branch then
         return utils.branch_key()
     else
-        return utils.project_key()
+        return get_project_key(global_settings)
     end
 end
 
@@ -100,7 +109,11 @@ local function ensure_correct_config(config)
             marks[idx] = mark
         end
 
-        marks[idx].filename = utils.normalize_path(mark.filename)
+        if config.global_project then
+            marks[idx].filename = mark.filename
+        else
+            marks[idx].filename = utils.normalize_path(mark.filename)
+        end
     end
 
     return config
@@ -234,7 +247,7 @@ end
 
 function M.get_term_config()
     log.trace("get_term_config()")
-    return ensure_correct_config(HarpoonConfig).projects[utils.project_key()].term
+    return ensure_correct_config(HarpoonConfig).projects[mark_config_key()].term
 end
 
 function M.get_mark_config()
