@@ -10,5 +10,16 @@ fi
 
 # Switch to a window called nvim in tmux - if it exists
 session_name=$(tmux display-message -p "#S")
+windows=$(tmux list-windows)
+window_name="nvim"
 
-tmux switch-client -t "$session_name:nvim"
+if [[ -n $session_name ]]; then
+    for window in "${windows[@]}"
+    do
+        if [[ $window == *"$window_name"* ]]
+        then
+            tmux switch-client -t "$session_name:$window_name"
+            exit 0
+        fi
+    done
+fi
