@@ -108,6 +108,17 @@ function M.valid_index(idx)
     return true
 end
 
+function M.num_terminals()
+    return table.maxn(terminals)
+end
+
+function M.valid_terminal_index(idx)
+    if idx == nil or idx > M.num_terminals() or idx <= 0 then
+        return false
+    end
+    return true
+end
+
 function M.emit_changed()
     log.trace("_emit_changed()")
     if harpoon.get_global_settings().save_on_change then
