@@ -165,7 +165,10 @@ function M.nav_file(id)
 
     local mark = Marked.get_marked_file(idx)
     local filename = mark.filename
-    if filename:sub(1, 1) ~= "/" then
+    local relative_path = harpoon.get_global_settings().global_project
+    if relative_path then
+        filename = relative_path .. "/" .. mark.filename
+    elseif filename:sub(1, 1) ~= "/" then
         filename = vim.loop.cwd() .. "/" .. mark.filename
     end
     local buf_id = vim.fn.bufnr(filename, true)

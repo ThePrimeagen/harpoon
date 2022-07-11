@@ -109,11 +109,8 @@ local function ensure_correct_config(config)
             marks[idx] = mark
         end
 
-        if config.global_project then
-            marks[idx].filename = mark.filename
-        else
-            marks[idx].filename = utils.normalize_path(mark.filename)
-        end
+        marks[idx].filename = utils.normalize_path(mark.filename, config.global_project)
+
     end
 
     return config

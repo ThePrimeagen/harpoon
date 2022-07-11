@@ -27,8 +27,12 @@ function M.branch_key()
     end
 end
 
-function M.normalize_path(item)
-    return Path:new(item):make_relative(M.project_key())
+function M.normalize_path(item, relative_path)
+    if relative_path then
+        return Path:new(item):make_relative(relative_path)
+    else
+        return Path:new(item):make_relative(M.project_key())
+    end
 end
 
 function M.get_os_command_output(cmd, cwd)

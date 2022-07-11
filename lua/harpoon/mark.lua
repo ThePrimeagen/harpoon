@@ -6,6 +6,7 @@ local log = require("harpoon.dev").log
 -- of procedural all the things
 local M = {}
 local callbacks = {}
+local relative_path = harpoon.get_global_settings().global_project
 
 -- I am trying to avoid over engineering the whole thing.  We will likely only
 -- need one event emitted
@@ -58,9 +59,9 @@ end
 local function get_buf_name(id)
     log.trace("_get_buf_name():", id)
     if id == nil then
-        return utils.normalize_path(vim.api.nvim_buf_get_name(0))
+        return utils.normalize_path(vim.api.nvim_buf_get_name(0), relative_path)
     elseif type(id) == "string" then
-        return utils.normalize_path(id)
+        return utils.normalize_path(id, relative_path)
     end
 
     local idx = M.get_index_of(id)
@@ -149,7 +150,7 @@ function M.get_index_of(item)
     end
 
     if type(item) == "string" then
-        local relative_item = utils.normalize_path(item)
+        local relative_item = utils.normalize_path(item, relative_path)
         for idx = 1, M.get_length() do
             if M.get_marked_file_name(idx) == relative_item then
                 return idx
@@ -181,7 +182,7 @@ function M.status(bufnr)
         buf_name = vim.api.nvim_buf_get_name(0)
     end
 
-    local norm_name = utils.normalize_path(buf_name)
+    local norm_name = utils.normalize_path(buf_name, relative_path)
     local idx = M.get_index_of(norm_name)
 
     if M.valid_index(idx) then
