@@ -155,6 +155,15 @@ function M.on_menu_save()
     Marked.set_mark_list(get_menu_items())
 end
 
+local function get_or_create_buffer(filename)
+    local buf_exists = vim.fn.bufexists(filename) ~= 0
+    if buf_exists then
+        return vim.fn.bufnr(filename)
+    end
+
+    return vim.fn.bufadd(filename)
+end
+
 function M.nav_file(id)
     log.trace("nav_file(): Navigating to", id)
     local idx = Marked.get_index_of(id)
@@ -168,7 +177,7 @@ function M.nav_file(id)
     if filename:sub(1, 1) ~= "/" then
         filename = vim.loop.cwd() .. "/" .. mark.filename
     end
-    local buf_id = vim.fn.bufnr(filename, true)
+    local buf_id = get_or_create_buffer(filename)
     local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
 
     vim.api.nvim_set_current_buf(buf_id)
