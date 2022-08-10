@@ -7,11 +7,17 @@ local M = {}
 local tmux_windows = {}
 
 if global_config.tmux_autoclose_windows then
-    vim.cmd([[
-        augroup HARPOON_TMUX
-        autocmd!
-        autocmd VimLeave * :lua require('harpoon.tmux').clear_all()
-    ]])
+    local harpoon_tmux_group = vim.api.nvim_create_augroup(
+        "HARPOON_TMUX",
+        { clear = true }
+    )
+
+    vim.api.nvim_create_autocmd("VimLeave", {
+        callback = function()
+            require("harpoon.tmux").clear_all()
+        end,
+        group = harpoon_tmux_group,
+    })
 end
 
 local function create_terminal()
