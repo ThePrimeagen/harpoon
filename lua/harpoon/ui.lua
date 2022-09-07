@@ -80,12 +80,12 @@ function M.toggle_quick_menu()
     local curr_file = utils.normalize_path(vim.api.nvim_buf_get_name(0))
     vim.cmd(
         string.format(
-            "autocmd Filetype harpoon " ..
-                "let path = '%s' | call clearmatches() | " ..
+            "autocmd Filetype harpoon "
+                .. "let path = '%s' | call clearmatches() | "
                 -- move the cursor to the line containing the current filename
-                "call search('\\V'.path.'\\$') | " ..
+                .. "call search('\\V'.path.'\\$') | "
                 -- add a hl group to that line
-                "call matchadd('HarpoonCurrentFile', '\\V'.path.'\\$')",
+                .. "call matchadd('HarpoonCurrentFile', '\\V'.path.'\\$')",
             curr_file:gsub("\\", "\\\\")
         )
     )
