@@ -26,6 +26,12 @@ local function create_terminal(create_with)
     -- away and cause an error
     vim.api.nvim_buf_set_option(buf_id, "bufhidden", "hide")
 
+    -- Sets the current buffer if the current one is invalid.
+    if not vim.api.nvim_buf_is_valid(current_id) then
+        log.trace("term: _create_terminal(): Invalid buffer ", current_id)
+        current_id = vim.api.nvim_create_buf(true, false)
+    end
+    
     -- Resets the buffer back to the old one
     vim.api.nvim_set_current_buf(current_id)
     return buf_id, term_id
