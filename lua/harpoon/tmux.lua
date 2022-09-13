@@ -55,12 +55,14 @@ local function terminal_exists(window_id)
     local window_list, _, _ = utils.get_os_command_output({
         "tmux",
         "list-windows",
+        "-F",
+        "#{pane_id}"
     }, vim.loop.cwd())
 
     -- This has to be done this way because tmux has-session does not give
     -- updated results
     for _, line in pairs(window_list) do
-        local window_info = utils.split_string(line, "@")[2]
+        local window_info = line
 
         if string.find(window_info, string.sub(window_id, 2)) then
             exists = true
