@@ -3,14 +3,13 @@ local log = require("harpoon.dev").log
 local global_config = harpoon.get_global_settings()
 local utils = require("harpoon.utils")
 
-local M = {}
+local M = { is_tmux = false }
+
 local tmux_windows = {}
 
 if global_config.tmux_autoclose_windows then
-    local harpoon_tmux_group = vim.api.nvim_create_augroup(
-        "HARPOON_TMUX",
-        { clear = true }
-    )
+    local harpoon_tmux_group =
+        vim.api.nvim_create_augroup("HARPOON_TMUX", { clear = true })
 
     vim.api.nvim_create_autocmd("VimLeave", {
         callback = function()
@@ -19,6 +18,12 @@ if global_config.tmux_autoclose_windows then
         group = harpoon_tmux_group,
     })
 end
+
+local function get_tmux()
+    return os.getenv("TMUX")
+end
+
+M.is_tmux = get_tmux() ~= nil
 
 local function create_terminal()
     log.trace("tmux: _create_terminal())")
