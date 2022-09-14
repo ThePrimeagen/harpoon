@@ -145,6 +145,9 @@ global_settings = {
 
     -- set marks specific to each git branch inside git repository
     mark_branch = false,
+
+    -- set an override for opening a terminal, this is useful if you want to use a different terminal
+    create_with = ":terminal",
 }
 ```
 
@@ -205,7 +208,7 @@ require("harpoon").setup({
 ```
 
 ## ⇁ Social
-For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.  
+For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
 * [Twitch](https://www.twitch.tv/theprimeagen)
 * [Twitter](https://twitter.com/ThePrimeagen)

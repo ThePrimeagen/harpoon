@@ -178,6 +178,7 @@ function M.setup(config)
             ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
             ["mark_branch"] = false,
+            ["create_with"] = ":terminal",
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 
