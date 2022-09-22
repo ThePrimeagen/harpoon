@@ -174,7 +174,7 @@ function M.nav_file(id)
 
     local mark = Marked.get_marked_file(idx)
     local filename = mark.filename
-    if filename:sub(1, 1) ~= "/" then
+    if filename:sub(1, 1) ~= "/" and filename:sub(2, 2) ~= ":" then
         filename = vim.loop.cwd() .. "/" .. mark.filename
     end
     local buf_id = get_or_create_buffer(filename)
