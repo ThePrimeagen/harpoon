@@ -218,6 +218,20 @@ function M.add_file(file_name_or_buf_id)
     emit_changed()
 end
 
+function M.add_current_folder()
+    local directory = vim.fn.expand('%:h')
+
+    local popen = io.popen
+    -- Only list files
+    local pfile = popen('ls -p ' .. directory .. ' | grep -v /')
+
+    for filename in pfile:lines() do
+        M.add_file(directory..'/'..filename)
+    end
+
+    pfile:close()
+end
+
 -- _emit_on_changed == false should only be used internally
 function M.remove_empty_tail(_emit_on_changed)
     log.trace("remove_empty_tail()")
