@@ -219,14 +219,14 @@ function M.add_file(file_name_or_buf_id)
 end
 
 function M.add_current_folder()
-    local directory = vim.fn.expand('%:h')
+    local directory = vim.fn.expand("%:h")
 
     local popen = io.popen
     -- Only list files
-    local pfile = popen('ls -p ' .. directory .. ' | grep -v /')
+    local pfile = popen("ls -p " .. directory .. " | grep -v /")
 
     for filename in pfile:lines() do
-        M.add_file(directory..'/'..filename)
+        M.add_file(directory .. "/" .. filename)
     end
 
     pfile:close()
