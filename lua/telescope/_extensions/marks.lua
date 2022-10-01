@@ -50,9 +50,8 @@ local generate_new_finder = function()
 end
 
 local delete_harpoon_mark = function(prompt_bufnr)
-    local confirmation = vim.fn.input(
-        string.format("Delete current mark(s)? [y/n]: ")
-    )
+    local confirmation =
+        vim.fn.input(string.format("Delete current mark(s)? [y/n]: "))
     if
         string.len(confirmation) == 0
         or string.sub(string.lower(confirmation), 0, 1) ~= "y"
@@ -81,6 +80,23 @@ local delete_harpoon_mark = function(prompt_bufnr)
     current_picker:refresh(generate_new_finder(), { reset_prompt = true })
 end
 
+local move_mark_up = function(prompt_bufnr)
+    local selection = action_state.get_selected_entry()
+    local length = harpoon_mark.get_length()
+
+    if selection.index == length then
+        return
+    end
+
+    local mark_list = harpoon.get_mark_config().marks
+
+    table.remove(mark_list, selection.index)
+    table.insert(mark_list, selection.index + 1, selection.value)
+
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    current_picker:refresh(generate_new_finder(), { reset_prompt = true })
+end
+
 local move_mark_down = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     if selection.index == 1 then
@@ -96,20 +112,23 @@ end
 return function(opts)
     opts = opts or {}
 
-    pickers.new(opts, {
-        prompt_title = "harpoon marks",
-        finder = generate_new_finder(),
-        sorter = conf.generic_sorter(opts),
-        previewer = conf.grep_previewer(opts),
-        attach_mappings = function(_, map)
-            map("i", "<c-d>", delete_harpoon_mark)
-            map("n", "<c-d>", delete_harpoon_mark)
-            -- TODO: implement move_mark_up
-            -- map("i", "<c-p>", move_mark_up)
-            -- map("n", "<c-p>", move_mark_up)
-            map("i", "<c-n>", move_mark_down)
-            map("n", "<c-n>", move_mark_down)
-            return true
-        end,
-    }):find()
+    pickers
+        .new(opts, {
+            prompt_title = "harpoon marks",
+            finder = generate_new_finder(),
+            sorter = conf.generic_sorter(opts),
+            previewer = conf.grep_previewer(opts),
+            attach_mappings = function(_, map)
+                map("i", "<c-d>", delete_harpoon_mark)
+                map("n", "<c-d>", delete_harpoon_mark)
+
+                map("i", "<c-p>", move_mark_up)
+                map("n", "<c-p>", move_mark_up)
+
+                map("i", "<c-n>", move_mark_down)
+                map("n", "<c-n>", move_mark_down)
+                return true
+            end,
+        })
+        :find()
 end
