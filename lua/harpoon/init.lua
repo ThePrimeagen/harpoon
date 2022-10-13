@@ -15,6 +15,8 @@ local the_primeagen_harpoon = vim.api.nvim_create_augroup(
     { clear = true }
 )
 
+vim.cmd("set title titlestring=nvim\\ %t")
+
 vim.api.nvim_create_autocmd({ "BufLeave, VimLeave" }, {
     callback = function()
         require("harpoon.mark").store_offset()
