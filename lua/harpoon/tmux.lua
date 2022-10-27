@@ -7,8 +7,10 @@ local M = {}
 local tmux_windows = {}
 
 if tmux_config.tmux_autoclose_windows then
-    local harpoon_tmux_group =
-        vim.api.nvim_create_augroup("HARPOON_TMUX", { clear = true })
+    local harpoon_tmux_group = vim.api.nvim_create_augroup(
+        "HARPOON_TMUX",
+        { clear = true }
+    )
 
     vim.api.nvim_create_autocmd("VimLeave", {
         callback = function()
