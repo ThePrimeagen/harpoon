@@ -219,7 +219,7 @@ function M.add_file(file_name_or_buf_id)
 end
 
 function M.add_current_folder()
-    local directory = vim.fn.expand("%:h")
+    local directory = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
 
     for name, type in vim.fs.dir(directory) do
         if type == "file" then
