@@ -198,7 +198,7 @@ end
 function M.get_tmux_config()
     log.trace("get_tmux_config()")
     return {
-        ["tmux_autoclose_windows"] = HarpoonConfig.enter_on_sendcmd,
+        ["tmux_autoclose_windows"] = HarpoonConfig.tmux_autoclose_windows,
         ["enter_on_sendcmd"] = HarpoonConfig.enter_on_sendcmd,
     }
 end
