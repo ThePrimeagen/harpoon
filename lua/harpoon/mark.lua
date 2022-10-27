@@ -221,15 +221,11 @@ end
 function M.add_current_folder()
     local directory = vim.fn.expand("%:h")
 
-    local popen = io.popen
-    -- Only list files
-    local pfile = popen("ls -p " .. directory .. " | grep -v /")
-
-    for filename in pfile:lines() do
-        M.add_file(directory .. "/" .. filename)
+    for name, type in vim.fs.dir(directory) do
+        if type == "file" then
+            M.add_file(directory .. "/" .. name)
+        end
     end
-
-    pfile:close()
 end
 
 -- _emit_on_changed == false should only be used internally
