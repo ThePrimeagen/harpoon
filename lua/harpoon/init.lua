@@ -195,6 +195,14 @@ function M.get_global_settings()
     return HarpoonConfig.global_settings
 end
 
+function M.get_tmux_config()
+    log.trace("get_tmux_config()")
+    return {
+        ["tmux_autoclose_windows"] = HarpoonConfig.enter_on_sendcmd,
+        ["enter_on_sendcmd"] = HarpoonConfig.enter_on_sendcmd,
+    }
+end
+
 -- refresh all projects from disk, except our current one
 function M.refresh_projects_b4update()
     log.trace(
