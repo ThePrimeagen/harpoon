@@ -1,12 +1,12 @@
 local harpoon = require("harpoon")
 local log = require("harpoon.dev").log
-local global_config = harpoon.get_global_settings()
+local tmux_config = harpoon.get_tmux_config()
 local utils = require("harpoon.utils")
 
 local M = {}
 local tmux_windows = {}
 
-if global_config.tmux_autoclose_windows then
+if tmux_config.tmux_autoclose_windows then
     local harpoon_tmux_group =
         vim.api.nvim_create_augroup("HARPOON_TMUX", { clear = true })
 
@@ -143,7 +143,7 @@ function M.sendCommand(idx, cmd, ...)
         cmd = harpoon.get_term_config().cmds[cmd]
     end
 
-    if global_config.enter_on_sendcmd then
+    if tmux_config.enter_on_sendcmd then
         cmd = cmd .. "\r"
     end
 
