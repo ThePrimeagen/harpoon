@@ -7,10 +7,8 @@ local M = {}
 local tmux_windows = {}
 
 if global_config.tmux_autoclose_windows then
-    local harpoon_tmux_group = vim.api.nvim_create_augroup(
-        "HARPOON_TMUX",
-        { clear = true }
-    )
+    local harpoon_tmux_group =
+        vim.api.nvim_create_augroup("HARPOON_TMUX", { clear = true })
 
     vim.api.nvim_create_autocmd("VimLeave", {
         callback = function()
@@ -146,7 +144,7 @@ function M.sendCommand(idx, cmd, ...)
     end
 
     if global_config.enter_on_sendcmd then
-        cmd = cmd .. "\n"
+        cmd = cmd .. "\r"
     end
 
     if cmd then
