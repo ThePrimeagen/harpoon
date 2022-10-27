@@ -146,7 +146,7 @@ function M.sendCommand(idx, cmd, ...)
     end
 
     if tmux_config.enter_on_sendcmd then
-        cmd = cmd .. "\r"
+        cmd = cmd .. "\n"
     end
 
     if cmd then
