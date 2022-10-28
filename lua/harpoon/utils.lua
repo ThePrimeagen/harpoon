@@ -27,8 +27,15 @@ function M.branch_key()
     end
 end
 
+local function fixItem(item)
+    local upperItem = item:gsub('^%l:', string.upper)
+    local fixedItem = vim.fs.normalize(upperItem):gsub('/', '\\')
+    return fixedItem
+end
+
 function M.normalize_path(item)
-    return Path:new(item):make_relative(M.project_key())
+    local fixedItem = fixItem(item)
+    return Path:new(fixedItem):make_relative(M.project_key())
 end
 
 function M.get_os_command_output(cmd, cwd)
