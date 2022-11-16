@@ -1,0 +1,123 @@
+harpoon.txt*    For Neovim version 0.5                 Last change: 2022 Nov 16
+
+===============================================================================
+CONTENTS                                                     *harpoon-contents*
+
+  Introduction ········································· |harpoon-introduction|
+  Requirements ········································· |harpoon-requirements|
+  Usage ······················································· |harpoon-usage|
+    Commands ··············································· |harpoon-commands|
+    Lua API ················································· |harpoon-lua-api|
+  Configuration ·············································· |harpoon-config|
+  Highlights ············································· |harpoon-highlights|
+  License ··················································· |harpoon-license|
+
+===============================================================================
+INTRODUCTION                                                          *harpoon*
+
+The goal of Harpoon is to get you where you want with the fewest keystrokes.
+
+The Problems:
+    * You're working on a codebase. medium, large, tiny, whatever. You find
+    yourself frequenting a small set of files and you are tired of using a
+    fuzzy finder, :bnext & :bprev are getting too repetitive, alternate file
+    doesn't quite cut it, etc etc.
+    * You want to execute some project specific commands or have any number of
+    persistent terminals that can be easily navigated to.
+
+The Solutions:
+    * The ability to specify, or on the fly, mark and create persisting key
+    strokes to go to the files you want.
+    * Unlimited terminals and navigation.
+
+===============================================================================
+REQUIREMENTS                                             *harpoon-requirements*
+
+Harpoon works only with Neovim and was written with Neovim-0.5, and is
+dependent on plenary.
+
+===============================================================================
+USAGE                                                           *harpoon-usage*
+
+Lua API~
+
+The Lua API comprises several modules. Even though those modules might have
+more public functions than described here, you are only supposed to use the
+functions in this help page. Using one that is not listed here is considered
+unstable.
+
+`harpoon`       Entry point and main interface.
+`harpoon.mark`  Marking files.
+`harpoon.ui`    Ui related commands.
+`harpoon.term`  Neovim term commands.
+`harpoon.tmux`  Tmux term commands.
+
+
+`harpoon.setup(`{opts}`)`                                       *harpoon.setup*
+    Setup Harpoon with options.
+
+    This function will setup the Lua API and commands in a way that respects
+    the options you pass. It is mandatory to call that function at some time
+    if you want to be able to use Harpoon, should it be from the Lua API or
+    Neovim commands.
+
+Arguments:~
+    {opts} List of options. See |harpoon-config|
+
+`'harpoon.mark'.add_file()`
+    Add the current file to your harpoon list.
+
+`'harpoon.ui'.toggle_quick_menu()`               *harpoon.ui.toggle_quick_menu*
+    Toggle the quick menu on/off.
+
+`'harpoon.ui'.nav_file(`{opts}`)`                         *harpoon.ui.nav_file*
+    Navagate to the selected file
+
+Arguments~
+    {opts} Navigate to the nth file in your harpoon menu
+
+`'harpoon.ui'.nav_next()`                                 *harpoon.ui.nav_next*
+    Navigate to the next marked file
+    
+`'harpoon.ui'.nav_prev()`                                 *harpoon.ui.nav_prev*
+    Navigate to the previous marked file
+
+
+===============================================================================
+CONFIGURATION                                                  *harpoon-config*
+The configuration option of Harpoon can be passed to |harpoon.setup| to
+customize the way it works. 
+
+                                               *harpoon.config.global_settings*
+Default~
+global_settings = {
+    save_on_toggle = false,
+    save_on_change = true,
+    enter_on_sendcmd = false,
+    tmux_autoclose_windows = false,
+    excluded_filetypes = { "harpoon" },
+    mark_branch = false,
+}
+
+===============================================================================
+LICENCE                                                  *harpoon-requirements*
+
+Copyright (c) 2020 ThePrimeagen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
