@@ -150,8 +150,9 @@ function M.get_index_of(item)
 
     if type(item) == "string" then
         local relative_item = utils.normalize_path(item)
+        local marks = harpoon.get_mark_config().marks
         for idx = 1, M.get_length() do
-            if M.get_marked_file_name(idx) == relative_item then
+            if marks[idx] and marks[idx].filename == relative_item then
                 return idx
             end
         end
