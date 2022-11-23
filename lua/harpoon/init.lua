@@ -142,7 +142,7 @@ end
 
 local function read_config(local_config)
     log.trace("_read_config():", local_config)
-    return vim.fn.json_decode(Path:new(local_config):read())
+    return vim.json.decode(Path:new(local_config):read())
 end
 
 -- 1. saved.  Where do we save?
