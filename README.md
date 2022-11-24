@@ -65,6 +65,10 @@ you can also cycle the list in both directions
 :lua require("harpoon.ui").nav_next()                   -- navigates to next mark
 :lua require("harpoon.ui").nav_prev()                   -- navigates to previous mark
 ```
+from the quickmenu, open a file in: 
+a vertical split with control+v,
+a horizontal split with control+x, 
+a new tab with control+t
 
 ### Terminal Navigation
 this works like file navigation except that if there is no terminal at the specified index
