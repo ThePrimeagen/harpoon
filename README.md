@@ -4,7 +4,7 @@
 ##### Getting you where you want with the fewest keystrokes.
 
 [![Lua](https://img.shields.io/badge/Lua-blue.svg?style=for-the-badge&logo=lua)](http://www.lua.org)
-[![Neovim](https://img.shields.io/badge/Neovim%200.5+-green.svg?style=for-the-badge&logo=neovim)](https://neovim.io)
+[![Neovim](https://img.shields.io/badge/Neovim%200.7+-green.svg?style=for-the-badge&logo=neovim)](https://neovim.io)
 </div>
 
 ![Harpoon](harpoon.png)
@@ -32,7 +32,7 @@ to go to the files you want.
 
 
 ## ⇁ Installation
-* neovim 0.5.0+ required
+* neovim 0.7.0+ required
 * install using your favorite plugin manager (`vim-plug` in this example)
 ```vim
 Plug 'nvim-lua/plenary.nvim' " don't forget to add this one if you don't have it yet!
