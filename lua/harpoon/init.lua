@@ -10,10 +10,8 @@ local cache_config = string.format("%s/harpoon.json", data_path)
 
 local M = {}
 
-local the_primeagen_harpoon = vim.api.nvim_create_augroup(
-    "THE_PRIMEAGEN_HARPOON",
-    { clear = true }
-)
+local the_primeagen_harpoon =
+    vim.api.nvim_create_augroup("THE_PRIMEAGEN_HARPOON", { clear = true })
 
 vim.api.nvim_create_autocmd({ "BufLeave, VimLeave" }, {
     callback = function()
@@ -144,7 +142,7 @@ end
 
 local function read_config(local_config)
     log.trace("_read_config():", local_config)
-    return vim.fn.json_decode(Path:new(local_config):read())
+    return vim.json.decode(Path:new(local_config):read())
 end
 
 -- 1. saved.  Where do we save?
