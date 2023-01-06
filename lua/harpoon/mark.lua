@@ -136,7 +136,7 @@ local function filter_filetype()
     end
 end
 
-function M.get_index_of(item)
+function M.get_index_of(item, marks)
     log.trace("get_index_of():", item)
     if item == nil then
         log.error(
@@ -150,8 +150,11 @@ function M.get_index_of(item)
 
     if type(item) == "string" then
         local relative_item = utils.normalize_path(item)
-        for idx = 1, M.get_length() do
-            if M.get_marked_file_name(idx) == relative_item then
+        if marks == nil then
+            marks = harpoon.get_mark_config().marks
+        end
+        for idx = 1, M.get_length(marks) do
+            if marks[idx] and marks[idx].filename == relative_item then
                 return idx
             end
         end
@@ -190,13 +193,13 @@ function M.status(bufnr)
     return ""
 end
 
-function M.valid_index(idx)
+function M.valid_index(idx, marks)
     log.trace("valid_index():", idx)
     if idx == nil then
         return false
     end
 
-    local file_name = M.get_marked_file_name(idx)
+    local file_name = M.get_marked_file_name(idx, marks)
     return file_name ~= nil and file_name ~= ""
 end
 
@@ -245,9 +248,10 @@ end
 function M.store_offset()
     log.trace("store_offset()")
     local ok, res = pcall(function()
+        local marks = harpoon.get_mark_config().marks
         local buf_name = get_buf_name()
-        local idx = M.get_index_of(buf_name)
-        if not M.valid_index(idx) then
+        local idx = M.get_index_of(buf_name, marks)
+        if not M.valid_index(idx, marks) then
             return
         end
 
@@ -259,8 +263,8 @@ function M.store_offset()
                 cursor_pos[2]
             )
         )
-        harpoon.get_mark_config().marks[idx].row = cursor_pos[1]
-        harpoon.get_mark_config().marks[idx].col = cursor_pos[2]
+        marks[idx].row = cursor_pos[1]
+        marks[idx].col = cursor_pos[2]
     end)
 
     if not ok then
@@ -300,15 +304,23 @@ function M.get_marked_file(idxOrName)
     return harpoon.get_mark_config().marks[idxOrName]
 end
 
-function M.get_marked_file_name(idx)
-    local mark = harpoon.get_mark_config().marks[idx]
+function M.get_marked_file_name(idx, marks)
+    local mark
+    if marks ~= nil then
+        mark = marks[idx]
+    else
+        mark = harpoon.get_mark_config().marks[idx]
+    end
     log.trace("get_marked_file_name():", mark and mark.filename)
     return mark and mark.filename
 end
 
-function M.get_length()
+function M.get_length(marks)
+    if marks == nil then
+        marks = harpoon.get_mark_config().marks
+    end
     log.trace("get_length()")
-    return table.maxn(harpoon.get_mark_config().marks)
+    return table.maxn(marks)
 end
 
 function M.set_current_at(idx)
