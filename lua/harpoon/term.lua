@@ -7,7 +7,7 @@ local terminals = {}
 
 local function create_terminal(create_with)
     if not create_with then
-        create_with = ":terminal"
+        create_with = global_config.create_with
     end
     log.trace("term: _create_terminal(): Init:", create_with)
     local current_id = vim.api.nvim_get_current_buf()
