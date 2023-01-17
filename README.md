@@ -49,6 +49,10 @@ you mark files you want to revisit later on
 :lua require("harpoon.mark").add_file()
 ```
 
+```lua
+:lua require("harpoon").get_mark_config().marks = {}    -- clear all current marks
+```
+
 ### File Navigation
 view all project marks with:
 ```lua
@@ -205,7 +209,7 @@ require("harpoon").setup({
 ```
 
 ## ⇁ Social
-For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.  
+For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
 * [Twitch](https://www.twitch.tv/theprimeagen)
 * [Twitter](https://twitter.com/ThePrimeagen)
