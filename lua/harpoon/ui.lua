@@ -6,6 +6,7 @@ local log = require("harpoon.dev").log
 
 local M = {}
 
+Harpoon_ns_id = vim.api.nvim_create_namespace("harpoon")
 Harpoon_win_id = nil
 Harpoon_bufh = nil
 
@@ -68,6 +69,44 @@ local function get_menu_items()
     end
 
     return indices
+end
+
+local function show_file_keymaps(keymaps)
+    local extmarks = {}
+    for idx = 1, #keymaps do
+        extmarks[idx] = {
+            id = idx,
+            -- virt_text = {{ string.format("%s ", global_config.file_keymaps[idx]), "HarpoonKeymap" }},
+            -- virt_text_pos = "right_align",
+            sign_text = string.format(" %s", keymaps[idx]),
+            sign_hl_group = "HarpoonKeymap",
+        }
+    end
+    vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+        buffer = Harpoon_bufh,
+        callback = function()
+            local num_lines = vim.call("line", "$")
+            for idx = 1, #extmarks do
+                if idx <= num_lines then
+                    vim.api.nvim_buf_set_extmark(
+                        Harpoon_bufh,
+                        Harpoon_ns_id,
+                        idx - 1,
+                        0,
+                        extmarks[idx]
+                    )
+                else
+                    vim.api.nvim_buf_del_extmark(
+                        Harpoon_bufh,
+                        Harpoon_ns_id,
+                        idx
+                    )
+                end
+            end
+        end,
+    })
+    -- vim.api.nvim_win_set_option(Harpoon_win_id, "number", false)
+    -- vim.api.nvim_win_set_option(Harpoon_win_id, "signcolumn", "yes:2")
 end
 
 function M.toggle_quick_menu()
@@ -155,6 +194,9 @@ function M.toggle_quick_menu()
     vim.cmd(
         "autocmd BufLeave <buffer> ++nested ++once silent lua require('harpoon.ui').toggle_quick_menu()"
     )
+    if global_config.show_file_keymaps then
+        show_file_keymaps(global_config.file_keymaps)
+    end
 end
 
 function M.select_menu_item()

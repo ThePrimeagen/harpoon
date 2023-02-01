@@ -54,6 +54,9 @@ vim.api.nvim_create_autocmd("FileType", {
         end, { buffer = true, noremap = true, silent = true })
     end,
 })
+
+vim.cmd("highlight default link HarpoonKeymap SpecialComment")
+
 --[[
 {
     projects = {
@@ -210,6 +213,8 @@ function M.setup(config)
             ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
             ["mark_branch"] = false,
+            ["show_file_keymaps"] = false,
+            ["file_keymaps"] = { "h", "t", "n", "s" },
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 
