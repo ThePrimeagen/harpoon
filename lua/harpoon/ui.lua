@@ -76,16 +76,27 @@ local function show_file_keymaps(keymaps)
     for idx = 1, #keymaps do
         extmarks[idx] = {
             id = idx,
-            -- virt_text = {{ string.format("%s ", global_config.file_keymaps[idx]), "HarpoonKeymap" }},
+            -- virt_text = {{ string.format("%s ", keymaps[idx], "HarpoonKeymap" }},
             -- virt_text_pos = "right_align",
-            sign_text = string.format(" %s", keymaps[idx]),
+            sign_text = string.rep(" ", 2 - #keymaps[idx]) .. keymaps[idx],
             sign_hl_group = "HarpoonKeymap",
+        }
+    end
+    local num_extmarks = #extmarks
+    local function extmark_for_line_nr(line_nr)
+        local sign_text = string.format("%s", line_nr)
+        return {
+            id = line_nr,
+            -- virt_text = {{ string.format("%s ", idx, "LineNr" }},
+            -- virt_text_pos = "right_align",
+            sign_text = string.rep(" ", 2 - #sign_text) .. sign_text,
+            sign_hl_group = "LineNr",
         }
     end
     vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
         buffer = Harpoon_bufh,
         callback = function()
-            local num_lines = vim.call("line", "$")
+            local num_lines = vim.fn["line"]("$")
             for idx = 1, #extmarks do
                 if idx <= num_lines then
                     vim.api.nvim_buf_set_extmark(
@@ -103,10 +114,28 @@ local function show_file_keymaps(keymaps)
                     )
                 end
             end
+            for idx = #extmarks + 1, math.max(num_extmarks, num_lines) do
+                if idx <= num_lines then
+                    vim.api.nvim_buf_set_extmark(
+                        Harpoon_bufh,
+                        Harpoon_ns_id,
+                        idx - 1,
+                        0,
+                        extmark_for_line_nr(idx)
+                    )
+                else
+                    vim.api.nvim_buf_del_extmark(
+                        Harpoon_bufh,
+                        Harpoon_ns_id,
+                        idx
+                    )
+                end
+            end
+            num_extmarks = num_lines
         end,
     })
-    -- vim.api.nvim_win_set_option(Harpoon_win_id, "number", false)
-    -- vim.api.nvim_win_set_option(Harpoon_win_id, "signcolumn", "yes:2")
+    vim.api.nvim_win_set_option(Harpoon_win_id, "number", false)
+    vim.api.nvim_win_set_option(Harpoon_win_id, "signcolumn", "yes:2")
 end
 
 function M.toggle_quick_menu()
