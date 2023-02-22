@@ -7,10 +7,11 @@ local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 local harpoon_mark = require("harpoon.mark")
 
-local function filter_empty_string(list)
+local function prepare_results(list)
     local next = {}
     for idx = 1, #list do
         if list[idx].filename ~= "" then
+            list[idx].index = idx
             table.insert(next, list[idx])
         end
     end
@@ -20,7 +21,7 @@ end
 
 local generate_new_finder = function()
     return finders.new_table({
-        results = filter_empty_string(harpoon.get_mark_config().marks),
+        results = prepare_results(harpoon.get_mark_config().marks),
         entry_maker = function(entry)
             local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
             local displayer = entry_display.create({
