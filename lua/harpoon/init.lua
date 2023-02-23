@@ -10,8 +10,10 @@ local cache_config = string.format("%s/harpoon.json", data_path)
 
 local M = {}
 
-local the_primeagen_harpoon =
-    vim.api.nvim_create_augroup("THE_PRIMEAGEN_HARPOON", { clear = true })
+local the_primeagen_harpoon = vim.api.nvim_create_augroup(
+    "THE_PRIMEAGEN_HARPOON",
+    { clear = true }
+)
 
 vim.api.nvim_create_autocmd({ "BufLeave, VimLeave" }, {
     callback = function()
@@ -33,7 +35,7 @@ vim.api.nvim_create_autocmd("FileType", {
             local working_directory = vim.fn.getcwd() .. "/"
             vim.cmd("vs")
             vim.cmd("e " .. working_directory .. curline)
-        end, { buffer=true, noremap = true, silent = true })
+        end, { buffer = true, noremap = true, silent = true })
 
         -- horizontal split (control+x)
         vim.keymap.set("n", "<C-x>", function()
@@ -41,7 +43,7 @@ vim.api.nvim_create_autocmd("FileType", {
             local working_directory = vim.fn.getcwd() .. "/"
             vim.cmd("sp")
             vim.cmd("e " .. working_directory .. curline)
-        end, { buffer=true, noremap = true, silent = true })
+        end, { buffer = true, noremap = true, silent = true })
 
         -- new tab (control+t)
         vim.keymap.set("n", "<C-t>", function()
@@ -49,8 +51,8 @@ vim.api.nvim_create_autocmd("FileType", {
             local working_directory = vim.fn.getcwd() .. "/"
             vim.cmd("tabnew")
             vim.cmd("e " .. working_directory .. curline)
-        end, { buffer=true, noremap = true, silent = true })
-    end
+        end, { buffer = true, noremap = true, silent = true })
+    end,
 })
 --[[
 {

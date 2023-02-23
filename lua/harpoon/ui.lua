@@ -205,12 +205,15 @@ function M.nav_file(id)
         )
     end
 
-    local old_bufinfo = vim.fn.getbufinfo(old_bufnr)[1]
-    local no_name = old_bufinfo.name == ""
-    local one_line = old_bufinfo.linecount == 1
-    local unchanged = old_bufinfo.changed == 0
-    if no_name and one_line and unchanged then
-        vim.api.nvim_buf_delete(old_bufnr, {})
+    local old_bufinfo = vim.fn.getbufinfo(old_bufnr)
+    if type(old_bufinfo) == "table" and #old_bufinfo >= 1 then
+        old_bufinfo = old_bufinfo[1]
+        local no_name = old_bufinfo.name == ""
+        local one_line = old_bufinfo.linecount == 1
+        local unchanged = old_bufinfo.changed == 0
+        if no_name and one_line and unchanged then
+            vim.api.nvim_buf_delete(old_bufnr, {})
+        end
     end
 end
 
