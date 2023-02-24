@@ -217,6 +217,25 @@ function M.nav_file(id)
     end
 end
 
+-- Returns buffer id, if buffer exists for hacking own actions in lua.
+-- On error returns nil.
+function M.getBufferId(id)
+    log.trace("nav_file(): Navigating to", id)
+    local idx = Marked.get_index_of(id)
+    if not Marked.valid_index(idx) then
+        log.debug("nav_file(): No mark exists for id", id)
+        return
+    end
+
+    local mark = Marked.get_marked_file(idx)
+    local filename = vim.fs.normalize(mark.filename)
+    local buf_exists = vim.fn.bufexists(filename) ~= 0
+    if buf_exists then
+        return vim.fn.bufnr(filename)
+    end
+    return nil
+end
+
 function M.location_window(options)
     local default_options = {
         relative = "editor",

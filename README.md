@@ -208,6 +208,23 @@ require("harpoon").setup({
 })
 ```
 
+### More Power
+Work on underlying buffer and terminal ids to ~~not~~ utterly break things:
+
+```lua
+lua require("harpoon.ui").getBufferId(1)
+lua require("harpoon.term").getBufferTerminalId(1)
+-- :lua = require("harpoon.term").getBufferTerminalId(1)
+-- Returns:
+-- {
+--   buf_id = 7,
+--   term_id = 8
+-- }
+```
+
+This allows Lua code to do things like movements, which can be convenient, like
+for sending `G` to the window after sending `!!` as shell command.
+
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.  
 * [Discord](https://discord.gg/theprimeagen)

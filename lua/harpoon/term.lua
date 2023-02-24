@@ -18,7 +18,7 @@ local function create_terminal(create_with)
 
     if term_id == nil then
         log.error("_create_terminal(): term_id is nil")
-        -- TODO: Throw an error?
+        -- 2 cases: explicit or automatic call. automatic => no error.
         return nil
     end
 
@@ -61,6 +61,24 @@ local function get_first_empty_slot()
         end
     end
     return M.get_length() + 1
+end
+
+-- Returns tuple of buffer id and terminal id for hacking own actions in lua.
+-- On error (terminal not existent or buffer not valid) returns nil for both.
+function M.getBufferTerminalId(args)
+    log.trace("term: getBufferTerminalId(): Terminal:", args)
+    if type(args) == "number" then
+        args = { idx = args }
+    end
+    local term_handle = terminals[args.idx]
+    if not term_handle or not vim.api.nvim_buf_is_valid(term_handle.buf_id) then
+        term_handle = {
+            buf_id = nil,
+            term_id = nil,
+        }
+        return term_handle
+    end
+    return term_handle
 end
 
 function M.gotoTerminal(idx)
