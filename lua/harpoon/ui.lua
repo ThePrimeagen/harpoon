@@ -103,6 +103,8 @@ function M.toggle_quick_menu()
             file = "(empty)"
         end
         contents[idx] = string.format("%s", file)
+        vim.api.nvim_buf_set_keymap(Harpoon_bufh, "n", string.format("%d", idx),
+            "<Cmd>lua require('harpoon.ui').nav_file(" .. idx .. ")<CR>", { silent = true })
     end
 
     vim.api.nvim_win_set_option(Harpoon_win_id, "number", true)
