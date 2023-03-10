@@ -70,7 +70,7 @@ local function get_menu_items()
     return indices
 end
 
-function M.toggle_quick_menu()
+function M.toggle_quick_menu(current_file)
     log.trace("toggle_quick_menu()")
     if Harpoon_win_id ~= nil and vim.api.nvim_win_is_valid(Harpoon_win_id) then
         close_menu()
@@ -80,14 +80,19 @@ function M.toggle_quick_menu()
     local win_info = create_window()
     local contents = {}
     local global_config = harpoon.get_global_settings()
+    local current_line = nil
 
     Harpoon_win_id = win_info.win_id
     Harpoon_bufh = win_info.bufnr
 
+    local current_path = utils.normalize_path(current_file)
     for idx = 1, Marked.get_length() do
         local file = Marked.get_marked_file_name(idx)
         if file == "" then
             file = "(empty)"
+        end
+        if file == current_path then
+            current_line = idx
         end
         contents[idx] = string.format("%s", file)
     end
@@ -98,6 +103,11 @@ function M.toggle_quick_menu()
     vim.api.nvim_buf_set_option(Harpoon_bufh, "filetype", "harpoon")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "buftype", "acwrite")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "bufhidden", "delete")
+    vim.api.nvim_buf_clear_namespace(Harpoon_bufh, utils.namespace_id(), 0, -1)
+    if current_line ~= nil then
+        vim.api.nvim_win_set_cursor(Harpoon_win_id, { current_line, 0 })
+        vim.api.nvim_buf_add_highlight(Harpoon_bufh, utils.namespace_id(), "Label", current_line - 1, 0, -1)
+    end
     vim.api.nvim_buf_set_keymap(
         Harpoon_bufh,
         "n",

@@ -27,6 +27,16 @@ function M.branch_key()
     end
 end
 
+Namespace_id = nil
+function M.namespace_id()
+  if Namespace_id ~= nil then
+    return Namespace_id
+  end
+
+  Namespace_id = vim.api.nvim_create_namespace('harpoon')
+  return Namespace_id
+end
+
 function M.normalize_path(item)
     return Path:new(item):make_relative(M.project_key())
 end
