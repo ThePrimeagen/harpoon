@@ -23,6 +23,7 @@ local generate_new_finder = function()
     return finders.new_table({
         results = prepare_results(harpoon.get_mark_config().marks),
         entry_maker = function(entry)
+            local ordinal = entry.index .. " - " .. entry.filename
             local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
             local displayer = entry_display.create({
                 separator = " - ",
@@ -34,13 +35,13 @@ local generate_new_finder = function()
             })
             local make_display = function()
                 return displayer({
-                    tostring(entry.index),
+                    { tostring(entry.index), "TelescopeResultsNumber" },
                     line,
                 })
             end
             return {
                 value = entry,
-                ordinal = line,
+                ordinal = ordinal,
                 display = make_display,
                 lnum = entry.row,
                 col = entry.col,
