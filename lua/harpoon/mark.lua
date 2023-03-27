@@ -230,10 +230,6 @@ function M.remove_empty_tail(_emit_on_changed)
 
     for i = M.get_length(), 1, -1 do
         local filename = M.get_marked_file_name(i)
-        if filename ~= "" then
-            return
-        end
-
         if filename == "" then
             table.remove(config.marks, i)
             found = found or _emit_on_changed
