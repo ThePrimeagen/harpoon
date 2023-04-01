@@ -269,37 +269,42 @@ function M.close_notification(bufnr)
     vim.api.nvim_buf_delete(bufnr)
 end
 
-function M.nav_next()
+---@param count number?
+function M.nav_next(count)
     log.trace("nav_next()")
+
+    if count == nil then
+        count = 1
+    end
+
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
     if current_index == nil then
-        current_index = 1
-    else
-        current_index = current_index + 1
+        current_index = 0
     end
 
-    if current_index > number_of_items then
-        current_index = 1
-    end
+    current_index = (current_index + count - 1) % number_of_items + 1
+
     M.nav_file(current_index)
 end
 
-function M.nav_prev()
+---@param count number?
+function M.nav_prev(count)
     log.trace("nav_prev()")
+
+    if count == nil then
+        count = 1
+    end
+
     local current_index = Marked.get_current_index()
     local number_of_items = Marked.get_length()
 
     if current_index == nil then
-        current_index = number_of_items
-    else
-        current_index = current_index - 1
+        current_index = number_of_items + 1
     end
 
-    if current_index < 1 then
-        current_index = number_of_items
-    end
+    current_index = (current_index - count - 1) % number_of_items + 1
 
     M.nav_file(current_index)
 end
