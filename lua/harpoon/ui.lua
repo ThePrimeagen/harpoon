@@ -103,6 +103,17 @@ function M.toggle_quick_menu()
             file = "(empty)"
         end
         contents[idx] = string.format("%s", file)
+
+        vim.api.nvim_buf_set_keymap(
+            Harpoon_bufh,
+            "n",
+            tostring(idx),
+            string.format(
+                "<Cmd>lua require('harpoon.ui').select_menu_item(%s)<CR>",
+                idx
+            ),
+            {}
+        )
     end
 
     vim.api.nvim_win_set_option(Harpoon_win_id, "number", true)
@@ -157,8 +168,8 @@ function M.toggle_quick_menu()
     )
 end
 
-function M.select_menu_item()
-    local idx = vim.fn.line(".")
+function M.select_menu_item(idx)
+    idx = idx or vim.fn.line(".")
     close_menu(true)
     M.nav_file(idx)
 end
