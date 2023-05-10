@@ -210,6 +210,9 @@ function M.setup(config)
             ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
             ["mark_branch"] = false,
+            ["tabline"] = false,
+            ["tabline_suffix"] = "   ",
+            ["tabline_prefix"] = "   ",
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 
@@ -217,7 +220,12 @@ function M.setup(config)
     -- an object for vim.loop.cwd()
     ensure_correct_config(complete_config)
 
+    if complete_config.tabline then
+        require("harpoon.tabline").setup(complete_config)
+    end
+
     HarpoonConfig = complete_config
+
     log.debug("setup(): Complete config", HarpoonConfig)
     log.trace("setup(): log_key", Dev.get_log_key())
 end
