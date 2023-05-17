@@ -149,6 +149,11 @@ global_settings = {
 
     -- set marks specific to each git branch inside git repository
     mark_branch = false,
+
+    -- enable tabline with harpoon marks
+    tabline = false,
+    tabline_prefix = "   ",
+    tabline_suffix = "   ",
 }
 ```
 
@@ -207,6 +212,29 @@ require("harpoon").setup({
     }
 })
 ```
+
+
+#### Tabline
+
+By default, the tabline will use the default theme of your theme.  You can customize by editing the following highlights:
+
+* HarpoonInactive
+* HarpoonActive
+* HarpoonNumberActive
+* HarpoonNumberInactive
+
+Example to make it cleaner:
+
+```lua
+vim.cmd('highlight! HarpoonInactive guibg=NONE guifg=#63698c')
+vim.cmd('highlight! HarpoonActive guibg=NONE guifg=white')
+vim.cmd('highlight! HarpoonNumberActive guibg=NONE guifg=#7aa2f7')
+vim.cmd('highlight! HarpoonNumberInactive guibg=NONE guifg=#7aa2f7')
+vim.cmd('highlight! TabLineFill guibg=NONE guifg=white')
+```
+
+Result: 
+![tabline](https://i.imgur.com/8i8mKJD.png) 
 
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.  
