@@ -1,4 +1,3 @@
-local harpoon = require("harpoon")
 local utils = require("harpoon.utils")
 local log = require("harpoon.dev").log
 
@@ -11,6 +10,7 @@ local callbacks = {}
 -- need one event emitted
 local function emit_changed()
     log.trace("_emit_changed()")
+    local harpoon = require("harpoon")
     if harpoon.get_global_settings().save_on_change then
         harpoon.save()
     end
@@ -116,6 +116,7 @@ local function validate_buf_name(buf_name)
 end
 
 local function filter_filetype()
+    local harpoon = require("harpoon")
     local current_filetype = vim.bo.filetype
     local excluded_filetypes = harpoon.get_global_settings().excluded_filetypes
 
@@ -137,6 +138,7 @@ local function filter_filetype()
 end
 
 function M.get_index_of(item, marks)
+    local harpoon = require("harpoon")
     log.trace("get_index_of():", item)
     if item == nil then
         log.error(
@@ -204,6 +206,7 @@ function M.valid_index(idx, marks)
 end
 
 function M.add_file(file_name_or_buf_id)
+    local harpoon = require("harpoon")
     filter_filetype()
     local buf_name = get_buf_name(file_name_or_buf_id)
     log.trace("add_file():", buf_name)
@@ -223,6 +226,7 @@ end
 
 -- _emit_on_changed == false should only be used internally
 function M.remove_empty_tail(_emit_on_changed)
+    local harpoon = require("harpoon")
     log.trace("remove_empty_tail()")
     _emit_on_changed = _emit_on_changed == nil or _emit_on_changed
     local config = harpoon.get_mark_config()
@@ -246,6 +250,7 @@ function M.remove_empty_tail(_emit_on_changed)
 end
 
 function M.store_offset()
+    local harpoon = require("harpoon")
     log.trace("store_offset()")
     local ok, res = pcall(function()
         local marks = harpoon.get_mark_config().marks
@@ -275,6 +280,7 @@ function M.store_offset()
 end
 
 function M.rm_file(file_name_or_buf_id)
+    local harpoon = require("harpoon")
     local buf_name = get_buf_name(file_name_or_buf_id)
     local idx = M.get_index_of(buf_name)
     log.trace("rm_file(): Removing mark at id", idx)
@@ -290,6 +296,7 @@ function M.rm_file(file_name_or_buf_id)
 end
 
 function M.clear_all()
+    local harpoon = require("harpoon")
     harpoon.get_mark_config().marks = {}
     log.trace("clear_all(): Clearing all marks.")
     emit_changed()
@@ -297,6 +304,7 @@ end
 
 --- ENTERPRISE PROGRAMMING
 function M.get_marked_file(idxOrName)
+    local harpoon = require("harpoon")
     log.trace("get_marked_file():", idxOrName)
     if type(idxOrName) == "string" then
         idxOrName = M.get_index_of(idxOrName)
@@ -305,6 +313,7 @@ function M.get_marked_file(idxOrName)
 end
 
 function M.get_marked_file_name(idx, marks)
+    local harpoon = require("harpoon")
     local mark
     if marks ~= nil then
         mark = marks[idx]
@@ -316,6 +325,7 @@ function M.get_marked_file_name(idx, marks)
 end
 
 function M.get_length(marks)
+    local harpoon = require("harpoon")
     if marks == nil then
         marks = harpoon.get_mark_config().marks
     end
@@ -324,6 +334,7 @@ function M.get_length(marks)
 end
 
 function M.set_current_at(idx)
+    local harpoon = require("harpoon")
     filter_filetype()
     local buf_name = get_buf_name()
     log.trace("set_current_at(): Setting id", idx, buf_name)
@@ -347,6 +358,7 @@ function M.set_current_at(idx)
 end
 
 function M.to_quickfix_list()
+    local harpoon = require("harpoon")
     log.trace("to_quickfix_list(): Sending marks to quickfix list.")
     local config = harpoon.get_mark_config()
     local file_list = filter_empty_string(config.marks)
@@ -365,6 +377,7 @@ function M.to_quickfix_list()
 end
 
 function M.set_mark_list(new_list)
+    local harpoon = require("harpoon")
     log.trace("set_mark_list(): New list:", new_list)
 
     local config = harpoon.get_mark_config()

@@ -78,6 +78,8 @@ function M.setup(opts)
         end,
     })
 
+    local mark = require("harpoon.mark")
+    mark.on("changed", function() vim.cmd("redrawtabline") end)
     log.debug("setup(): Tabline Setup", opts)
 end
 
