@@ -39,7 +39,14 @@ function M.setup(opts)
         for i, tab in ipairs(original_tabs) do
             local is_current = string.match(vim.fn.bufname(), tab.filename) or vim.fn.bufname() == tab.filename
 
-            local label = tabs[i].filename
+            local label
+
+            if tabs[i].filename == "" or tabs[i].filename == "(empty)" then
+                label = "(empty)"
+                is_current = false
+            else
+                label = tabs[i].filename
+            end
 
 
             if is_current then
