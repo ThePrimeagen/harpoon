@@ -154,6 +154,9 @@ global_settings = {
     tabline = false,
     tabline_prefix = "   ",
     tabline_suffix = "   ",
+
+    -- enable vim notifications when marking files 
+    enable_notifications = true,
 }
 ```
 

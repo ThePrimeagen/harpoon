@@ -136,6 +136,12 @@ local function filter_filetype()
     end
 end
 
+local function notify(message, buf_name, index, level)
+    if harpoon.get_global_settings().enable_notifications then
+        vim.notify(string.format(message, buf_name, index), level)
+    end
+end
+
 function M.get_index_of(item, marks)
     log.trace("get_index_of():", item)
     if item == nil then
@@ -210,12 +216,16 @@ function M.add_file(file_name_or_buf_id)
 
     if M.valid_index(M.get_index_of(buf_name)) then
         -- we don't alter file layout.
+        local found_idx = M.get_index_of(buf_name)
+        notify("`%s` is already set as index `%d`", buf_name, found_idx, vim.log.levels.WARN)
         return
     end
 
     validate_buf_name(buf_name)
 
     local found_idx = get_first_empty_slot()
+    notify("Added `%s` as index `%d`", buf_name, found_idx, vim.log.levels.INFO)
+
     harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
     M.remove_empty_tail(false)
     emit_changed()
