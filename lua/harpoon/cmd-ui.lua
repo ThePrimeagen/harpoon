@@ -9,6 +9,9 @@ local M = {}
 Harpoon_cmd_win_id = nil
 Harpoon_cmd_bufh = nil
 
+Harpoon_last_selected_cmd = nil
+Harpoon_last_selected_idx = nil
+
 local function close_menu(force_save)
     force_save = force_save or false
     local global_config = harpoon.get_global_settings()
@@ -141,6 +144,7 @@ end
 function M.select_menu_item()
     log.trace("cmd-ui#select_menu_item()")
     local cmd = vim.fn.line(".")
+    Harpoon_last_selected_cmd = cmd
     close_menu(true)
     local answer = vim.fn.input("Terminal index (default to 1): ")
     if answer == "" then
@@ -148,6 +152,7 @@ function M.select_menu_item()
     end
     local idx = tonumber(answer)
     if idx then
+        Harpoon_last_selected_idx = idx
         term.sendCommand(idx, cmd)
     end
 end
@@ -155,6 +160,21 @@ end
 function M.on_menu_save()
     log.trace("cmd-ui#on_menu_save()")
     term.set_cmd_list(get_menu_items())
+end
+
+function M.resend()
+    log.trace("cmd-ui#resend()")
+    if (Harpoon_last_selected_cmd == nil or Harpoon_last_selected_idx == nil) then
+        log.warn(
+            string.format(
+                "Could not resend command '%s' to term idx '%s' because at least one of them is nil.",
+                Harpoon_last_selected_cmd, Harpoon_last_selected_idx
+            )
+        )
+        return
+    end
+
+    term.sendCommand(Harpoon_last_selected_idx, Harpoon_last_selected_cmd)
 end
 
 return M

@@ -87,6 +87,10 @@ further more commands can be stored for later quick
 lua require('harpoon.cmd-ui').toggle_quick_menu()       -- shows the commands menu
 lua require("harpoon.term").sendCommand(1, 1)           -- sends command 1 to term 1
 ```
+the last command you've selected with the cmd-ui's quick menu can be resent
+```lua
+lua require('harpoon.cmd-ui').resend()                  -- resends the last selected command to the last selected terminal
+```
 
 ### Tmux Support
 tmux is supported out of the box and can be used as a drop-in replacement to normal terminals
