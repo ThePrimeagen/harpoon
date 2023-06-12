@@ -65,6 +65,10 @@ you can also cycle the list in both directions
 :lua require("harpoon.ui").nav_next()                   -- navigates to next mark
 :lua require("harpoon.ui").nav_prev()                   -- navigates to previous mark
 ```
+from the quickmenu, open a file in: 
+a vertical split with control+v,
+a horizontal split with control+x, 
+a new tab with control+t
 
 ### Terminal Navigation
 this works like file navigation except that if there is no terminal at the specified index
@@ -148,6 +152,11 @@ global_settings = {
 
     -- set an override for opening a terminal, this is useful if you want to use a different terminal
     create_with = ":terminal",
+    
+    -- enable tabline with harpoon marks
+    tabline = false,
+    tabline_prefix = "   ",
+    tabline_suffix = "   ",
 }
 ```
 
@@ -206,6 +215,29 @@ require("harpoon").setup({
     }
 })
 ```
+
+
+#### Tabline
+
+By default, the tabline will use the default theme of your theme.  You can customize by editing the following highlights:
+
+* HarpoonInactive
+* HarpoonActive
+* HarpoonNumberActive
+* HarpoonNumberInactive
+
+Example to make it cleaner:
+
+```lua
+vim.cmd('highlight! HarpoonInactive guibg=NONE guifg=#63698c')
+vim.cmd('highlight! HarpoonActive guibg=NONE guifg=white')
+vim.cmd('highlight! HarpoonNumberActive guibg=NONE guifg=#7aa2f7')
+vim.cmd('highlight! HarpoonNumberInactive guibg=NONE guifg=#7aa2f7')
+vim.cmd('highlight! TabLineFill guibg=NONE guifg=white')
+```
+
+Result: 
+![tabline](https://i.imgur.com/8i8mKJD.png) 
 
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.
