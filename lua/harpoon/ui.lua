@@ -134,7 +134,7 @@ function M.toggle_quick_menu()
     )
     vim.cmd(
         string.format(
-            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon.ui').on_menu_save()",
+            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon.ui').on_menu_save() require('harpoon').save()",
             Harpoon_bufh
         )
     )
