@@ -138,7 +138,7 @@ function M.toggle_quick_menu()
             Harpoon_bufh
         )
     )
-    if global_config.save_on_change then
+    if global_config.save_on_text_change then
         vim.cmd(
             string.format(
                 "autocmd TextChanged,TextChangedI <buffer=%s> lua require('harpoon.ui').on_menu_save()",

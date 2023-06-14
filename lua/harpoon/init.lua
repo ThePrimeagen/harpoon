@@ -206,6 +206,7 @@ function M.setup(config)
         global_settings = {
             ["save_on_toggle"] = false,
             ["save_on_change"] = true,
+            ["save_on_text_change"] = false,
             ["enter_on_sendcmd"] = false,
             ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },

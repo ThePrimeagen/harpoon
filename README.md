@@ -138,6 +138,9 @@ global_settings = {
     -- saves the harpoon file upon every change. disabling is unrecommended.
     save_on_change = true,
 
+    -- saves the harpoon file upon every change in the ui.
+    save_on_text_change = false
+
     -- sets harpoon to run the command immediately as it's passed to the terminal when calling `sendCommand`.
     enter_on_sendcmd = false,
 
