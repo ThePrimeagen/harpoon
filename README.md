@@ -65,9 +65,9 @@ you can also cycle the list in both directions
 :lua require("harpoon.ui").nav_next()                   -- navigates to next mark
 :lua require("harpoon.ui").nav_prev()                   -- navigates to previous mark
 ```
-from the quickmenu, open a file in: 
+from the quickmenu, open a file in:
 a vertical split with control+v,
-a horizontal split with control+x, 
+a horizontal split with control+x,
 a new tab with control+t
 
 ### Terminal Navigation
@@ -143,6 +143,9 @@ global_settings = {
 
     -- closes any tmux windows harpoon that harpoon creates when you close Neovim.
     tmux_autoclose_windows = false,
+
+    -- what keys should be mapped to close the ui. Default is `:q`. Example override: { "<ESC>", "q" }.
+    ui_closing_keys = {},
 
     -- filetypes that you want to prevent from adding to the harpoon list menu.
     excluded_filetypes = { "harpoon" },
@@ -233,11 +236,11 @@ vim.cmd('highlight! HarpoonNumberInactive guibg=NONE guifg=#7aa2f7')
 vim.cmd('highlight! TabLineFill guibg=NONE guifg=white')
 ```
 
-Result: 
-![tabline](https://i.imgur.com/8i8mKJD.png) 
+Result:
+![tabline](https://i.imgur.com/8i8mKJD.png)
 
 ## ⇁ Social
-For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.  
+For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
 * [Twitch](https://www.twitch.tv/theprimeagen)
 * [Twitter](https://twitter.com/ThePrimeagen)

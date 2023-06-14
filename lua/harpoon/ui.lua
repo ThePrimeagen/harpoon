@@ -111,20 +111,17 @@ function M.toggle_quick_menu()
     vim.api.nvim_buf_set_option(Harpoon_bufh, "filetype", "harpoon")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "buftype", "acwrite")
     vim.api.nvim_buf_set_option(Harpoon_bufh, "bufhidden", "delete")
-    vim.api.nvim_buf_set_keymap(
-        Harpoon_bufh,
-        "n",
-        "q",
-        "<Cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>",
-        { silent = true }
-    )
-    vim.api.nvim_buf_set_keymap(
-        Harpoon_bufh,
-        "n",
-        "<ESC>",
-        "<Cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>",
-        { silent = true }
-    )
+
+    for i = 1, #global_config.ui_closing_keys do
+        vim.api.nvim_buf_set_keymap(
+            Harpoon_bufh,
+            "n",
+            global_config.ui_closing_keys[i],
+            "<Cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>",
+            { silent = true }
+        )
+    end
+
     vim.api.nvim_buf_set_keymap(
         Harpoon_bufh,
         "n",
