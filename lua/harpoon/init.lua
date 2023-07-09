@@ -211,6 +211,7 @@ function M.setup(config)
             ["excluded_filetypes"] = { "harpoon" },
             ["mark_branch"] = false,
             ["tabline"] = false,
+            ["tabline_icons"] = false,
             ["tabline_suffix"] = "   ",
             ["tabline_prefix"] = "   ",
         },
@@ -220,7 +221,7 @@ function M.setup(config)
     -- an object for vim.loop.cwd()
     ensure_correct_config(complete_config)
 
-    if complete_config.tabline then
+    if complete_config.global_settings.tabline then
         require("harpoon.tabline").setup(complete_config)
     end
 

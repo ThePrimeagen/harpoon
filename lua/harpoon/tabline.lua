@@ -36,6 +36,8 @@ function M.setup(opts)
         local tabline = ''
 
         local index = require('harpoon.mark').get_index_of(vim.fn.bufname())
+        local cfg = opts.global_settings
+        local has_icons = cfg.tabline_icons
 
         for i, tab in ipairs(tabs) do
             local is_current = i == index
@@ -49,16 +51,34 @@ function M.setup(opts)
                 label = tab.filename
             end
 
+            if has_icons then
+                local extension = tab.filename:match("^.+(%..+)$") or ""
+                local mime, color = require 'nvim-web-devicons'.get_icon(tab.filename, extension:sub(2, #extension),
+                    { default = true })
 
-            if is_current then
-                tabline = tabline ..
-                    '%#HarpoonNumberActive#' .. (opts.tabline_prefix or '   ') .. i .. ' %*' .. '%#HarpoonActive#'
+                if is_current then
+                    tabline = tabline ..
+                        '%#HarpoonNumberActive#' ..
+                        (cfg.tabline_prefix or '   ') ..
+                        i .. ' %*%#' .. color .. '#' .. mime .. '%*%#HarpoonActive# '
+                else
+                    tabline = tabline ..
+                        '%#HarpoonNumberInactive#' ..
+                        (cfg.tabline_prefix or '   ') ..
+                        i .. ' %*%#' .. color .. '#' .. mime .. '%*' .. '%#HarpoonInactive# '
+                end
             else
-                tabline = tabline ..
-                    '%#HarpoonNumberInactive#' .. (opts.tabline_prefix or '   ') .. i .. ' %*' .. '%#HarpoonInactive#'
+                if is_current then
+                    tabline = tabline ..
+                        '%#HarpoonNumberActive#' .. (cfg.tabline_prefix or '   ') .. i .. ' %*' .. '%#HarpoonActive#'
+                else
+                    tabline = tabline ..
+                        '%#HarpoonNumberInactive#' ..
+                        (opts.tabline_prefix or '   ') .. i .. ' %*' .. '%#HarpoonInactive#'
+                end
             end
 
-            tabline = tabline .. label .. (opts.tabline_suffix or '   ') .. '%*'
+            tabline = tabline .. label .. (cfg.tabline_suffix or '   ') .. '%*'
 
             if i < #tabs then
                 tabline = tabline .. '%T'

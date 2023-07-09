@@ -125,7 +125,7 @@ currently only marks are supported in telescope
 ## ⇁ Configuration
 if configuring harpoon is desired it must be done through harpoons setup function
 ```lua
-require("harpoon").setup({ ... })
+require("harpoon").setup({ global_settings = { ... }, projects = { ... }})
 ```
 
 ### Global Settings
@@ -152,6 +152,7 @@ global_settings = {
 
     -- enable tabline with harpoon marks
     tabline = false,
+    tabline_icons = false, -- requires nvim-web-devicons
     tabline_prefix = "   ",
     tabline_suffix = "   ",
 }
