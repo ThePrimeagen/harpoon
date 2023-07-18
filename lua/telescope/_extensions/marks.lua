@@ -4,6 +4,7 @@ local entry_display = require("telescope.pickers.entry_display")
 local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
+local utils = require("telescope.utils")
 local harpoon = require("harpoon")
 local harpoon_mark = require("harpoon.mark")
 
@@ -19,11 +20,20 @@ local function prepare_results(list)
     return next
 end
 
-local generate_new_finder = function()
+local generate_new_finder = function(opts)
+    opts = opts or {}
+    local disable_devicons = opts.disable_devicons
+
     return finders.new_table({
         results = prepare_results(harpoon.get_mark_config().marks),
         entry_maker = function(entry)
-            local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
+            local display_filename = utils.transform_path(opts, entry.filename)
+            local line, hl_group, icon = utils.transform_devicons(
+                entry.filename,
+                display_filename .. ":" .. entry.row .. ":" .. entry.col,
+                disable_devicons
+            )
+
             local displayer = entry_display.create({
                 separator = " - ",
                 items = {
@@ -31,11 +41,21 @@ local generate_new_finder = function()
                     { remaining = true },
                 },
             })
+
             local make_display = function()
+                local icon_start = #tostring(entry.index) + 5
+                local icon_end = icon_start + #icon - 1
+                local hl_group_line = nil
+
+                if hl_group then
+                    hl_group_line = { { { icon_start, icon_end }, hl_group } }
+                end
+
                 return displayer({
                     tostring(entry.index),
                     line,
-                })
+                }),
+                    hl_group_line
             end
             return {
                 value = entry,
@@ -50,9 +70,8 @@ local generate_new_finder = function()
 end
 
 local delete_harpoon_mark = function(prompt_bufnr)
-    local confirmation = vim.fn.input(
-        string.format("Delete current mark(s)? [y/n]: ")
-    )
+    local confirmation =
+        vim.fn.input(string.format("Delete current mark(s)? [y/n]: "))
     if
         string.len(confirmation) == 0
         or string.sub(string.lower(confirmation), 0, 1) ~= "y"
