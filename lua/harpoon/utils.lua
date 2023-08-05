@@ -74,19 +74,4 @@ function M.is_white_space(str)
     return str:gsub("%s", "") == ""
 end
 
--- http://lua-users.org/wiki/CopyTable
-function M.deepcopy(orig)
-    local copy
-    if type(orig) == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[M.deepcopy(orig_key)] = M.deepcopy(orig_value)
-        end
-        setmetatable(copy, M.deepcopy(getmetatable(orig)))
-    else
-        copy = orig
-    end
-    return copy
-end
-
 return M
