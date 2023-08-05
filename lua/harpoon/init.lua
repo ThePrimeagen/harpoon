@@ -2,7 +2,6 @@ local Path = require("plenary.path")
 local utils = require("harpoon.utils")
 local Dev = require("harpoon.dev")
 local log = Dev.log
-
 local config_path = vim.fn.stdpath("config")
 local data_path = vim.fn.stdpath("data")
 local user_config = string.format("%s/harpoon.json", config_path)
@@ -171,7 +170,12 @@ function M.save()
     M.refresh_projects_b4update()
 
     log.trace("save(): Saving cache config to", cache_config)
-    Path:new(cache_config):write(vim.fn.json_encode(HarpoonConfig), "w")
+
+    local to_save = utils.deepcopy(HarpoonConfig)
+    if type(to_save.menu.width) == "function" then
+        to_save.menu.width = nil
+    end
+    Path:new(cache_config):write(vim.fn.json_encode(to_save), "w")
 end
 
 local function read_config(local_config)

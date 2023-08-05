@@ -213,6 +213,19 @@ require("harpoon").setup({
 })
 ```
 
+It's also possible to provide a function that will run and set the menu width on open. This means the menu will fit the current open window.
+The following snippet sets the menu width to 80% of the window width or 60, whichever is greater:
+
+```lua
+require("harpoon").setup {
+  menu = {
+    width = function()
+      return math.max(60, math.floor(vim.api.nvim_win_get_width(0) * 0.8))
+    end
+  }
+}
+
+```
 
 #### Tabline
 
