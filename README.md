@@ -33,10 +33,58 @@ to go to the files you want.
 
 ## ⇁ Installation
 * neovim 0.5.0+ required
-* install using your favorite plugin manager (`vim-plug` in this example)
+* install using your favorite plugin manager
+
+### Vim-plug
+
 ```vim
 Plug 'nvim-lua/plenary.nvim' " don't forget to add this one if you don't have it yet!
 Plug 'ThePrimeagen/harpoon'
+```
+
+### LazyVim
+
+Install the plugin by creating the file `NVIM_CONFIG/lua/plugins/harpoon.lua` in your Neovim config directory (e.g. `~/.config/nvim/`)
+
+```lua
+return { "ThePrimeagen/harpoon" }
+```
+
+To set up keyboard shortcuts, you can make edits to your `NVIM_CONFIG/lua/config/keymaps.lua` file.
+For example, the relevant section could look like:
+
+```lua
+wk.register({
+...
+    h = {
+        name = "harpoon",
+        a = { "<cmd>lua require('harpoon.mark').add_file()<cr>", "add file" },
+        r = { "<cmd>lua require('harpoon.mark').rm_file()<cr>", "remove file" },
+        m = { "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", "harpoon menu" },
+        n = { "<cmd>lua require('harpoon.ui').nav_next()<cr>", "next file" },
+        p = { "<cmd>lua require('harpoon.ui').nav_prev()<cr>", "previous file" },
+        ["1"] = { "<cmd> lua require('harpoon.ui').nav_file(1)<cr>", "file 1" },
+        ["2"] = { "<cmd> lua require('harpoon.ui').nav_file(2)<cr>", "file 2" },
+        ["3"] = { "<cmd> lua require('harpoon.ui').nav_file(3)<cr>", "file 3" },
+    },
+    # Remap debugging to "H" from LV default of "h"
+    H = {
+        name = "help/debug/conceal",
+        c = {
+            name = "conceal",
+            h = { ":set conceallevel=1<cr>", "hide/conceal" },
+            s = { ":set conceallevel=0<cr>", "show/unconceal" },
+        },
+        t = {
+            name = "treesitter",
+            t = { vim.treesitter.inspect_tree, "show tree" },
+            c = { ":=vim.treesitter.get_captures_at_cursor()<cr>", "show capture" },
+            n = { ":=vim.treesitter.get_node():type()<cr>", "show node" },
+        },
+    },
+
+...
+})
 ```
 
 ## ⇁ Harpooning
