@@ -30,8 +30,8 @@ local function shorten_filenames(filenames)
     return shortened
 end
 
-function M.setup(opts)
-    function _G.tabline()
+function M.format(opts)
+    return function()
         local tabs = shorten_filenames(require('harpoon').get_mark_config().marks)
         local tabline = ''
 
@@ -67,6 +67,11 @@ function M.setup(opts)
 
         return tabline
     end
+end
+
+function M.setup(opts)
+
+    vim.api.nvim_set_var('tabline', M.format(opts))
 
     vim.opt.showtabline = 2
 
