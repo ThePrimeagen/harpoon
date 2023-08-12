@@ -52,13 +52,13 @@ function M.format(opts)
 
             if is_current then
                 tabline = tabline ..
-                    '%#HarpoonNumberActive#' .. (opts.tabline_prefix or '   ') .. i .. ' %*' .. '%#HarpoonActive#'
+                    '%#HarpoonNumberActive#' .. (opts.tabline_prefix or '   ') .. i .. ' %#HarpoonActive#'
             else
                 tabline = tabline ..
-                    '%#HarpoonNumberInactive#' .. (opts.tabline_prefix or '   ') .. i .. ' %*' .. '%#HarpoonInactive#'
+                    '%#HarpoonNumberInactive#' .. (opts.tabline_prefix or '   ') .. i .. ' %#HarpoonInactive#'
             end
 
-            tabline = tabline .. label .. (opts.tabline_suffix or '   ') .. '%*'
+            tabline = tabline .. label .. (opts.tabline_suffix or '   ')
 
             if i < #tabs then
                 tabline = tabline .. '%T'
