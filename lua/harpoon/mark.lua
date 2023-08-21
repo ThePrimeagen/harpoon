@@ -290,7 +290,8 @@ function M.rm_file(file_name_or_buf_id)
         log.debug("rm_file(): No mark exists for id", file_name_or_buf_id)
         return
     end
-    harpoon.get_mark_config().marks[idx] = create_mark("")
+    local marks = harpoon.get_mark_config().marks
+    marks[idx] = create_mark("")
     local config = harpoon.get_complete_config()
     if config.auto_shift_indices then
         for i = 1, M.get_length(), 1 do
