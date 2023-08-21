@@ -290,9 +290,18 @@ function M.rm_file(file_name_or_buf_id)
         log.debug("rm_file(): No mark exists for id", file_name_or_buf_id)
         return
     end
-
     harpoon.get_mark_config().marks[idx] = create_mark("")
-    M.remove_empty_tail(false)
+    local config = harpoon.get_complete_config()
+    if config.auto_shift_indices then
+        for i = 1, M.get_length(), 1 do
+            local filename = M.get_marked_file_name(i)
+            if filename == "" then
+                table.remove(marks, i)
+            end
+        end
+    else
+        M.remove_empty_tail(false)
+    end
     emit_changed()
 end
 

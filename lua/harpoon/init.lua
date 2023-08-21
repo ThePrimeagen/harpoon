@@ -206,6 +206,7 @@ function M.setup(config)
         global_settings = {
             ["save_on_toggle"] = false,
             ["save_on_change"] = true,
+            ["auto_shift_indices"] = false,
             ["enter_on_sendcmd"] = false,
             ["tmux_autoclose_windows"] = false,
             ["excluded_filetypes"] = { "harpoon" },
@@ -215,7 +216,6 @@ function M.setup(config)
             ["tabline_prefix"] = "   ",
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
-
     -- There was this issue where the vim.loop.cwd() didn't have marks or term, but had
     -- an object for vim.loop.cwd()
     ensure_correct_config(complete_config)
@@ -225,7 +225,6 @@ function M.setup(config)
     end
 
     HarpoonConfig = complete_config
-
     log.debug("setup(): Complete config", HarpoonConfig)
     log.trace("setup(): log_key", Dev.get_log_key())
 end
@@ -282,6 +281,11 @@ function M.refresh_projects_b4update()
     HarpoonConfig = complete_config
     log.debug("refresh_projects_b4update(): Complete config", HarpoonConfig)
     log.trace("refresh_projects_b4update(): log_key", Dev.get_log_key())
+end
+
+function M.get_complete_config()
+    log.trace("get_complete_config()")
+    return HarpoonConfig
 end
 
 function M.get_term_config()
