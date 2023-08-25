@@ -186,8 +186,15 @@ function M.nav_file(id)
     end
 
     local mark = Marked.get_marked_file(idx)
-    local filename = vim.fs.normalize(mark.filename)
-    local buf_id = get_or_create_buffer(filename)
+    local buf_id
+
+    if vim.fn.has('macunix') == 0 then
+        buf_id = get_or_create_buffer(mark.filename)
+    else
+        local filename = vim.fs.normalize(mark.filename)
+        buf_id = get_or_create_buffer(filename)
+    end
+
     local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
 
     local old_bufnr = vim.api.nvim_get_current_buf()
