@@ -177,7 +177,7 @@ local function get_or_create_buffer(filename)
     return vim.fn.bufadd(filename)
 end
 
-function M.nav_file(id)
+function M.nav_file(id, opts)
     log.trace("nav_file(): Navigating to", id)
     local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
@@ -189,6 +189,19 @@ function M.nav_file(id)
     local filename = vim.fs.normalize(mark.filename)
     local buf_id = get_or_create_buffer(filename)
     local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
+
+    if opts and opts.check_windows then
+        local current_windows = vim.api.nvim_tabpage_list_wins(0)
+        if #current_windows > 1 then
+            for _, window in ipairs(current_windows) do
+                local win_buf_id = vim.api.nvim_win_get_buf(window)
+                if win_buf_id == buf_id then
+                    vim.api.nvim_set_current_win(window)
+                    return
+                end
+            end
+        end
+    end
 
     local old_bufnr = vim.api.nvim_get_current_buf()
 
