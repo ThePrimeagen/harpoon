@@ -20,6 +20,7 @@ if global_config.tmux_autoclose_windows then
     })
 end
 
+
 local function create_terminal()
     log.trace("tmux: _create_terminal())")
 
@@ -121,6 +122,12 @@ local function get_first_empty_slot()
     return M.get_length() + 1
 end
 
+local function not_in_tmux()
+    log.trace("_not_in_tmux()")
+    local TMUX = os.getenv("TMUX");
+    return (TMUX == nil or TMUX == "")
+end
+
 function M.gotoTerminal(idx)
     log.trace("tmux: gotoTerminal(): Window:", idx)
     local window_handle = find_terminal(idx)
@@ -134,6 +141,32 @@ function M.gotoTerminal(idx)
 
     if ret ~= 0 then
         error("Failed to go to terminal." .. stderr[1])
+    end
+end
+
+function M.runCommand(cmd)
+    log.trace("tmux: runCommand()")
+
+    if not_in_tmux() then
+        error("Not inside a tmux session")
+        return
+    end
+
+    if type(cmd) == "number" then
+        cmd = harpoon.get_term_config().cmds[cmd]
+    end
+
+    if cmd then
+        log.debug("sendCommand:", cmd)
+        local _,ret,stderr = utils.get_os_command_output({
+            "tmux",
+            "neww",
+            "-n", "run", 
+            string.format(cmd .. "; read;"),
+        }, vim.loop.cwd())
+        if ret ~=0 then
+            error("Failed to run command. " .. stderr[1])
+        end
     end
 end
 
@@ -193,6 +226,7 @@ function M.valid_index(idx)
     end
     return true
 end
+
 
 function M.emit_changed()
     log.trace("_emit_changed()")
