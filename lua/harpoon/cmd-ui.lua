@@ -3,6 +3,7 @@ local popup = require("plenary.popup")
 local utils = require("harpoon.utils")
 local log = require("harpoon.dev").log
 local term = require("harpoon.term")
+local tmux = require("harpoon.tmux")
 
 local M = {}
 
@@ -138,10 +139,18 @@ function M.toggle_quick_menu()
     )
 end
 
+
 function M.select_menu_item()
     log.trace("cmd-ui#select_menu_item()")
     local cmd = vim.fn.line(".")
     close_menu(true)
+
+    local config = harpoon.get_global_settings();
+    if config.send_commands_to_tmux_window then
+        tmux.runCommand(cmd)
+        return
+    end
+
     local answer = vim.fn.input("Terminal index (default to 1): ")
     if answer == "" then
         answer = "1"
