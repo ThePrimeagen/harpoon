@@ -109,47 +109,6 @@ function M.setup(opts)
             end
         end
 
-        if (not index) and vim.fn.bufname() ~= "" then
-            if cfg.tabline_show_current_buffer_not_added then
-                local current_buffer_filename =
-                    vim.fn.fnamemodify(vim.fn.bufname(), ":t")
-
-                if has_icons then
-                    local extension = current_buffer_filename:match(
-                        "^.+(%..+)$"
-                    ) or ""
-                    -- local extension = tab.filename:match("^.+(%..+)$") or ""
-                    local mime, color = require("nvim-web-devicons").get_icon(
-                        current_buffer_filename,
-                        extension:sub(2, #extension),
-                        { default = true }
-                    )
-
-                    tabline = tabline
-                        .. "%T"
-                        .. "%#HarpoonNumberActive#"
-                        .. (cfg.tabline_prefix or "   ")
-                        .. "?"
-                        .. " %*%#"
-                        .. color
-                        .. "#"
-                        .. mime
-                        .. "%*%#HarpoonActive# "
-                        .. current_buffer_filename
-                        .. (cfg.tabline_suffix or "   ")
-                else
-                    tabline = tabline
-                        .. "%#HarpoonNumberActive#"
-                        .. (cfg.tabline_prefix or "   ")
-                        .. "?"
-                        .. " %*"
-                        .. "%#HarpoonActive#"
-                        .. current_buffer_filename
-                        .. (cfg.tabline_suffix or "   ")
-                end
-            end
-        end
-
         if
             vim.fn.bufexists("#")
             and not (require("harpoon.mark").get_index_of(
@@ -191,6 +150,47 @@ function M.setup(opts)
                         .. " %*"
                         .. "%#HarpoonInactive#"
                         .. previous_buffer_filename
+                        .. (cfg.tabline_suffix or "   ")
+                end
+            end
+        end
+
+        if (not index) and vim.fn.bufname() ~= "" then
+            if cfg.tabline_show_current_buffer_not_added then
+                local current_buffer_filename =
+                    vim.fn.fnamemodify(vim.fn.bufname(), ":t")
+
+                if has_icons then
+                    local extension = current_buffer_filename:match(
+                        "^.+(%..+)$"
+                    ) or ""
+                    -- local extension = tab.filename:match("^.+(%..+)$") or ""
+                    local mime, color = require("nvim-web-devicons").get_icon(
+                        current_buffer_filename,
+                        extension:sub(2, #extension),
+                        { default = true }
+                    )
+
+                    tabline = tabline
+                        .. "%T"
+                        .. "%#HarpoonNumberActive#"
+                        .. (cfg.tabline_prefix or "   ")
+                        .. "?"
+                        .. " %*%#"
+                        .. color
+                        .. "#"
+                        .. mime
+                        .. "%*%#HarpoonActive# "
+                        .. current_buffer_filename
+                        .. (cfg.tabline_suffix or "   ")
+                else
+                    tabline = tabline
+                        .. "%#HarpoonNumberActive#"
+                        .. (cfg.tabline_prefix or "   ")
+                        .. "?"
+                        .. " %*"
+                        .. "%#HarpoonActive#"
+                        .. current_buffer_filename
                         .. (cfg.tabline_suffix or "   ")
                 end
             end
