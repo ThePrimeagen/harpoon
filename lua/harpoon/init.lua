@@ -10,10 +10,8 @@ local cache_config = string.format("%s/harpoon.json", data_path)
 
 local M = {}
 
-local the_primeagen_harpoon = vim.api.nvim_create_augroup(
-    "THE_PRIMEAGEN_HARPOON",
-    { clear = true }
-)
+local the_primeagen_harpoon =
+    vim.api.nvim_create_augroup("THE_PRIMEAGEN_HARPOON", { clear = true })
 
 vim.api.nvim_create_autocmd({ "BufLeave, VimLeave" }, {
     callback = function()
@@ -212,6 +210,9 @@ function M.setup(config)
             ["mark_branch"] = false,
             ["tabline"] = false,
             ["tabline_icons"] = false,
+            ["tabline_previous_buffer_text"] = "#",
+            ["tabline_show_previous_buffer"] = true,
+            ["tabline_show_current_buffer_not_added"] = true,
             ["tabline_suffix"] = "   ",
             ["tabline_prefix"] = "   ",
         },

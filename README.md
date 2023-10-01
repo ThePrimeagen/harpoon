@@ -155,6 +155,9 @@ global_settings = {
     tabline_icons = false, -- requires nvim-web-devicons
     tabline_prefix = "   ",
     tabline_suffix = "   ",
+    tabline_previous_buffer_text = ":b#",
+    tabline_show_previous_buffer = true,
+    tabline_show_current_buffer_not_added = true,
 }
 ```
 
