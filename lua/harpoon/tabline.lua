@@ -109,7 +109,7 @@ function M.setup(opts)
             end
         end
 
-        if (not index) and vim.fn.bufname("#") ~= "" then
+        if (not index) and vim.fn.bufname() ~= "" then
             if cfg.tabline_show_current_buffer_not_added then
                 local current_buffer_filename =
                     vim.fn.fnamemodify(vim.fn.bufname(), ":t")
