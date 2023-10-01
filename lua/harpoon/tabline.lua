@@ -148,7 +148,9 @@ function M.setup(opts)
                         .. (cfg.tabline_suffix or "   ")
                 end
             end
-        elseif
+        end
+
+        if
             vim.fn.bufexists("#")
             and not (require("harpoon.mark").get_index_of(
                 vim.fn.bufname("#") or ""
