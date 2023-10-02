@@ -154,6 +154,9 @@ global_settings = {
     tabline = false,
     tabline_prefix = "   ",
     tabline_suffix = "   ",
+
+    -- notify when adding a mark
+    notify_on_add = false,
 }
 ```
 

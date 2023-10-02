@@ -213,6 +213,7 @@ function M.setup(config)
             ["tabline"] = false,
             ["tabline_suffix"] = "   ",
             ["tabline_prefix"] = "   ",
+            ["notify_on_add"] = false,
         },
     }, expand_dir(c_config), expand_dir(u_config), expand_dir(config))
 

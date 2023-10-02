@@ -215,6 +215,13 @@ function M.add_file(file_name_or_buf_id)
     local buf_name = get_buf_name(file_name_or_buf_id)
     log.trace("add_file():", buf_name)
 
+    if harpoon.get_global_settings().notify_on_add then
+        vim.notify(
+            "Harpoon Mark Added: " .. buf_name,
+            vim.log.levels.INFO,
+            { title = "Harpoon" }
+        )
+    end
     if M.valid_index(M.get_index_of(buf_name)) then
         -- we don't alter file layout.
         return
