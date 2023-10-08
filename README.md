@@ -32,7 +32,7 @@ to go to the files you want.
 
 
 ## ⇁ Installation
-* neovim 0.5.0+ required
+* neovim 0.7.0+ required
 * install using your favorite plugin manager (`vim-plug` in this example)
 ```vim
 Plug 'nvim-lua/plenary.nvim' " don't forget to add this one if you don't have it yet!

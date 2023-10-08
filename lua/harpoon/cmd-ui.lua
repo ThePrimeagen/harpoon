@@ -89,7 +89,11 @@ function M.toggle_quick_menu()
         contents[idx] = cmd
     end
 
-    vim.api.nvim_win_set_option(Harpoon_cmd_win_id, "number", true)
+    vim.api.nvim_set_option_value(
+        "number",
+        true,
+        { scope = "local", win = Harpoon_cmd_win_id }
+    )
     vim.api.nvim_buf_set_name(Harpoon_cmd_bufh, "harpoon-cmd-menu")
     vim.api.nvim_buf_set_lines(Harpoon_cmd_bufh, 0, #contents, false, contents)
     vim.api.nvim_buf_set_option(Harpoon_cmd_bufh, "filetype", "harpoon")
