@@ -24,7 +24,7 @@ local function create_terminal(create_with)
 
     -- Make sure the term buffer has "hidden" set so it doesn't get thrown
     -- away and cause an error
-    vim.api.nvim_buf_set_option(buf_id, "bufhidden", "hide")
+    vim.api.nvim_set_option_value("bufhidden", "hide", { buf = buf_id })
 
     -- Resets the buffer back to the old one
     vim.api.nvim_set_current_buf(current_id)
