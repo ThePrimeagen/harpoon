@@ -1,5 +1,5 @@
-local List = require("harpoon.list")
-local Config = require("harpoon.config")
+local List = require("harpoon2.list")
+local Config = require("harpoon2.config")
 local eq = assert.are.same
 
 describe("config", function()
@@ -10,7 +10,6 @@ describe("config", function()
         local bufnr = vim.fn.bufnr("/tmp/harpoon-test", true)
 
         vim.api.nvim_set_current_buf(bufnr)
-
         vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, {
             "foo",
             "bar",

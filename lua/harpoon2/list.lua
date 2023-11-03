@@ -1,5 +1,3 @@
-local get_config = require "harpoon.config".get_config
-
 -- TODO: Define the config object
 
 --- @class HarpoonItem
@@ -8,7 +6,7 @@ local get_config = require "harpoon.config".get_config
 
 --- create a table object to be new'd
 --- @class HarpoonList
---- @field config any
+--- @field config HarpoonPartialConfigItem
 --- @field name string
 --- @field items HarpoonItem[]
 local HarpoonList = {}
@@ -22,25 +20,35 @@ function HarpoonList:new(config, name, items)
     }, self)
 end
 
+---@return HarpoonList
 function HarpoonList:push(item)
+    item = item or self.config.add()
     table.insert(self.items, item)
+    return self
 end
 
+---@return HarpoonList
 function HarpoonList:addToFront(item)
+    item = item or self.config.add()
     table.insert(self.items, 1, item)
+    return self
 end
 
+---@return HarpoonList
 function HarpoonList:remove(item)
     for i, v in ipairs(self.items) do
-        if get_config(self.config, self.name)(v, item) then
+        if self.config.equals(v, item) then
             table.remove(self.items, i)
             break
         end
     end
+    return self
 end
 
+---@return HarpoonList
 function HarpoonList:removeAt(index)
     table.remove(self.items, index)
+    return self
 end
 
 function HarpoonList:get(index)
@@ -51,12 +59,11 @@ end
 ---@param displayed string[]
 function HarpoonList:resolve_displayed(displayed)
     local not_found = {}
-    local config = get_config(self.config, self.name)
 
     for _, v in ipairs(displayed) do
         local found = false
         for _, in_table in ipairs(self.items) do
-            if config.display(in_table) == v then
+            if self.config.display(in_table) == v then
                 found = true
                 break
             end
@@ -75,9 +82,8 @@ end
 --- @return string[]
 function HarpoonList:display()
     local out = {}
-    local config = get_config(self.config, self.name)
     for _, v in ipairs(self.items) do
-        table.insert(out, config.display(v))
+        table.insert(out, self.config.display(v))
     end
 
     return out
@@ -86,27 +92,25 @@ end
 --- @return string[]
 function HarpoonList:encode()
     local out = {}
-    local config = get_config(self.config, self.name)
     for _, v in ipairs(self.items) do
-        table.insert(out, config.encode(v))
+        table.insert(out, self.config.encode(v))
     end
 
     return out
 end
 
 --- @return HarpoonList
---- @param config HarpoonConfig
+--- @param list_config HarpoonPartialConfigItem
 --- @param name string
 --- @param items string[]
-function HarpoonList.decode(config, name, items)
+function HarpoonList.decode(list_config, name, items)
     local list_items = {}
-    local c = get_config(config, name)
 
     for _, item in ipairs(items) do
-        table.insert(list_items, c.decode(item))
+        table.insert(list_items, list_config.decode(item))
     end
 
-    return HarpoonList:new(config, name, list_items)
+    return HarpoonList:new(list_config, name, list_items)
 end
 
 

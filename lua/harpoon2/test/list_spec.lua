@@ -1,5 +1,5 @@
-local List = require("harpoon.list")
-local Config = require("harpoon.config")
+local List = require("harpoon2.list")
+local Config = require("harpoon2.config")
 local eq = assert.are.same
 
 describe("list", function()
