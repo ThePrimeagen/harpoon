@@ -2,19 +2,19 @@ local get_config = require "harpoon.config".get_config
 
 -- TODO: Define the config object
 
---- @class Item
+--- @class HarpoonItem
 --- @field value string
 --- @field context any
 
 --- create a table object to be new'd
---- @class List
+--- @class HarpoonList
 --- @field config any
 --- @field name string
---- @field items Item[]
-local List = {}
+--- @field items HarpoonItem[]
+local HarpoonList = {}
 
-List.__index = List
-function List:new(config, name, items)
+HarpoonList.__index = HarpoonList
+function HarpoonList:new(config, name, items)
     return setmetatable({
         items = items,
         config = config,
@@ -22,15 +22,15 @@ function List:new(config, name, items)
     }, self)
 end
 
-function List:push(item)
+function HarpoonList:push(item)
     table.insert(self.items, item)
 end
 
-function List:addToFront(item)
+function HarpoonList:addToFront(item)
     table.insert(self.items, 1, item)
 end
 
-function List:remove(item)
+function HarpoonList:remove(item)
     for i, v in ipairs(self.items) do
         if get_config(self.config, self.name)(v, item) then
             table.remove(self.items, i)
@@ -39,17 +39,17 @@ function List:remove(item)
     end
 end
 
-function List:removeAt(index)
+function HarpoonList:removeAt(index)
     table.remove(self.items, index)
 end
 
-function List:get(index)
+function HarpoonList:get(index)
     return self.items[index]
 end
 
 --- much inefficiencies.  dun care
 ---@param displayed string[]
-function List:resolve_displayed(displayed)
+function HarpoonList:resolve_displayed(displayed)
     local not_found = {}
     local config = get_config(self.config, self.name)
     for _, v in ipairs(displayed) do
@@ -70,7 +70,7 @@ function List:resolve_displayed(displayed)
 end
 
 --- @return string[]
-function List:display()
+function HarpoonList:display()
     local out = {}
     local config = get_config(self.config, self.name)
     for _, v in ipairs(self.items) do
@@ -81,7 +81,7 @@ function List:display()
 end
 
 --- @return string[]
-function List:encode()
+function HarpoonList:encode()
     local out = {}
     local config = get_config(self.config, self.name)
     for _, v in ipairs(self.items) do
@@ -91,11 +91,11 @@ function List:encode()
     return out
 end
 
---- @return List
+--- @return HarpoonList
 --- @param config HarpoonConfig
 --- @param name string
 --- @param items string[]
-function List.decode(config, name, items)
+function HarpoonList.decode(config, name, items)
     local list_items = {}
     local c = get_config(config, name)
 
@@ -103,9 +103,9 @@ function List.decode(config, name, items)
         table.insert(list_items, c.decode(item))
     end
 
-    return List:new(config, name, list_items)
+    return HarpoonList:new(config, name, list_items)
 end
 
 
-return List
+return HarpoonList
 

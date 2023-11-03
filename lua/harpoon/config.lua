@@ -1,6 +1,7 @@
 local M = {}
 
 ---@alias HarpoonListItem {value: any, context: any}
+---@alias HarpoonListFileItem {value: string, context: {row: number, col: number}}
 
 ---@class HarpoonPartialConfigItem
 ---@field encode? (fun(list_item: HarpoonListItem): string)
@@ -20,7 +21,13 @@ local M = {}
 ---@field settings HarpoonSettings
 ---@field [string] HarpoonPartialConfigItem
 
----@return HarpoonConfig
+---@class HarpoonPartialConfig
+---@field default HarpoonPartialConfigItem?
+---@field settings HarpoonSettings?
+---@field [string] HarpoonPartialConfigItem
+
+
+---@return HarpoonPartialConfigItem
 function M.get_config(config, name)
     return vim.tbl_extend("force", {}, config.default, config[name] or {})
 end
@@ -55,9 +62,26 @@ function M.get_default_config()
                 return list_item.value
             end,
 
-            ---@param list_item HarpoonListItem
-            select = function(list_item)
-                error("please implement select")
+            ---@param file_item HarpoonListFileItem
+            select = function(file_item)
+                if file_item == nil then
+                    return
+                end
+
+                local bufnr = vim.fn.bufnr(file_item.value)
+                local set_position = false
+                if bufnr == -1 then
+                    set_position = true
+                    bufnr = vim.fn.bufnr(file_item.value, true)
+                end
+
+                vim.api.nvim_set_current_buf(bufnr)
+                if set_position then
+                    vim.api.nvim_win_set_cursor(0, {
+                        file_item.context.row or 1,
+                        file_item.context.col or 0
+                    })
+                end
             end,
 
             ---@param list_item_a HarpoonListItem
@@ -66,14 +90,23 @@ function M.get_default_config()
                 return list_item_a.value == list_item_b.value
             end,
 
+            ---@return HarpoonListItem
             add = function()
-                error("please implement add")
+                local name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+                local pos = vim.api.nvim_win_get_cursor(0)
+                return {
+                    value = name,
+                    context = {
+                        row = pos[1],
+                        col = pos[2],
+                    }
+                }
             end,
         }
     }
 end
 
----@param partial_config HarpoonConfig
+---@param partial_config HarpoonPartialConfig
 ---@param latest_config HarpoonConfig?
 ---@return HarpoonConfig
 function M.merge_config(partial_config, latest_config)

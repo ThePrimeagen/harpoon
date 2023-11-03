@@ -37,7 +37,7 @@ harpoon.setup({
 
         # question mark: what does it take to support custom things in here?
         # potentially subject to change
-        add = function() => void
+        add = function() HarpoonListItem
     }
 
     frecency = {
