@@ -171,11 +171,11 @@ function M.save()
 
     log.trace("save(): Saving cache config to", cache_config)
 
-    local to_save = utils.deepcopy(HarpoonConfig)
-    if type(to_save.menu.width) == "function" then
-        to_save.menu.width = nil
-    end
-    Path:new(cache_config):write(vim.fn.json_encode(to_save), "w")
+    -- Remove the menu object since width may be a function and is not serializable
+    local menu = HarpoonConfig.menu
+    HarpoonConfig.menu = nil
+    Path:new(cache_config):write(vim.fn.json_encode(HarpoonConfig), "w")
+    HarpoonConfig.menu = menu
 end
 
 local function read_config(local_config)
