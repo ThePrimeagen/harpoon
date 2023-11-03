@@ -88,3 +88,7 @@ frecency = later feature likely, but great idea
 // i don't understand this one
 harpoon -> qfix : qfix -> harpoon
 
+
+harpoon.list("notehu") -> HarpoonList
+harpoon.list().add()
+

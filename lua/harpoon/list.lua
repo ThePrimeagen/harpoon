@@ -52,11 +52,14 @@ end
 function HarpoonList:resolve_displayed(displayed)
     local not_found = {}
     local config = get_config(self.config, self.name)
+
     for _, v in ipairs(displayed) do
         local found = false
         for _, in_table in ipairs(self.items) do
-            found = config.display(in_table, v)
-            break
+            if config.display(in_table) == v then
+                found = true
+                break
+            end
         end
 
         if not found then
