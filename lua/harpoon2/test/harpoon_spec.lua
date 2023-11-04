@@ -29,7 +29,7 @@ describe("harpoon", function()
         })
         vim.api.nvim_win_set_cursor(0, {row, col})
 
-        local list = harpoon:list():push()
+        local list = harpoon:list():append()
         harpoon:sync()
 
         eq(harpoon:dump(), {

@@ -1,10 +1,19 @@
--- TODO: Define the config object
+local function index_of(config, items, element)
+    local index = -1
+    for i, item in ipairs(items) do
+        if config.equals(element, item) then
+            index = i
+            break
+        end
+    end
+
+    return index
+end
 
 --- @class HarpoonItem
 --- @field value string
 --- @field context any
 
---- create a table object to be new'd
 --- @class HarpoonList
 --- @field config HarpoonPartialConfigItem
 --- @field name string
@@ -21,14 +30,19 @@ function HarpoonList:new(config, name, items)
 end
 
 ---@return HarpoonList
-function HarpoonList:push(item)
+function HarpoonList:append(item)
     item = item or self.config.add()
-    table.insert(self.items, item)
+
+    local index = index_of(self.config, self.items, item)
+    if index == -1 then
+        table.insert(self.items, item)
+    end
+
     return self
 end
 
 ---@return HarpoonList
-function HarpoonList:addToFront(item)
+function HarpoonList:prepend(item)
     item = item or self.config.add()
     table.insert(self.items, 1, item)
     return self

@@ -21,8 +21,9 @@ describe("list", function()
                 end
             }
         })
+        local list_config = Config.get_config(config, "foo")
 
-        local list = List.decode(config, "foo", {"foo:bar", "baz:qux"})
+        local list = List.decode(list_config, "foo", {"foo:bar", "baz:qux"})
         local displayed = list:display()
 
         eq(displayed, {
