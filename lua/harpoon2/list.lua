@@ -44,7 +44,11 @@ end
 ---@return HarpoonList
 function HarpoonList:prepend(item)
     item = item or self.config.add()
-    table.insert(self.items, 1, item)
+    local index = index_of(self.config, self.items, item)
+    if index == -1 then
+        table.insert(self.items, 1, item)
+    end
+
     return self
 end
 
