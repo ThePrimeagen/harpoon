@@ -96,6 +96,13 @@ function HarpoonList:resolve_displayed(displayed)
     self.items = new_list
 end
 
+function HarpoonList:select(index, options)
+    local item = self.items[index]
+    if item then
+        self.config.select(item, options)
+    end
+end
+
 --- @return string[]
 function HarpoonList:display()
     local out = {}

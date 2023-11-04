@@ -8,7 +8,7 @@ local M = {}
 ---@field decode? (fun(obj: string): any)
 ---@field key? (fun(): string)
 ---@field display? (fun(list_item: HarpoonListItem): string)
----@field select? (fun(list_item: HarpoonListItem): nil)
+---@field select? (fun(list_item: HarpoonListItem, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
 ---@field add? fun(item: any?): HarpoonListItem
 
@@ -63,7 +63,7 @@ function M.get_default_config()
             end,
 
             ---@param file_item HarpoonListFileItem
-            select = function(file_item)
+            select = function(file_item, options)
                 if file_item == nil then
                     return
                 end
@@ -75,7 +75,16 @@ function M.get_default_config()
                     bufnr = vim.fn.bufnr(file_item.value, true)
                 end
 
-                vim.api.nvim_set_current_buf(bufnr)
+                if not options or not options.vsplit or not options.split then
+                    vim.api.nvim_set_current_buf(bufnr)
+                elseif options.vsplit then
+                    vim.cmd("vsplit")
+                    vim.api.nvim_set_current_buf(bufnr)
+                elseif options.split then
+                    vim.cmd("split")
+                    vim.api.nvim_set_current_buf(bufnr)
+                end
+
                 if set_position then
                     vim.api.nvim_win_set_cursor(0, {
                         file_item.context.row or 1,
