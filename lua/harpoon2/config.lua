@@ -10,7 +10,7 @@ local M = {}
 ---@field display? (fun(list_item: HarpoonListItem): string)
 ---@field select? (fun(list_item: HarpoonListItem): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
----@field add? fun(): HarpoonListItem
+---@field add? fun(item: any?): HarpoonListItem
 
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to true
@@ -90,10 +90,17 @@ function M.get_default_config()
                 return list_item_a.value == list_item_b.value
             end,
 
+            ---@param value any
             ---@return HarpoonListItem
-            add = function()
-                local name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
-                local pos = vim.api.nvim_win_get_cursor(0)
+            add = function(name)
+                name = name or vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+                local bufnr = vim.fn.bufnr(name, false)
+
+                local pos = {1, 0}
+                if bufnr ~= -1 then
+                    pos = vim.api.nvim_win_get_cursor(0)
+                end
+
                 return {
                     value = name,
                     context = {

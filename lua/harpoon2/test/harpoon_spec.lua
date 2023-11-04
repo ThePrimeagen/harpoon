@@ -74,6 +74,103 @@ describe("harpoon", function()
         })
 
     end)
+
+    it("ui - display resolve", function()
+        harpoon:setup({
+            default = {
+                display = function(item)
+                    -- split string on /
+                    local parts = vim.split(item.value, "/")
+                    return parts[#parts]
+                end
+            }
+        })
+
+        local file_names = {
+            "/tmp/harpoon-test-1",
+            "/tmp/harpoon-test-2",
+            "/tmp/harpoon-test-3",
+            "/tmp/harpoon-test-4",
+        }
+
+        local contents = { "foo", "bar", "baz", "qux" }
+
+        local bufnrs = {}
+        local list = harpoon:list()
+        for _, v in ipairs(file_names) do
+            table.insert(bufnrs, utils.create_file(v, contents))
+            harpoon:list():append()
+        end
+
+        local displayed = list:display()
+        eq(displayed, {
+            "harpoon-test-1",
+            "harpoon-test-2",
+            "harpoon-test-3",
+            "harpoon-test-4",
+        })
+
+        table.remove(displayed, 3)
+        table.remove(displayed, 2)
+
+        list:resolve_displayed(displayed)
+
+        eq(list.items, {
+            {value = file_names[1], context = {row = 4, col = 2}},
+            {value = file_names[4], context = {row = 4, col = 2}},
+        })
+    end)
+
+    it("ui - display resolve", function()
+        local file_names = {
+            "/tmp/harpoon-test-1",
+            "/tmp/harpoon-test-2",
+            "/tmp/harpoon-test-3",
+            "/tmp/harpoon-test-4",
+        }
+
+        local contents = { "foo", "bar", "baz", "qux" }
+
+        local bufnrs = {}
+        local list = harpoon:list()
+        for _, v in ipairs(file_names) do
+            table.insert(bufnrs, utils.create_file(v, contents))
+            harpoon:list():append()
+        end
+
+        local displayed = list:display()
+        eq(displayed, {
+            "/tmp/harpoon-test-1",
+            "/tmp/harpoon-test-2",
+            "/tmp/harpoon-test-3",
+            "/tmp/harpoon-test-4",
+        })
+
+        table.remove(displayed, 3)
+        table.remove(displayed, 2)
+
+        table.insert(displayed, "/tmp/harpoon-test-other-file-1")
+        table.insert(displayed, "/tmp/harpoon-test-other-file-2")
+
+        list:resolve_displayed(displayed)
+
+        eq(list.items, {
+            {value = file_names[1], context = {row = 4, col = 2}},
+            {value = file_names[4], context = {row = 4, col = 2}},
+            {value = "/tmp/harpoon-test-other-file-1", context = {row = 1, col = 0}},
+            {value = "/tmp/harpoon-test-other-file-2", context = {row = 1, col = 0}},
+        })
+
+        table.remove(displayed, 3)
+        table.insert(displayed, "/tmp/harpoon-test-4")
+        list:resolve_displayed(displayed)
+
+        eq(list.items, {
+            {value = file_names[1], context = {row = 4, col = 2}},
+            {value = file_names[4], context = {row = 4, col = 2}},
+            {value = "/tmp/harpoon-test-other-file-2", context = {row = 1, col = 0}},
+        })
+    end)
 end)
 
 

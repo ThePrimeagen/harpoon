@@ -1,7 +1,8 @@
-local function index_of(config, items, element)
+local function index_of(items, element, config)
+    local equals = config and config.equals or function(a, b) return a == b end
     local index = -1
     for i, item in ipairs(items) do
-        if config.equals(element, item) then
+        if equals(element, item) then
             index = i
             break
         end
@@ -33,7 +34,7 @@ end
 function HarpoonList:append(item)
     item = item or self.config.add()
 
-    local index = index_of(self.config, self.items, item)
+    local index = index_of(self.items, item, self.config)
     if index == -1 then
         table.insert(self.items, item)
     end
@@ -44,7 +45,7 @@ end
 ---@return HarpoonList
 function HarpoonList:prepend(item)
     item = item or self.config.add()
-    local index = index_of(self.config, self.items, item)
+    local index = index_of(self.items, item, self.config)
     if index == -1 then
         table.insert(self.items, 1, item)
     end
@@ -76,25 +77,23 @@ end
 --- much inefficiencies.  dun care
 ---@param displayed string[]
 function HarpoonList:resolve_displayed(displayed)
-    local not_found = {}
+    local new_list = {}
 
-    for _, v in ipairs(displayed) do
-        local found = false
-        for _, in_table in ipairs(self.items) do
-            if self.config.display(in_table) == v then
-                found = true
-                break
+    local list_displayed = self:display()
+    for i, v in ipairs(displayed) do
+        local index = index_of(list_displayed, v)
+        if index == -1 then
+            table.insert(new_list, self.config.add(v))
+        else
+            local index_in_new_list = index_of(new_list, self.items[index], self.config)
+            if index_in_new_list == -1 then
+                table.insert(new_list, self.items[index])
             end
         end
 
-        if not found then
-            table.insert(not_found, v)
-        end
     end
 
-    for _, v in ipairs(not_found) do
-        self:remove(v)
-    end
+    self.items = new_list
 end
 
 --- @return string[]
