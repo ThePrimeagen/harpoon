@@ -6,7 +6,6 @@ local M = {}
 ---@class HarpoonPartialConfigItem
 ---@field encode? (fun(list_item: HarpoonListItem): string)
 ---@field decode? (fun(obj: string): any)
----@field key? (fun(): string)
 ---@field display? (fun(list_item: HarpoonListItem): string)
 ---@field select? (fun(list_item: HarpoonListItem, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
@@ -15,6 +14,13 @@ local M = {}
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to true
 ---@field jump_to_file_location boolean defaults to true
+---@field key (fun(): string)
+
+---@class HarpoonPartialSettings
+---@field save_on_toggle? boolean
+---@field jump_to_file_location? boolean
+---@field key? (fun(): string)
+
 
 ---@class HarpoonConfig
 ---@field default HarpoonPartialConfigItem
@@ -22,8 +28,8 @@ local M = {}
 ---@field [string] HarpoonPartialConfigItem
 
 ---@class HarpoonPartialConfig
----@field default HarpoonPartialConfigItem?
----@field settings HarpoonSettings?
+---@field default? HarpoonPartialConfigItem
+---@field settings? HarpoonPartialSettings
 ---@field [string] HarpoonPartialConfigItem
 
 
@@ -35,9 +41,13 @@ end
 ---@return HarpoonConfig
 function M.get_default_config()
     return {
+
         settings = {
             save_on_toggle = true,
             jump_to_file_location = true,
+            key = function()
+                return vim.loop.cwd()
+            end,
         },
 
         default = {
@@ -51,10 +61,6 @@ function M.get_default_config()
             ---@return HarpoonListItem
             decode = function(str)
                 return vim.json.decode(str)
-            end,
-
-            key = function()
-                return vim.loop.cwd()
             end,
 
             ---@param list_item HarpoonListItem
@@ -99,7 +105,7 @@ function M.get_default_config()
                 return list_item_a.value == list_item_b.value
             end,
 
-            ---@param value any
+            ---@param name any
             ---@return HarpoonListItem
             add = function(name)
                 name = name or vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())

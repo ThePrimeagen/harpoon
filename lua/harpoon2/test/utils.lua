@@ -1,6 +1,16 @@
 
 local M = {}
 
+M.created_files = {}
+
+function M.clean_files()
+    for _, bufnr in ipairs(M.created_files) do
+        vim.api.nvim_buf_delete(bufnr, {force = true})
+    end
+
+    M.created_files = {}
+end
+
 ---@param name string
 ---@param contents string[]
 function M.create_file(name, contents, row, col)
@@ -11,6 +21,7 @@ function M.create_file(name, contents, row, col)
         vim.api.nvim_win_set_cursor(0, {row, col})
     end
 
+    table.insert(M.created_files, bufnr)
     return bufnr
 end
 

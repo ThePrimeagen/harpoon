@@ -13,14 +13,24 @@ describe("harpoon", function()
         Data = require("harpoon2.data")
         Data.set_data_path("/tmp/harpoon2.json")
         harpoon = require("harpoon2")
+        utils.clean_files()
+
+        harpoon:setup({
+            settings = {
+                key = function()
+                    return "testies"
+                end
+            }
+        })
+
     end)
 
     it("full harpoon add sync cycle", function()
         local file_name = "/tmp/harpoon-test"
         local row = 3
         local col = 1
-        local default_key = harpoon:info().default_key
-        local bufnr = utils.create_file(file_name, {
+        local default_list_name = harpoon:info().default_list_name
+        utils.create_file(file_name, {
             "foo",
             "bar",
             "baz",
@@ -31,12 +41,14 @@ describe("harpoon", function()
         harpoon:sync()
 
         eq(harpoon:dump(), {
-            [default_key] = list:encode()
+            testies = {
+                [default_list_name] = list:encode()
+            }
         })
     end)
 
     it("prepend/append double add", function()
-        local default_key = harpoon:info().default_key
+        local default_list_name = harpoon:info().default_list_name
         local file_name_1 = "/tmp/harpoon-test"
         local row_1 = 3
         local col_1 = 1
@@ -56,7 +68,9 @@ describe("harpoon", function()
         harpoon:sync()
 
         eq(harpoon:dump(), {
-            [default_key] = list:encode()
+            testies = {
+                [default_list_name] = list:encode()
+            }
         })
 
         eq(list.items, {
@@ -154,23 +168,22 @@ describe("harpoon", function()
 
         list:resolve_displayed(displayed)
 
-        eq(list.items, {
+        eq({
             {value = file_names[1], context = {row = 4, col = 2}},
             {value = file_names[4], context = {row = 4, col = 2}},
             {value = "/tmp/harpoon-test-other-file-1", context = {row = 1, col = 0}},
             {value = "/tmp/harpoon-test-other-file-2", context = {row = 1, col = 0}},
-        })
+        }, list.items)
 
         table.remove(displayed, 3)
         table.insert(displayed, "/tmp/harpoon-test-4")
         list:resolve_displayed(displayed)
 
-        eq(list.items, {
+        eq({
             {value = file_names[1], context = {row = 4, col = 2}},
             {value = file_names[4], context = {row = 4, col = 2}},
             {value = "/tmp/harpoon-test-other-file-2", context = {row = 1, col = 0}},
-        })
+        }, list.items)
     end)
 end)
-
 

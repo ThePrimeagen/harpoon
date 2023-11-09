@@ -32,10 +32,10 @@ local function has_keys(t)
     return false
 end
 
---- @alias HarpoonRawData {[string]: string[]}
+--- @alias HarpoonRawData {[string]: {[string]: string[]}}
 
 --- @class HarpoonData
---- @field seen {[string]: boolean}
+--- @field seen {[string]: {[string]: boolean}}
 --- @field _data HarpoonRawData
 --- @field has_error boolean
 local Data = {}
@@ -51,6 +51,7 @@ Data.__index = Data
 local function read_data()
     local path =  Path:new(full_data_path)
     local exists = path:exists()
+
     if not exists then
         write_data({})
     end
@@ -68,25 +69,45 @@ function Data:new()
         has_error = not ok,
         seen = {}
     }, self)
+
 end
 
+---@param key string
 ---@param name string
 ---@return string[]
-function Data:data(name)
+function Data:_get_data(key, name)
+    if not self._data[key] then
+        self._data[key] = {}
+    end
+
+    return self._data[key][name] or {}
+end
+
+---@param key string
+---@param name string
+---@return string[]
+function Data:data(key, name)
     if self.has_error then
         error("Harpoon: there was an error reading the data file, cannot read data")
     end
-    self.seen[name] = true
-    return self._data[name] or {}
+
+    if not self.seen[key] then
+        self.seen[key] = {}
+    end
+
+    self.seen[key][name] = true
+
+    return self:_get_data(key, name)
 end
 
 ---@param name string
 ---@param values string[]
-function Data:update(name, values)
+function Data:update(key, name, values)
     if self.has_error then
         error("Harpoon: there was an error reading the data file, cannot update")
     end
-    self._data[name] = values
+    self:_get_data(key, name)
+    self._data[key][name] = values
 end
 
 function Data:sync()

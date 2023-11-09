@@ -6,12 +6,14 @@ local List = require("harpoon2.list")
 -- read from a config file
 --
 
+-- TODO: rename lists into something better...
+
 local DEFAULT_LIST = "__harpoon_files"
 
 ---@class Harpoon
 ---@field config HarpoonConfig
 ---@field data HarpoonData
----@field lists HarpoonList[]
+---@field lists {[string]: {[string]: HarpoonList}}
 local Harpoon = {}
 
 Harpoon.__index = Harpoon
@@ -39,25 +41,36 @@ end
 function Harpoon:list(name)
     name = name or DEFAULT_LIST
 
-    local existing_list = self.lists[name]
+    local key = self.config.settings.key()
+    local lists = self.lists[key]
 
-    if existing_list then
-        return self.lists[name]
+    if not lists then
+        lists = {}
+        self.lists[key] = lists
     end
 
-    local data = self.data:data(name)
+    local existing_list = lists[name]
+
+    if existing_list then
+        return existing_list
+    end
+
+    local data = self.data:data(key, name)
     local list_config = Config.get_config(self.config, name)
 
     local list = List.decode(list_config, name, data)
-    self.lists[name] = list
+    lists[name] = list
 
     return list
 end
 
 function Harpoon:sync()
-    for k, _ in pairs(self.data.seen) do
-        local encoded = self.lists[k]:encode()
-        self.data:update(k, encoded)
+    local key = self.config.settings.key()
+    local seen = self.data.seen[key]
+    local lists = self.lists[key]
+    for list_name, _ in pairs(seen) do
+        local encoded = lists[list_name]:encode()
+        self.data:update(key, list_name, encoded)
     end
     self.data:sync()
 end
@@ -72,7 +85,7 @@ end
 function Harpoon:info()
     return {
         paths = Data.info(),
-        default_key = DEFAULT_LIST,
+        default_list_name = DEFAULT_LIST,
     }
 end
 
