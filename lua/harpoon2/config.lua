@@ -10,7 +10,10 @@ local M = {}
 ---@field select? (fun(list_item: HarpoonListItem, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
 ---@field add? fun(item: any?): HarpoonListItem
+---@field BufLeave? fun(evt: any, list: HarpoonList): nil
+---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
 
+---notehunthoeunthoeunthoeunthoeunthoeunth
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to true
 ---@field jump_to_file_location boolean defaults to true
@@ -124,6 +127,20 @@ function M.get_default_config()
                     }
                 }
             end,
+
+            BufLeave = function(arg, list)
+                local bufnr = arg.buf;
+                local bufname = vim.api.nvim_buf_get_name(bufnr);
+                local item = list:get_by_display(bufname)
+
+                if item then
+                    local pos = vim.api.nvim_win_get_cursor(0)
+                    item.context.row = pos[1]
+                    item.context.col = pos[2]
+                end
+            end,
+
+            autocmds = {"BufLeave"},
         }
     }
 end

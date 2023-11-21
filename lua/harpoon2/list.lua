@@ -74,6 +74,16 @@ function HarpoonList:get(index)
     return self.items[index]
 end
 
+function HarpoonList:get_by_display(name)
+    local displayed = self:display()
+    local index = index_of(displayed, name)
+    if index == -1 then
+        return nil
+    end
+    return self.items[index]
+end
+
+
 --- much inefficiencies.  dun care
 ---@param displayed string[]
 function HarpoonList:resolve_displayed(displayed)

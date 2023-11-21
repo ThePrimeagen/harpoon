@@ -6,6 +6,7 @@ local eq = assert.are.same
 
 describe("harpoon", function()
 
+
     before_each(function()
         Data.set_data_path("/tmp/harpoon2.json")
         Data.__dangerously_clear_data()
@@ -22,6 +23,37 @@ describe("harpoon", function()
                 end
             }
         })
+
+    end)
+
+    it("when we change buffers we update the row and column", function()
+        local file_name = "/tmp/harpoon-test"
+        local row = 1
+        local col = 0
+        local target_buf = utils.create_file(file_name, {
+            "foo",
+            "bar",
+            "baz",
+            "qux"
+        }, row, col)
+
+        local list = harpoon:list():append()
+        local other_buf = utils.create_file("other-file", {
+            "foo",
+            "bar",
+            "baz",
+            "qux"
+        }, row, col)
+
+        vim.api.nvim_set_current_buf(target_buf)
+        vim.api.nvim_win_set_cursor(0, {row + 1, col})
+        vim.api.nvim_set_current_buf(other_buf)
+
+        local expected = {
+            {value = file_name, context = {row = row + 1, col = col}},
+        }
+
+        eq(list.items, expected)
 
     end)
 

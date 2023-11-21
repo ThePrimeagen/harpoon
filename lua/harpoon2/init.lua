@@ -14,6 +14,7 @@ local DEFAULT_LIST = "__harpoon_files"
 ---@field config HarpoonConfig
 ---@field data HarpoonData
 ---@field lists {[string]: {[string]: HarpoonList}}
+---@field hooks_setup boolean
 local Harpoon = {}
 
 Harpoon.__index = Harpoon
@@ -26,6 +27,7 @@ function Harpoon:new()
         config = config,
         data = Data.Data:new(),
         lists = {},
+        hooks_setup = false,
     }, self)
 end
 
@@ -33,6 +35,32 @@ end
 ---@return Harpoon
 function Harpoon:setup(partial_config)
     self.config = Config.merge_config(partial_config, self.config)
+
+    if self.hooks_setup == false then
+        local augroup = vim.api.nvim_create_augroup
+        local HarpoonGroup = augroup('Harpoon', {})
+
+        vim.api.nvim_create_autocmd({"BufLeave", "VimLeavePre"}, {
+            group = HarpoonGroup,
+            pattern = '*',
+            callback = function(ev)
+                self:_for_each_list(function(list, config)
+
+                    local fn = config[ev.event]
+                    if fn ~= nil then
+                        fn(ev, list)
+                    end
+
+                    if ev.event == "VimLeavePre" then
+                        self:sync()
+                    end
+                end)
+            end,
+        })
+
+        self.hooks_setup = true
+    end
+
     return self
 end
 
@@ -64,22 +92,29 @@ function Harpoon:list(name)
     return list
 end
 
-function Harpoon:sync()
+---@param cb fun(list: HarpoonList, config: HarpoonPartialConfigItem, name: string)
+function Harpoon:_for_each_list(cb)
     local key = self.config.settings.key()
     local seen = self.data.seen[key]
     local lists = self.lists[key]
-    for list_name, _ in pairs(seen) do
-        local encoded = lists[list_name]:encode()
-        self.data:update(key, list_name, encoded)
+
+    if not seen then
+        return
     end
-    self.data:sync()
+
+    for list_name, _ in pairs(seen) do
+        local list_config = Config.get_config(self.config, list_name)
+        cb(lists[list_name], list_config, list_name)
+    end
 end
 
-function Harpoon:setup_hooks()
-    -- setup the autocommands
-    -- vim exits sync data
-    -- buf exit setup the cursor location
-    error("I haven't implemented this yet")
+function Harpoon:sync()
+    local key = self.config.settings.key()
+    self:_for_each_list(function(list, _, list_name)
+        local encoded = list:encode()
+        self.data:update(key, list_name, encoded)
+    end)
+    self.data:sync()
 end
 
 function Harpoon:info()
