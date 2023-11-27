@@ -18,6 +18,7 @@ end
 --- @class HarpoonList
 --- @field config HarpoonPartialConfigItem
 --- @field name string
+--- @field _index number
 --- @field items HarpoonItem[]
 local HarpoonList = {}
 
@@ -27,7 +28,13 @@ function HarpoonList:new(config, name, items)
         items = items,
         config = config,
         name = name,
+        _index = 1,
     }, self)
+end
+
+---@return number
+function HarpoonList:length()
+    return #self.items
 end
 
 ---@return HarpoonList
@@ -111,6 +118,24 @@ function HarpoonList:select(index, options)
     if item then
         self.config.select(item, options)
     end
+end
+
+function HarpoonList:next()
+    self._index = self._index + 1
+    if self._index > #self.items then
+        self._index = 1
+    end
+
+    self:select(self._index)
+end
+
+function HarpoonList:prev()
+    self._index = self._index - 1
+    if self._index < 1 then
+        self._index = #self.items
+    end
+
+    self:select(self._index)
 end
 
 --- @return string[]

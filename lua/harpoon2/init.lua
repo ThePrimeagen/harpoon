@@ -1,3 +1,4 @@
+local Ui = require("harpoon2.ui")
 local Data = require("harpoon2.data")
 local Config = require("harpoon2.config")
 local List = require("harpoon2.list")
@@ -12,6 +13,7 @@ local DEFAULT_LIST = "__harpoon_files"
 
 ---@class Harpoon
 ---@field config HarpoonConfig
+---@field ui HarpoonUI
 ---@field data HarpoonData
 ---@field lists {[string]: {[string]: HarpoonList}}
 ---@field hooks_setup boolean
@@ -23,18 +25,24 @@ Harpoon.__index = Harpoon
 function Harpoon:new()
     local config = Config.get_default_config()
 
-    return setmetatable({
+    local harpoon = setmetatable({
         config = config,
         data = Data.Data:new(),
+        ui = Ui:new(config.settings),
         lists = {},
         hooks_setup = false,
     }, self)
+
+    return harpoon
 end
 
 ---@param partial_config HarpoonPartialConfig
 ---@return Harpoon
 function Harpoon:setup(partial_config)
     self.config = Config.merge_config(partial_config, self.config)
+    self.ui:configure(self.config.settings)
+
+    ---TODO: should we go through every seen list and update its config?
 
     if self.hooks_setup == false then
         local augroup = vim.api.nvim_create_augroup
@@ -44,6 +52,7 @@ function Harpoon:setup(partial_config)
             group = HarpoonGroup,
             pattern = '*',
             callback = function(ev)
+                --[[
                 self:_for_each_list(function(list, config)
 
                     local fn = config[ev.event]
@@ -55,6 +64,7 @@ function Harpoon:setup(partial_config)
                         self:sync()
                     end
                 end)
+                --]]
             end,
         })
 
@@ -129,6 +139,16 @@ function Harpoon:dump()
     return self.data._data
 end
 
-return Harpoon:new()
+function Harpoon:__debug_reset()
+    require("plenary.reload").reload_module("harpoon2")
+end
 
+local harpoon = Harpoon:new()
+HARPOON_DEBUG_VAR = HARPOON_DEBUG_VAR or 0
+if HARPOON_DEBUG_VAR == 0 then
+    harpoon.ui:toggle_quick_menu(harpoon:list())
+    HARPOON_DEBUG_VAR = 1
+end
+-- leave this undone, i sometimes use this for debugging
 
+return harpoon

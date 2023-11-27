@@ -1,3 +1,4 @@
+local utils = require("harpoon2.utils")
 local M = {}
 
 ---@alias HarpoonListItem {value: any, context: any}
@@ -12,6 +13,12 @@ local M = {}
 ---@field add? fun(item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
 ---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
+---@field get_root_dir? fun(): string
+
+---@class HarpoonWindowSettings
+---@field width number
+---@field height number
+
 
 ---notehunthoeunthoeunthoeunthoeunthoeunth
 ---@class HarpoonSettings
@@ -108,10 +115,21 @@ function M.get_default_config()
                 return list_item_a.value == list_item_b.value
             end,
 
+            get_root_dir = function()
+                return vim.loop.cwd()
+            end,
+
             ---@param name any
             ---@return HarpoonListItem
             add = function(name)
-                name = name or vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+                name = name or
+                    -- TODO: should we do path normalization???
+                    -- i know i have seen sometimes it becoming an absolute
+                    -- path, if that is the case we can use the context to
+                    -- store the bufname and then have value be the normalized
+                    -- value
+                    vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+
                 local bufnr = vim.fn.bufnr(name, false)
 
                 local pos = {1, 0}
