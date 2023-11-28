@@ -1,29 +1,15 @@
 local utils = require("harpoon2.test.utils")
-local Data = require("harpoon2.data")
 local harpoon = require("harpoon2")
 
 local eq = assert.are.same
 
+local be = utils.before_each(os.tmpname())
+
 describe("harpoon", function()
 
-
     before_each(function()
-        Data.set_data_path("/tmp/harpoon2.json")
-        Data.__dangerously_clear_data()
-        require("plenary.reload").reload_module("harpoon2")
-        Data = require("harpoon2.data")
-        Data.set_data_path("/tmp/harpoon2.json")
+        be()
         harpoon = require("harpoon2")
-        utils.clean_files()
-
-        harpoon:setup({
-            settings = {
-                key = function()
-                    return "testies"
-                end
-            }
-        })
-
     end)
 
     it("when we change buffers we update the row and column", function()
@@ -53,7 +39,7 @@ describe("harpoon", function()
             {value = file_name, context = {row = row + 1, col = col}},
         }
 
-        eq(list.items, expected)
+        eq(expected, list.items)
 
     end)
 
@@ -69,7 +55,8 @@ describe("harpoon", function()
             "qux"
         }, row, col)
 
-        local list = harpoon:list():append()
+        local list = harpoon:list()
+        list:append()
         harpoon:sync()
 
         eq(harpoon:dump(), {

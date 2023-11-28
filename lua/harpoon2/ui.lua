@@ -23,18 +23,25 @@ function HarpoonUI:new(settings)
 end
 
 function HarpoonUI:close_menu()
-    print("CLOSING MENU")
-    if self.win_id ~= nil and vim.api.nvim_win_is_valid(self.win_id) then
-        vim.api.nvim_win_close(self.win_id, true)
+    if self.closing then
+        return
     end
+
+    self.closing = true
 
     if self.bufnr ~= nil and vim.api.nvim_buf_is_valid(self.bufnr) then
         vim.api.nvim_buf_delete(self.bufnr, { force = true })
     end
 
+    if self.win_id ~= nil and vim.api.nvim_win_is_valid(self.win_id) then
+        vim.api.nvim_win_close(self.win_id, true)
+    end
+
     self.active_list = nil
     self.win_id = nil
     self.bufnr = nil
+
+    self.closing = false
 end
 
 ---@return number,number
@@ -51,7 +58,7 @@ function HarpoonUI:_create_window()
     local height = 8
     local borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
     local bufnr = vim.api.nvim_create_buf(false, false)
-    local win_id, _ = popup.create(bufnr, {
+    local _, popup_info = popup.create(bufnr, {
         title = "Harpoon",
         highlight = "HarpoonWindow",
         line = math.floor(((vim.o.lines - height) / 2) - 1),
@@ -60,6 +67,8 @@ function HarpoonUI:_create_window()
         minheight = height,
         borderchars = borderchars,
     })
+    local win_id = popup_info.win_id
+
     Buffer.setup_autocmds_and_keymaps(bufnr)
 
     self.win_id = win_id
@@ -75,11 +84,10 @@ end
 
 local count = 0
 
----@param list HarpoonList
+---@param list? HarpoonList
 function HarpoonUI:toggle_quick_menu(list)
 
     count = count + 1
-    print("toggle?", self.win_id, self.bufnr, count)
 
     if list == nil or self.win_id ~= nil then
         self:close_menu()
@@ -88,7 +96,6 @@ function HarpoonUI:toggle_quick_menu(list)
 
     local win_id, bufnr = self:_create_window()
 
-    print("_create_window_results", win_id, bufnr, count)
     self.win_id = win_id
     self.bufnr = bufnr
     self.active_list = list
@@ -98,14 +105,12 @@ function HarpoonUI:toggle_quick_menu(list)
 end
 
 function HarpoonUI:select_menu_item()
-    error("select_menu_item...?")
     local idx = vim.fn.line(".")
     self.active_list:select(idx)
     self:close_menu()
 end
 
 function HarpoonUI:on_menu_save()
-    error("saving...?")
     local list = Buffer.get_contents(self.bufnr)
     self.active_list:resolve_displayed(list)
 end

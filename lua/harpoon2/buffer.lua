@@ -42,16 +42,6 @@ function M.setup_autocmds_and_keymaps(bufnr)
     vim.api.nvim_buf_set_option(bufnr, "buftype", "acwrite")
     vim.api.nvim_buf_set_option(bufnr, "bufhidden", "delete")
 
-    --[[
-    vim.api.nvim_buf_set_keymap(
-        bufnr,
-        "n",
-        "z",
-        "<Cmd>lua print('WTF')<CR>",
-        { silent = true }
-    )
-    --]]
-
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",

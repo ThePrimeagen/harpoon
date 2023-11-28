@@ -52,7 +52,6 @@ function Harpoon:setup(partial_config)
             group = HarpoonGroup,
             pattern = '*',
             callback = function(ev)
-                --[[
                 self:_for_each_list(function(list, config)
 
                     local fn = config[ev.event]
@@ -64,7 +63,6 @@ function Harpoon:setup(partial_config)
                         self:sync()
                     end
                 end)
-                --]]
             end,
         })
 
@@ -143,12 +141,4 @@ function Harpoon:__debug_reset()
     require("plenary.reload").reload_module("harpoon2")
 end
 
-local harpoon = Harpoon:new()
-HARPOON_DEBUG_VAR = HARPOON_DEBUG_VAR or 0
-if HARPOON_DEBUG_VAR == 0 then
-    harpoon.ui:toggle_quick_menu(harpoon:list())
-    HARPOON_DEBUG_VAR = 1
-end
--- leave this undone, i sometimes use this for debugging
-
-return harpoon
+return Harpoon:new()

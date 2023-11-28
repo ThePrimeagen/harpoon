@@ -4,22 +4,27 @@ local M = {}
 
 M.created_files = {}
 
-function M.before_each()
-    Data.set_data_path("/tmp/harpoon2.json")
-    Data.__dangerously_clear_data()
-    require("plenary.reload").reload_module("harpoon2")
-    Data = require("harpoon2.data")
-    Data.set_data_path("/tmp/harpoon2.json")
-    local harpoon = require("harpoon2")
-    M.clean_files()
+---@param name string
+function M.before_each(name)
+    return function()
+        Data.set_data_path(name)
+        Data.__dangerously_clear_data()
 
-    harpoon:setup({
-        settings = {
-            key = function()
-                return "testies"
-            end
-        }
-    })
+        require("plenary.reload").reload_module("harpoon2")
+        Data = require("harpoon2.data")
+        Data.set_data_path(name)
+        local harpoon = require("harpoon2")
+
+        M.clean_files()
+
+        harpoon:setup({
+            settings = {
+                key = function()
+                    return "testies"
+                end
+            }
+        })
+    end
 end
 
 function M.clean_files()

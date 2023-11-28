@@ -56,7 +56,8 @@ local function read_data()
         write_data({})
     end
 
-    local data = vim.json.decode(path:read())
+    local out_data = path:read()
+    local data = vim.json.decode(out_data)
     return data
 end
 
