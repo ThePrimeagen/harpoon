@@ -1,4 +1,6 @@
-local utils = require("harpoon2.utils")
+local Listeners = require("harpoon2.listeners")
+local listeners = Listeners.listeners
+
 local M = {}
 
 ---@alias HarpoonListItem {value: any, context: any}
@@ -19,7 +21,6 @@ local M = {}
 ---@field width number
 ---@field height number
 
-
 ---notehunthoeunthoeunthoeunthoeunthoeunth
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to true
@@ -30,7 +31,6 @@ local M = {}
 ---@field save_on_toggle? boolean
 ---@field jump_to_file_location? boolean
 ---@field key? (fun(): string)
-
 
 ---@class HarpoonConfig
 ---@field default HarpoonPartialConfigItem

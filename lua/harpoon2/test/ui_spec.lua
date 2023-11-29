@@ -13,6 +13,9 @@ describe("harpoon", function()
         local bufnr = harpoon.ui.bufnr
         local win_id = harpoon.ui.win_id
 
+        eq(vim.api.nvim_buf_is_valid(bufnr), true)
+        eq(vim.api.nvim_win_is_valid(win_id), true)
+
         harpoon.ui:toggle_quick_menu()
 
         eq(vim.api.nvim_buf_is_valid(bufnr), false)
@@ -20,7 +23,6 @@ describe("harpoon", function()
         eq(harpoon.ui.bufnr, nil)
         eq(harpoon.ui.win_id, nil)
     end)
-
 end)
 
 

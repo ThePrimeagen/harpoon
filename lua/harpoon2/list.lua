@@ -1,3 +1,5 @@
+local Listeners = require("harpoon2.listeners")
+
 local function index_of(items, element, config)
     local equals = config and config.equals or function(a, b) return a == b end
     local index = -1
@@ -43,6 +45,7 @@ function HarpoonList:append(item)
 
     local index = index_of(self.items, item, self.config)
     if index == -1 then
+        Listeners.listeners:emit(Listeners.event_names.ADD, {list = self, item = item, idx = #self.items + 1})
         table.insert(self.items, item)
     end
 
@@ -54,6 +57,7 @@ function HarpoonList:prepend(item)
     item = item or self.config.add()
     local index = index_of(self.items, item, self.config)
     if index == -1 then
+        Listeners.listeners:emit(Listeners.event_names.ADD, {list = self, item = item, idx = 1})
         table.insert(self.items, 1, item)
     end
 
@@ -64,6 +68,7 @@ end
 function HarpoonList:remove(item)
     for i, v in ipairs(self.items) do
         if self.config.equals(v, item) then
+            Listeners.listeners:emit(Listeners.event_names.REMOVE, {list = self, item = item, idx = i})
             table.remove(self.items, i)
             break
         end
@@ -73,6 +78,7 @@ end
 
 ---@return HarpoonList
 function HarpoonList:removeAt(index)
+    Listeners.listeners:emit(Listeners.event_names.REMOVE, {list = self, item = self.items[index], idx = index})
     table.remove(self.items, index)
     return self
 end
@@ -97,17 +103,25 @@ function HarpoonList:resolve_displayed(displayed)
     local new_list = {}
 
     local list_displayed = self:display()
+
+    for i, v in ipairs(list_displayed) do
+        local index = index_of(list_displayed, v)
+        if index == -1 then
+            Listeners.listeners:emit(Listeners.event_names.REMOVE, {list = self, item = v, idx = i})
+        end
+    end
+
     for i, v in ipairs(displayed) do
         local index = index_of(list_displayed, v)
         if index == -1 then
-            table.insert(new_list, self.config.add(v))
+            Listeners.listeners:emit(Listeners.event_names.ADD, {list = self, item = v, idx = i})
+            new_list[i] = self.config.add(v)
         else
             local index_in_new_list = index_of(new_list, self.items[index], self.config)
             if index_in_new_list == -1 then
-                table.insert(new_list, self.items[index])
+                new_list[i] = self.items[index]
             end
         end
-
     end
 
     self.items = new_list
@@ -116,6 +130,7 @@ end
 function HarpoonList:select(index, options)
     local item = self.items[index]
     if item then
+        Listeners.listeners:emit(Listeners.event_names.SELECT, {list = self, item = item, idx = index})
         self.config.select(item, options)
     end
 end

@@ -2,6 +2,7 @@ local Ui = require("harpoon2.ui")
 local Data = require("harpoon2.data")
 local Config = require("harpoon2.config")
 local List = require("harpoon2.list")
+local Listeners = require("harpoon2.listeners")
 
 -- setup
 -- read from a config file
@@ -14,6 +15,7 @@ local DEFAULT_LIST = "__harpoon_files"
 ---@class Harpoon
 ---@field config HarpoonConfig
 ---@field ui HarpoonUI
+---@field listeners HarpoonListeners
 ---@field data HarpoonData
 ---@field lists {[string]: {[string]: HarpoonList}}
 ---@field hooks_setup boolean
@@ -29,6 +31,7 @@ function Harpoon:new()
         config = config,
         data = Data.Data:new(),
         ui = Ui:new(config.settings),
+        listeners = Listeners.listeners,
         lists = {},
         hooks_setup = false,
     }, self)
