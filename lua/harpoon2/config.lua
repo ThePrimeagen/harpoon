@@ -42,7 +42,6 @@ local M = {}
 ---@field settings? HarpoonPartialSettings
 ---@field [string] HarpoonPartialConfigItem
 
-
 ---@return HarpoonPartialConfigItem
 function M.get_config(config, name)
     return vim.tbl_extend("force", {}, config.default, config[name] or {})
@@ -104,7 +103,7 @@ function M.get_default_config()
                 if set_position then
                     vim.api.nvim_win_set_cursor(0, {
                         file_item.context.row or 1,
-                        file_item.context.col or 0
+                        file_item.context.col or 0,
                     })
                 end
             end,
@@ -122,17 +121,17 @@ function M.get_default_config()
             ---@param name any
             ---@return HarpoonListItem
             add = function(name)
-                name = name or
+                name = name
                     -- TODO: should we do path normalization???
                     -- i know i have seen sometimes it becoming an absolute
                     -- path, if that is the case we can use the context to
                     -- store the bufname and then have value be the normalized
                     -- value
-                    vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+                    or vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
 
                 local bufnr = vim.fn.bufnr(name, false)
 
-                local pos = {1, 0}
+                local pos = { 1, 0 }
                 if bufnr ~= -1 then
                     pos = vim.api.nvim_win_get_cursor(0)
                 end
@@ -142,13 +141,13 @@ function M.get_default_config()
                     context = {
                         row = pos[1],
                         col = pos[2],
-                    }
+                    },
                 }
             end,
 
             BufLeave = function(arg, list)
-                local bufnr = arg.buf;
-                local bufname = vim.api.nvim_buf_get_name(bufnr);
+                local bufnr = arg.buf
+                local bufname = vim.api.nvim_buf_get_name(bufnr)
                 local item = list:get_by_display(bufname)
 
                 if item then
@@ -158,8 +157,8 @@ function M.get_default_config()
                 end
             end,
 
-            autocmds = {"BufLeave"},
-        }
+            autocmds = { "BufLeave" },
+        },
     }
 end
 

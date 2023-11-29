@@ -1,7 +1,10 @@
 local Listeners = require("harpoon2.listeners")
 
 local function index_of(items, element, config)
-    local equals = config and config.equals or function(a, b) return a == b end
+    local equals = config and config.equals
+        or function(a, b)
+            return a == b
+        end
     local index = -1
     for i, item in ipairs(items) do
         if equals(element, item) then
@@ -45,7 +48,10 @@ function HarpoonList:append(item)
 
     local index = index_of(self.items, item, self.config)
     if index == -1 then
-        Listeners.listeners:emit(Listeners.event_names.ADD, {list = self, item = item, idx = #self.items + 1})
+        Listeners.listeners:emit(
+            Listeners.event_names.ADD,
+            { list = self, item = item, idx = #self.items + 1 }
+        )
         table.insert(self.items, item)
     end
 
@@ -57,7 +63,10 @@ function HarpoonList:prepend(item)
     item = item or self.config.add()
     local index = index_of(self.items, item, self.config)
     if index == -1 then
-        Listeners.listeners:emit(Listeners.event_names.ADD, {list = self, item = item, idx = 1})
+        Listeners.listeners:emit(
+            Listeners.event_names.ADD,
+            { list = self, item = item, idx = 1 }
+        )
         table.insert(self.items, 1, item)
     end
 
@@ -68,7 +77,10 @@ end
 function HarpoonList:remove(item)
     for i, v in ipairs(self.items) do
         if self.config.equals(v, item) then
-            Listeners.listeners:emit(Listeners.event_names.REMOVE, {list = self, item = item, idx = i})
+            Listeners.listeners:emit(
+                Listeners.event_names.REMOVE,
+                { list = self, item = item, idx = i }
+            )
             table.remove(self.items, i)
             break
         end
@@ -78,7 +90,10 @@ end
 
 ---@return HarpoonList
 function HarpoonList:removeAt(index)
-    Listeners.listeners:emit(Listeners.event_names.REMOVE, {list = self, item = self.items[index], idx = index})
+    Listeners.listeners:emit(
+        Listeners.event_names.REMOVE,
+        { list = self, item = self.items[index], idx = index }
+    )
     table.remove(self.items, index)
     return self
 end
@@ -96,7 +111,6 @@ function HarpoonList:get_by_display(name)
     return self.items[index]
 end
 
-
 --- much inefficiencies.  dun care
 ---@param displayed string[]
 function HarpoonList:resolve_displayed(displayed)
@@ -107,17 +121,24 @@ function HarpoonList:resolve_displayed(displayed)
     for i, v in ipairs(list_displayed) do
         local index = index_of(list_displayed, v)
         if index == -1 then
-            Listeners.listeners:emit(Listeners.event_names.REMOVE, {list = self, item = v, idx = i})
+            Listeners.listeners:emit(
+                Listeners.event_names.REMOVE,
+                { list = self, item = v, idx = i }
+            )
         end
     end
 
     for i, v in ipairs(displayed) do
         local index = index_of(list_displayed, v)
         if index == -1 then
-            Listeners.listeners:emit(Listeners.event_names.ADD, {list = self, item = v, idx = i})
+            Listeners.listeners:emit(
+                Listeners.event_names.ADD,
+                { list = self, item = v, idx = i }
+            )
             new_list[i] = self.config.add(v)
         else
-            local index_in_new_list = index_of(new_list, self.items[index], self.config)
+            local index_in_new_list =
+                index_of(new_list, self.items[index], self.config)
             if index_in_new_list == -1 then
                 new_list[i] = self.items[index]
             end
@@ -130,7 +151,10 @@ end
 function HarpoonList:select(index, options)
     local item = self.items[index]
     if item then
-        Listeners.listeners:emit(Listeners.event_names.SELECT, {list = self, item = item, idx = index})
+        Listeners.listeners:emit(
+            Listeners.event_names.SELECT,
+            { list = self, item = item, idx = index }
+        )
         self.config.select(item, options)
     end
 end
@@ -187,6 +211,4 @@ function HarpoonList.decode(list_config, name, items)
     return HarpoonList:new(list_config, name, list_items)
 end
 
-
 return HarpoonList
-

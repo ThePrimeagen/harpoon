@@ -91,7 +91,6 @@ function M.setup_autocmds_and_keymaps(bufnr)
     vim.cmd(
         "autocmd BufLeave <buffer> ++nested ++once silent lua require('harpoon2').ui:toggle_quick_menu()"
     )
-
 end
 
 ---@param bufnr number

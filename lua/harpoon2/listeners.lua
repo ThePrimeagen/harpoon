@@ -1,4 +1,3 @@
-
 ---@alias HarpoonListener fun(type: string, args: any[] | any | nil): nil
 
 ---@class HarpoonListeners
@@ -11,14 +10,14 @@ HarpoonListeners.__index = HarpoonListeners
 function HarpoonListeners:new()
     return setmetatable({
         listeners = {},
-        listenersByType = {}
+        listenersByType = {},
     }, self)
 end
 
 ---@param cbOrType HarpoonListener | string
 ---@param cbOrNil HarpoonListener | string
 function HarpoonListeners:add_listener(cbOrType, cbOrNil)
-    if (type(cbOrType) == "string") then
+    if type(cbOrType) == "string" then
         if not self.listenersByType[cbOrType] then
             self.listenersByType[cbOrType] = {}
         end

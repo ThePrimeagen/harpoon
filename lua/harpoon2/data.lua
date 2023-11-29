@@ -40,7 +40,6 @@ end
 --- @field has_error boolean
 local Data = {}
 
-
 -- 1. load the data
 -- 2. keep track of the lists requested
 -- 3. sync save
@@ -49,7 +48,7 @@ Data.__index = Data
 
 ---@return HarpoonRawData
 local function read_data()
-    local path =  Path:new(full_data_path)
+    local path = Path:new(full_data_path)
     local exists = path:exists()
 
     if not exists then
@@ -68,9 +67,8 @@ function Data:new()
     return setmetatable({
         _data = data,
         has_error = not ok,
-        seen = {}
+        seen = {},
     }, self)
-
 end
 
 ---@param key string
@@ -89,7 +87,9 @@ end
 ---@return string[]
 function Data:data(key, name)
     if self.has_error then
-        error("Harpoon: there was an error reading the data file, cannot read data")
+        error(
+            "Harpoon: there was an error reading the data file, cannot read data"
+        )
     end
 
     if not self.seen[key] then
@@ -105,7 +105,9 @@ end
 ---@param values string[]
 function Data:update(key, name, values)
     if self.has_error then
-        error("Harpoon: there was an error reading the data file, cannot update")
+        error(
+            "Harpoon: there was an error reading the data file, cannot update"
+        )
     end
     self:_get_data(key, name)
     self._data[key][name] = values
@@ -135,7 +137,6 @@ function Data:sync()
         self.seen = {}
     end
 end
-
 
 M.Data = Data
 

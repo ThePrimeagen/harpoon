@@ -6,7 +6,6 @@ local eq = assert.are.same
 local be = utils.before_each(os.tmpname())
 
 describe("harpoon", function()
-
     before_each(function()
         be()
         harpoon = require("harpoon2")
@@ -20,7 +19,7 @@ describe("harpoon", function()
             "foo",
             "bar",
             "baz",
-            "qux"
+            "qux",
         }, row, col)
 
         local list = harpoon:list():append()
@@ -28,19 +27,18 @@ describe("harpoon", function()
             "foo",
             "bar",
             "baz",
-            "qux"
+            "qux",
         }, row, col)
 
         vim.api.nvim_set_current_buf(target_buf)
-        vim.api.nvim_win_set_cursor(0, {row + 1, col})
+        vim.api.nvim_win_set_cursor(0, { row + 1, col })
         vim.api.nvim_set_current_buf(other_buf)
 
         local expected = {
-            {value = file_name, context = {row = row + 1, col = col}},
+            { value = file_name, context = { row = row + 1, col = col } },
         }
 
         eq(expected, list.items)
-
     end)
 
     it("full harpoon add sync cycle", function()
@@ -52,7 +50,7 @@ describe("harpoon", function()
             "foo",
             "bar",
             "baz",
-            "qux"
+            "qux",
         }, row, col)
 
         local list = harpoon:list()
@@ -61,8 +59,8 @@ describe("harpoon", function()
 
         eq(harpoon:dump(), {
             testies = {
-                [default_list_name] = list:encode()
-            }
+                [default_list_name] = list:encode(),
+            },
         })
     end)
 
@@ -88,13 +86,13 @@ describe("harpoon", function()
 
         eq(harpoon:dump(), {
             testies = {
-                [default_list_name] = list:encode()
-            }
+                [default_list_name] = list:encode(),
+            },
         })
 
         eq(list.items, {
-            {value = file_name_2, context = {row = row_2, col = col_2}},
-            {value = file_name_1, context = {row = row_1, col = col_1}},
+            { value = file_name_2, context = { row = row_2, col = col_2 } },
+            { value = file_name_1, context = { row = row_1, col = col_1 } },
         })
 
         harpoon:list():append()
@@ -102,10 +100,9 @@ describe("harpoon", function()
         harpoon:list():prepend()
 
         eq(list.items, {
-            {value = file_name_2, context = {row = row_2, col = col_2}},
-            {value = file_name_1, context = {row = row_1, col = col_1}},
+            { value = file_name_2, context = { row = row_2, col = col_2 } },
+            { value = file_name_1, context = { row = row_1, col = col_1 } },
         })
-
     end)
 
     it("ui - display resolve", function()
@@ -115,8 +112,8 @@ describe("harpoon", function()
                     -- split string on /
                     local parts = vim.split(item.value, "/")
                     return parts[#parts]
-                end
-            }
+                end,
+            },
         })
 
         local file_names = {
@@ -149,8 +146,8 @@ describe("harpoon", function()
         list:resolve_displayed(displayed)
 
         eq(list.items, {
-            {value = file_names[1], context = {row = 4, col = 2}},
-            {value = file_names[4], context = {row = 4, col = 2}},
+            { value = file_names[1], context = { row = 4, col = 2 } },
+            { value = file_names[4], context = { row = 4, col = 2 } },
         })
     end)
 
@@ -188,10 +185,16 @@ describe("harpoon", function()
         list:resolve_displayed(displayed)
 
         eq({
-            {value = file_names[1], context = {row = 4, col = 2}},
-            {value = file_names[4], context = {row = 4, col = 2}},
-            {value = "/tmp/harpoon-test-other-file-1", context = {row = 1, col = 0}},
-            {value = "/tmp/harpoon-test-other-file-2", context = {row = 1, col = 0}},
+            { value = file_names[1], context = { row = 4, col = 2 } },
+            { value = file_names[4], context = { row = 4, col = 2 } },
+            {
+                value = "/tmp/harpoon-test-other-file-1",
+                context = { row = 1, col = 0 },
+            },
+            {
+                value = "/tmp/harpoon-test-other-file-2",
+                context = { row = 1, col = 0 },
+            },
         }, list.items)
 
         table.remove(displayed, 3)
@@ -199,10 +202,12 @@ describe("harpoon", function()
         list:resolve_displayed(displayed)
 
         eq({
-            {value = file_names[1], context = {row = 4, col = 2}},
-            {value = file_names[4], context = {row = 4, col = 2}},
-            {value = "/tmp/harpoon-test-other-file-2", context = {row = 1, col = 0}},
+            { value = file_names[1], context = { row = 4, col = 2 } },
+            { value = file_names[4], context = { row = 4, col = 2 } },
+            {
+                value = "/tmp/harpoon-test-other-file-2",
+                context = { row = 1, col = 0 },
+            },
         }, list.items)
     end)
 end)
-

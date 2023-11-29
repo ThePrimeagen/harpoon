@@ -21,15 +21,15 @@ function M.before_each(name)
             settings = {
                 key = function()
                     return "testies"
-                end
-            }
+                end,
+            },
         })
     end
 end
 
 function M.clean_files()
     for _, bufnr in ipairs(M.created_files) do
-        vim.api.nvim_buf_delete(bufnr, {force = true})
+        vim.api.nvim_buf_delete(bufnr, { force = true })
     end
 
     M.created_files = {}
@@ -42,7 +42,7 @@ function M.create_file(name, contents, row, col)
     vim.api.nvim_set_current_buf(bufnr)
     vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, contents)
     if row then
-        vim.api.nvim_win_set_cursor(0, {row, col})
+        vim.api.nvim_win_set_cursor(0, { row, col })
     end
 
     table.insert(M.created_files, bufnr)

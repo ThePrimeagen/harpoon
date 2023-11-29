@@ -49,14 +49,13 @@ function Harpoon:setup(partial_config)
 
     if self.hooks_setup == false then
         local augroup = vim.api.nvim_create_augroup
-        local HarpoonGroup = augroup('Harpoon', {})
+        local HarpoonGroup = augroup("Harpoon", {})
 
-        vim.api.nvim_create_autocmd({"BufLeave", "VimLeavePre"}, {
+        vim.api.nvim_create_autocmd({ "BufLeave", "VimLeavePre" }, {
             group = HarpoonGroup,
-            pattern = '*',
+            pattern = "*",
             callback = function(ev)
                 self:_for_each_list(function(list, config)
-
                     local fn = config[ev.event]
                     if fn ~= nil then
                         fn(ev, list)

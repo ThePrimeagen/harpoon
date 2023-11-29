@@ -56,7 +56,8 @@ function HarpoonUI:_create_window()
     end
 
     local height = 8
-    local borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
+    local borderchars =
+        { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
     local bufnr = vim.api.nvim_create_buf(false, false)
     local _, popup_info = popup.create(bufnr, {
         title = "Harpoon",
@@ -73,11 +74,7 @@ function HarpoonUI:_create_window()
 
     self.win_id = win_id
     vim.api.nvim_win_set_option(self.win_id, "number", true)
-    vim.api.nvim_win_set_option(
-        win_id,
-        "winhl",
-        "Normal:HarpoonBorder"
-    )
+    vim.api.nvim_win_set_option(win_id, "winhl", "Normal:HarpoonBorder")
 
     return win_id, bufnr
 end
@@ -86,7 +83,6 @@ local count = 0
 
 ---@param list? HarpoonList
 function HarpoonUI:toggle_quick_menu(list)
-
     count = count + 1
 
     if list == nil or self.win_id ~= nil then

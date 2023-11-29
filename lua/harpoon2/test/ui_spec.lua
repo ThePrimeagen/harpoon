@@ -3,7 +3,6 @@ local utils = require("harpoon2.test.utils")
 local eq = assert.are.same
 
 describe("harpoon", function()
-
     before_each(utils.before_each(os.tmpname()))
 
     it("open the ui without any items in the list", function()
@@ -24,5 +23,3 @@ describe("harpoon", function()
         eq(harpoon.ui.win_id, nil)
     end)
 end)
-
-

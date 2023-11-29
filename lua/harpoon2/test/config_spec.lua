@@ -14,9 +14,9 @@ describe("config", function()
             "foo",
             "bar",
             "baz",
-            "qux"
+            "qux",
         })
-        vim.api.nvim_win_set_cursor(0, {3, 1})
+        vim.api.nvim_win_set_cursor(0, { 3, 1 })
 
         local item = config_item.add()
         eq(item, {
@@ -24,9 +24,7 @@ describe("config", function()
             context = {
                 row = 3,
                 col = 1,
-            }
+            },
         })
     end)
 end)
-
-

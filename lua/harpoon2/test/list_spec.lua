@@ -4,7 +4,6 @@ local eq = assert.are.same
 
 describe("list", function()
     it("decode", function()
-
         local config = Config.merge_config({
             foo = {
                 decode = function(item)
@@ -18,12 +17,12 @@ describe("list", function()
 
                 display = function(item)
                     return table.concat(item.value, "---")
-                end
-            }
+                end,
+            },
         })
         local list_config = Config.get_config(config, "foo")
 
-        local list = List.decode(list_config, "foo", {"foo:bar", "baz:qux"})
+        local list = List.decode(list_config, "foo", { "foo:bar", "baz:qux" })
         local displayed = list:display()
 
         eq(displayed, {
@@ -32,4 +31,3 @@ describe("list", function()
         })
     end)
 end)
-
