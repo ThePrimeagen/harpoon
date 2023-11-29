@@ -1,4 +1,5 @@
 local Listeners = require("harpoon2.listeners")
+local Buffer = require("harpoon2.buffer")
 
 local function index_of(items, element, config)
     local equals = config and config.equals

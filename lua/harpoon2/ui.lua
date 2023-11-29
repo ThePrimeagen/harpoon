@@ -102,6 +102,12 @@ end
 
 function HarpoonUI:select_menu_item()
     local idx = vim.fn.line(".")
+
+    -- must first save any updates potentially made to the list before
+    -- navigating
+    local list = Buffer.get_contents(self.bufnr)
+    self.active_list:resolve_displayed(list)
+
     self.active_list:select(idx)
     self:close_menu()
 end
