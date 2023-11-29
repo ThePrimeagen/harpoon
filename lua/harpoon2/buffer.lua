@@ -108,4 +108,8 @@ function M.get_contents(bufnr)
     return indices
 end
 
+function M.set_contents(bufnr, contents)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, contents)
+end
+
 return M

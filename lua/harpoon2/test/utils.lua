@@ -42,11 +42,26 @@ function M.create_file(name, contents, row, col)
     vim.api.nvim_set_current_buf(bufnr)
     vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, contents)
     if row then
-        vim.api.nvim_win_set_cursor(0, { row, col })
+        vim.api.nvim_win_set_cursor(0, { row or 1, col or 0 })
     end
 
     table.insert(M.created_files, bufnr)
     return bufnr
+end
+
+---@param count number
+---@param list HarpoonList
+function M.fill_list_with_files(count, list)
+    local files = {}
+
+    for _ = 1, count do
+        local name = os.tmpname()
+        table.insert(files, name)
+        M.create_file(name, { "test" })
+        list:append()
+    end
+
+    return files
 end
 
 return M
