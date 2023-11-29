@@ -67,7 +67,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
     -- TODO: Update these to use the new autocmd api
     vim.cmd(
         string.format(
-            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon2').ui:on_menu_save()",
+            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon2').ui:save()",
             bufnr
         )
     )
@@ -77,7 +77,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
     if global_config.save_on_change then
         vim.cmd(
             string.format(
-                "autocmd TextChanged,TextChangedI <buffer=%s> lua require('harpoon2').ui:on_menu_save()",
+                "autocmd TextChanged,TextChangedI <buffer=%s> lua require('harpoon2').ui:save()",
                 bufnr
             )
         )

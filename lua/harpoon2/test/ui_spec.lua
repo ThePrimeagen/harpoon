@@ -35,7 +35,7 @@ describe("harpoon", function()
         harpoon.ui:toggle_quick_menu(harpoon:list())
         table.remove(created_files, 2)
         Buffer.set_contents(harpoon.ui.bufnr, created_files)
-        harpoon.ui:toggle_quick_menu()
+        harpoon.ui:save()
 
         eq(harpoon:list():length(), 2)
         eq(harpoon:list():display(), created_files)

@@ -106,7 +106,7 @@ function HarpoonUI:select_menu_item()
     self:close_menu()
 end
 
-function HarpoonUI:on_menu_save()
+function HarpoonUI:save()
     local list = Buffer.get_contents(self.bufnr)
     self.active_list:resolve_displayed(list)
 end
