@@ -28,7 +28,7 @@ describe("harpoon", function()
         eq(harpoon.ui.win_id, nil)
     end)
 
-    it("delete file from list via ui", function()
+    it("delete file from ui contents and save", function()
         local created_files = utils.fill_list_with_files(3, harpoon:list())
         eq(harpoon:list():length(), 3)
 
@@ -39,5 +39,20 @@ describe("harpoon", function()
 
         eq(harpoon:list():length(), 2)
         eq(harpoon:list():display(), created_files)
+    end)
+
+    it("add file from ui contents and save", function()
+        local list = harpoon:list()
+        local created_files = utils.fill_list_with_files(3, list)
+        table.insert(created_files, os.tmpname())
+
+        eq(list:length(), 3)
+
+        harpoon.ui:toggle_quick_menu(list)
+        Buffer.set_contents(harpoon.ui.bufnr, created_files)
+        harpoon.ui:save()
+
+        eq(list:length(), 4)
+        eq(list:display(), created_files)
     end)
 end)
