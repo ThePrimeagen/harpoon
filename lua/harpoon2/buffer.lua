@@ -4,7 +4,8 @@ local M = {}
 local HARPOON_MENU = "__harpoon-menu__"
 
 -- simple reason here is that if we are deving harpoon, we will create several
--- ui objects, each with their own buffer, which will cause the name to be duplicated and then we will get a vim error on nvim_buf_set_name
+-- ui objects, each with their own buffer, which will cause the name to be
+-- duplicated and then we will get a vim error on nvim_buf_set_name
 local harpoon_menu_id = 0
 
 local function get_harpoon_menu_name()

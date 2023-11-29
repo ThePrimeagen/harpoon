@@ -1,6 +1,3 @@
-local Listeners = require("harpoon2.listeners")
-local listeners = Listeners.listeners
-
 local M = {}
 
 ---@alias HarpoonListItem {value: any, context: any}

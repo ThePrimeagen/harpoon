@@ -127,6 +127,7 @@ function Harpoon:sync()
     self.data:sync()
 end
 
+--luacheck: ignore 212/self
 function Harpoon:info()
     return {
         paths = Data.info(),
