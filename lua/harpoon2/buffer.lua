@@ -1,4 +1,4 @@
-local utils = require("harpoon2.utils")
+local utils = require("harpoon.utils")
 local M = {}
 
 local HARPOON_MENU = "__harpoon-menu__"
@@ -47,27 +47,27 @@ function M.setup_autocmds_and_keymaps(bufnr)
         bufnr,
         "n",
         "q",
-        "<Cmd>lua require('harpoon2').ui:toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon').ui:toggle_quick_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",
         "<ESC>",
-        "<Cmd>lua require('harpoon2').ui:toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon').ui:toggle_quick_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",
         "<CR>",
-        "<Cmd>lua require('harpoon2').ui:select_menu_item()<CR>",
+        "<Cmd>lua require('harpoon').ui:select_menu_item()<CR>",
         {}
     )
     -- TODO: Update these to use the new autocmd api
     vim.cmd(
         string.format(
-            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon2').ui:save()",
+            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon').ui:save()",
             bufnr
         )
     )
@@ -77,7 +77,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
     if global_config.save_on_change then
         vim.cmd(
             string.format(
-                "autocmd TextChanged,TextChangedI <buffer=%s> lua require('harpoon2').ui:save()",
+                "autocmd TextChanged,TextChangedI <buffer=%s> lua require('harpoon').ui:save()",
                 bufnr
             )
         )
@@ -90,7 +90,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
         )
     )
     vim.cmd(
-        "autocmd BufLeave <buffer> ++nested ++once silent lua require('harpoon2').ui:toggle_quick_menu()"
+        "autocmd BufLeave <buffer> ++nested ++once silent lua require('harpoon').ui:toggle_quick_menu()"
     )
 end
 

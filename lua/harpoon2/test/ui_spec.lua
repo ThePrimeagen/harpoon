@@ -1,6 +1,6 @@
-local utils = require("harpoon2.test.utils")
-local Buffer = require("harpoon2.buffer")
-local harpoon = require("harpoon2")
+local utils = require("harpoon.test.utils")
+local Buffer = require("harpoon.buffer")
+local harpoon = require("harpoon")
 
 local eq = assert.are.same
 local be = utils.before_each(os.tmpname())
@@ -8,7 +8,7 @@ local be = utils.before_each(os.tmpname())
 describe("harpoon", function()
     before_each(function()
         be()
-        harpoon = require("harpoon2")
+        harpoon = require("harpoon")
     end)
 
     it("open the ui without any items in the list", function()

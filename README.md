@@ -11,18 +11,12 @@
 -- image provided by **Bob Rust**
 
 ## ⇁ TOC
-* [Note to legacy Harpoon 1 users](#-Note-to-legacy-Harpoon-1-users)
 * [The Problems](#-The-Problems)
 * [The Solutions](#-The-Solutions)
 * [Installation](#-Installation)
 * [Getting Started](#-Getting-Started)
 * [Social](#-Social)
-
-## ⇁ Note to legacy Harpoon 1 users
-Original Harpoon will remain in a frozen state and i will merge PRs in with _no
-code review_ for those that wish to remain on that.  Harpoon 2 is significantly
-better and allows for MUCH greater control.  Please migrate to that (will
-become `master` within the next few months).
+* [Note to legacy Harpoon 1 users](#-Note-to-legacy-Harpoon-1-users)
 
 ## ⇁ The Problems
 1. You're working on a codebase. medium, large, tiny, whatever. You find
@@ -37,17 +31,39 @@ to go to the files you want.
 1. Unlimited terminals and navigation.
 
 ## ⇁ Installation
-* neovim 0.5.0+ required
-* install using your favorite plugin manager (`vim-plug` in this example)
-```vim
-Plug 'nvim-lua/plenary.nvim' " don't forget to add this one if you don't have it yet!
-Plug 'ThePrimeagen/harpoon'
+* neovim 0.8.0+ required
+* install using your favorite plugin manager (i am using `packer` in this case)
+```lua
+use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
+use {
+    "ThePrimeagen/harpoon",
+    branch = "0.1.x",
+    requires = { {"nvim-lua/plenary.nvim"} }
+}
 ```
 
 ## ⇁ Getting Started
 
+### Quick Note
+You will want to add your style of remaps and such to your neovim dotfiles with
+the shortcuts you like.  My shortcuts are for me.  Me alone.  Which also means
+they are designed with dvorak in mind (My layout btw, I use dvorak btw).
+
+```lua
+local harpoon = require("harpoon")
+
+harpoon.ui:toggle_quick_menu(harpoon:list())
+```
+
 ## ⇁ Social
-For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.
+For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
 * [Twitch](https://www.twitch.tv/theprimeagen)
 * [Twitter](https://twitter.com/ThePrimeagen)
+
+## ⇁ Note to legacy Harpoon 1 users
+Original Harpoon will remain in a frozen state and i will merge PRs in with _no
+code review_ for those that wish to remain on that.  Harpoon 2 is significantly
+better and allows for MUCH greater control.  Please migrate to that (will
+become `master` within the next few months).
+

@@ -1,5 +1,5 @@
-local utils = require("harpoon2.test.utils")
-local harpoon = require("harpoon2")
+local utils = require("harpoon.test.utils")
+local harpoon = require("harpoon")
 
 local eq = assert.are.same
 
@@ -8,7 +8,7 @@ local be = utils.before_each(os.tmpname())
 describe("harpoon", function()
     before_each(function()
         be()
-        harpoon = require("harpoon2")
+        harpoon = require("harpoon")
     end)
 
     it("when we change buffers we update the row and column", function()

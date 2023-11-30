@@ -1,7 +1,7 @@
 local Path = require("plenary.path")
 
 local data_path = vim.fn.stdpath("data")
-local full_data_path = string.format("%s/harpoon2.json", data_path)
+local full_data_path = string.format("%s/harpoon.json", data_path)
 
 ---@param data any
 local function write_data(data)

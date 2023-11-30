@@ -1,8 +1,8 @@
-local Ui = require("harpoon2.ui")
-local Data = require("harpoon2.data")
-local Config = require("harpoon2.config")
-local List = require("harpoon2.list")
-local Listeners = require("harpoon2.listeners")
+local Ui = require("harpoon.ui")
+local Data = require("harpoon.data")
+local Config = require("harpoon.config")
+local List = require("harpoon.list")
+local Listeners = require("harpoon.listeners")
 
 -- setup
 -- read from a config file
@@ -141,7 +141,7 @@ function Harpoon:dump()
 end
 
 function Harpoon:__debug_reset()
-    require("plenary.reload").reload_module("harpoon2")
+    require("plenary.reload").reload_module("harpoon")
 end
 
 return Harpoon:new()

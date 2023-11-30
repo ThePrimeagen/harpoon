@@ -1,4 +1,4 @@
-local Config = require("harpoon2.config")
+local Config = require("harpoon.config")
 local eq = assert.are.same
 
 describe("config", function()

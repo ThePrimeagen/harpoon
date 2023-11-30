@@ -1,4 +1,4 @@
-local Data = require("harpoon2.data")
+local Data = require("harpoon.data")
 
 local M = {}
 
@@ -10,10 +10,10 @@ function M.before_each(name)
         Data.set_data_path(name)
         Data.__dangerously_clear_data()
 
-        require("plenary.reload").reload_module("harpoon2")
-        Data = require("harpoon2.data")
+        require("plenary.reload").reload_module("harpoon")
+        Data = require("harpoon.data")
         Data.set_data_path(name)
-        local harpoon = require("harpoon2")
+        local harpoon = require("harpoon")
 
         M.clean_files()
 

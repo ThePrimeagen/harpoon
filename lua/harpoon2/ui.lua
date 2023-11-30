@@ -1,5 +1,5 @@
 local popup = require("plenary").popup
-local Buffer = require("harpoon2.buffer")
+local Buffer = require("harpoon.buffer")
 local DEFAULT_WINDOW_WIDTH = 69 -- nice
 
 ---@class HarpoonUI
