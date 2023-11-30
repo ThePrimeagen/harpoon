@@ -123,7 +123,6 @@ end
 function HarpoonUI:save()
     local list = Buffer.get_contents(self.bufnr)
     self.active_list:resolve_displayed(list)
-    self:close_menu()
 end
 
 ---@param settings HarpoonSettings

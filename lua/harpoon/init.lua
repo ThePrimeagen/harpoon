@@ -1,3 +1,4 @@
+local Path = require("plenary.path")
 local Ui = require("harpoon.ui")
 local Data = require("harpoon.data")
 local Config = require("harpoon.config")
@@ -144,3 +145,5 @@ function Harpoon:__debug_reset()
 end
 
 return Harpoon:new()
+
+

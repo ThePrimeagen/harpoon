@@ -62,13 +62,6 @@ function M.setup_autocmds_and_keymaps(bufnr)
         "<Cmd>lua require('harpoon').ui:select_menu_item()<CR>",
         {}
     )
-    -- TODO: Update these to use the new autocmd api
-    vim.cmd(
-        string.format(
-            "autocmd BufWriteCmd <buffer=%s> lua require('harpoon').ui:save()",
-            bufnr
-        )
-    )
 
     -- TODO: Do we want this?  is this a thing?
     -- its odd... why save on text change? shouldn't we wait until close / w / esc?
@@ -88,6 +81,17 @@ function M.setup_autocmds_and_keymaps(bufnr)
             bufnr
         )
     )
+
+    vim.api.nvim_create_autocmd({ "BufWriteCmd" }, {
+        group = HarpoonGroup,
+        pattern = "__harpoon*",
+        callback = function()
+            require("harpoon").ui:save()
+            vim.schedule(function()
+                require("harpoon").ui:toggle_quick_menu()
+            end)
+        end
+    })
 
     vim.api.nvim_create_autocmd({ "BufLeave" }, {
         group = HarpoonGroup,

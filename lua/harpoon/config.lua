@@ -164,6 +164,7 @@ end
 ---@param latest_config HarpoonConfig?
 ---@return HarpoonConfig
 function M.merge_config(partial_config, latest_config)
+    partial_config = partial_config or {}
     local config = latest_config or M.get_default_config()
     for k, v in pairs(partial_config) do
         if k == "settings" then
