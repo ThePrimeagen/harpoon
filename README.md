@@ -49,10 +49,25 @@ You will want to add your style of remaps and such to your neovim dotfiles with
 the shortcuts you like.  My shortcuts are for me.  Me alone.  Which also means
 they are designed with dvorak in mind (My layout btw, I use dvorak btw).
 
+### harpoon:setup
+it is a requirement to call `harpoon:setup()`.  This is required due to
+autocmds setup.
+
+### Basic Setup
+Here is my basic setup
+
 ```lua
 local harpoon = require("harpoon")
 
-harpoon.ui:toggle_quick_menu(harpoon:list())
+harpoon:setup()
+
+vim.keymap.set("n", "<leader>a", function() harpoon:list():append() end)
+vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
+vim.keymap.set("n", "<C-t>", function() harpoon.ui:select(2) end)
+vim.keymap.set("n", "<C-n>", function() harpoon.ui:select(3) end)
+vim.keymap.set("n", "<C-s>", function() harpoon.ui:select(4) end)
 ```
 
 ## ⇁ Social
