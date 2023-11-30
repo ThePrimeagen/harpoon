@@ -37,7 +37,7 @@ to go to the files you want.
 use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
 use {
     "ThePrimeagen/harpoon",
-    branch = "0.1.x",
+    branch = "harpoon2",
     requires = { {"nvim-lua/plenary.nvim"} }
 }
 ```
