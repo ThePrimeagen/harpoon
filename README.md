@@ -11,12 +11,12 @@
 -- image provided by **Bob Rust**
 
 ## ⇁ TOC
-[Note to legacy Harpoon 1 users](#-Note-to-legacy-Harpoon-1-users)
-[The Problems](#-The-Problems)
-[The Solutions](#-The-Solutions)
-[Installation](#-Installation)
-[Getting Started](#-Getting-Started)
-[Social](#-Social)
+* [Note to legacy Harpoon 1 users](#-Note-to-legacy-Harpoon-1-users)
+* [The Problems](#-The-Problems)
+* [The Solutions](#-The-Solutions)
+* [Installation](#-Installation)
+* [Getting Started](#-Getting-Started)
+* [Social](#-Social)
 
 ## ⇁ Note to legacy Harpoon 1 users
 Original Harpoon will remain in a frozen state and i will merge PRs in with _no
