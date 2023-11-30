@@ -55,4 +55,19 @@ describe("harpoon", function()
         eq(list:length(), 4)
         eq(list:display(), created_files)
     end)
+
+    it("edit ui but toggle should not save", function()
+        local list = harpoon:list()
+        local created_files = utils.fill_list_with_files(3, list)
+
+        eq(list:length(), 3)
+
+        harpoon.ui:toggle_quick_menu(list)
+        Buffer.set_contents(harpoon.ui.bufnr, {})
+        harpoon.ui:toggle_quick_menu()
+
+        eq(list:length(), 3)
+        eq(created_files, list:display())
+
+    end)
 end)
