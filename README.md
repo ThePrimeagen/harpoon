@@ -1,5 +1,15 @@
 <div align="center">
 
+## ⇁  HARPOON 2
+This is a deprecated and all future changes will be to the branch `harpoon2`.
+
+[Harpoon 2](https://github.com/ThePrimeagen/harpoon/tree/harpoon2)
+
+**STATUS**: Merging into mainline April 20th or June 9th (nice)
+
+-------------------------------
+# Legacy Harpoon README
+
 # Harpoon
 ##### Getting you where you want with the fewest keystrokes.
 
@@ -9,7 +19,6 @@
 
 ![Harpoon](harpoon.png)
 -- image provided by **Bob Rust**
-
 
 ## ⇁  WIP
 This is not fully baked, though used by several people. If you experience any
@@ -65,9 +74,9 @@ you can also cycle the list in both directions
 :lua require("harpoon.ui").nav_next()                   -- navigates to next mark
 :lua require("harpoon.ui").nav_prev()                   -- navigates to previous mark
 ```
-from the quickmenu, open a file in: 
+from the quickmenu, open a file in:
 a vertical split with control+v,
-a horizontal split with control+x, 
+a horizontal split with control+x,
 a new tab with control+t
 
 ### Terminal Navigation
@@ -233,11 +242,11 @@ vim.cmd('highlight! HarpoonNumberInactive guibg=NONE guifg=#7aa2f7')
 vim.cmd('highlight! TabLineFill guibg=NONE guifg=white')
 ```
 
-Result: 
-![tabline](https://i.imgur.com/8i8mKJD.png) 
+Result:
+![tabline](https://i.imgur.com/8i8mKJD.png)
 
 ## ⇁ Social
-For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.  
+For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
 * [Twitch](https://www.twitch.tv/theprimeagen)
 * [Twitter](https://twitter.com/ThePrimeagen)
