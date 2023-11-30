@@ -76,6 +76,7 @@ function M.get_default_config()
 
             ---@param file_item HarpoonListFileItem
             select = function(file_item, options)
+                options = options or {}
                 if file_item == nil then
                     return
                 end
@@ -87,13 +88,13 @@ function M.get_default_config()
                     bufnr = vim.fn.bufnr(file_item.value, true)
                 end
 
-                if not options or not options.vsplit or not options.split then
-                    vim.api.nvim_set_current_buf(bufnr)
-                elseif options.vsplit then
+                if options.vsplit then
                     vim.cmd("vsplit")
                     vim.api.nvim_set_current_buf(bufnr)
                 elseif options.split then
                     vim.cmd("split")
+                    vim.api.nvim_set_current_buf(bufnr)
+                else
                     vim.api.nvim_set_current_buf(bufnr)
                 end
 
