@@ -4,6 +4,7 @@ local DEFAULT_WINDOW_WIDTH = 69 -- nice
 
 ---@class HarpoonUI
 ---@field win_id number
+---@field border_win_id number
 ---@field bufnr number
 ---@field settings HarpoonSettings
 ---@field active_list HarpoonList
@@ -16,6 +17,7 @@ HarpoonUI.__index = HarpoonUI
 function HarpoonUI:new(settings)
     return setmetatable({
         win_id = nil,
+        border_win_id = nil,
         bufnr = nil,
         active_list = nil,
         settings = settings,
@@ -37,8 +39,13 @@ function HarpoonUI:close_menu()
         vim.api.nvim_win_close(self.win_id, true)
     end
 
+    if self.border_win_id ~= nil and vim.api.nvim_win_is_valid(self.border_win_id) then
+        vim.api.nvim_win_close(self.border_win_id, true)
+    end
+
     self.active_list = nil
     self.win_id = nil
+    self.border_win_id = nil
     self.bufnr = nil
 
     self.closing = false
@@ -73,7 +80,8 @@ function HarpoonUI:_create_window()
     Buffer.setup_autocmds_and_keymaps(bufnr)
 
     self.win_id = win_id
-    vim.api.nvim_win_set_option(self.win_id, "number", true)
+    self.border_win_id = popup_info.border.win_id
+    vim.api.nvim_win_set_option(win_id, "number", true)
     vim.api.nvim_win_set_option(win_id, "winhl", "Normal:HarpoonBorder")
 
     return win_id, bufnr

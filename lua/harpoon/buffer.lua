@@ -1,4 +1,6 @@
 local utils = require("harpoon.utils")
+local HarpoonGroup = require("harpoon.autocmd")
+
 local M = {}
 
 local HARPOON_MENU = "__harpoon-menu__"
@@ -18,8 +20,6 @@ end
 ---strings back into the ui.  it feels gross and it puts odd coupling
 ---@param bufnr number
 function M.setup_autocmds_and_keymaps(bufnr)
-    --[[
-    -- TODO: Do the highlighting better
     local curr_file = vim.api.nvim_buf_get_name(0)
     local cmd =
         string.format(
@@ -31,9 +31,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
                 .. "call matchadd('HarpoonCurrentFile', '\\V'.path.'\\$')",
             curr_file:gsub("\\", "\\\\")
         )
-    print(cmd)
     vim.cmd(cmd)
-    --]]
 
     if vim.api.nvim_buf_get_name(bufnr) == "" then
         vim.api.nvim_buf_set_name(bufnr, get_harpoon_menu_name())
@@ -71,6 +69,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
             bufnr
         )
     )
+
     -- TODO: Do we want this?  is this a thing?
     -- its odd... why save on text change? shouldn't we wait until close / w / esc?
     --[[
@@ -89,9 +88,14 @@ function M.setup_autocmds_and_keymaps(bufnr)
             bufnr
         )
     )
-    vim.cmd(
-        "autocmd BufLeave <buffer> ++nested ++once silent lua require('harpoon').ui:toggle_quick_menu()"
-    )
+
+    vim.api.nvim_create_autocmd({ "BufLeave" }, {
+        group = HarpoonGroup,
+        pattern = "__harpoon*",
+        callback = function()
+            require("harpoon").ui:toggle_quick_menu()
+        end
+    })
 end
 
 ---@param bufnr number

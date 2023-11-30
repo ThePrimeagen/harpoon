@@ -3,6 +3,7 @@ local Data = require("harpoon.data")
 local Config = require("harpoon.config")
 local List = require("harpoon.list")
 local Listeners = require("harpoon.listeners")
+local HarpoonGroup = require("harpoon.autocmd")
 
 -- setup
 -- read from a config file
@@ -48,8 +49,6 @@ function Harpoon:setup(partial_config)
     ---TODO: should we go through every seen list and update its config?
 
     if self.hooks_setup == false then
-        local augroup = vim.api.nvim_create_augroup
-        local HarpoonGroup = augroup("Harpoon", {})
 
         vim.api.nvim_create_autocmd({ "BufLeave", "VimLeavePre" }, {
             group = HarpoonGroup,
