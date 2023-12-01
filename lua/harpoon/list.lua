@@ -79,6 +79,7 @@ end
 
 ---@return HarpoonList
 function HarpoonList:remove(item)
+    item = item or self.config.add(self.config)
     for i, v in ipairs(self.items) do
         if self.config.equals(v, item) then
             Listeners.listeners:emit(
