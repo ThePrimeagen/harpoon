@@ -17,6 +17,7 @@
 * [API](#-API)
     * [Config](#config)
     * [Settings](#settings)
+* [Contribution](#-Contribution)
 * [Social](#-Social)
 * [Note to legacy Harpoon 1 users](#-Note-to-legacy-Harpoon-1-users)
 
@@ -186,6 +187,12 @@ settings = {
     end,
 },
 ```
+
+## ⇁ Contribution
+This project is officially open source, not just public source.  If you wish to
+contribute start with an issue and I am totally willing for PRs, but I will be
+very conservative on what I take.  I don't want Harpoon _solving_ specific
+issues, I want it to create the proper hooks to solve any problem
 
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
