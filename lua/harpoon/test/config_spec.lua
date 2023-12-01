@@ -17,7 +17,7 @@ describe("config", function()
         })
         vim.api.nvim_win_set_cursor(0, { 3, 1 })
 
-        local item = config_item.add()
+        local item = config_item.add(config_item)
         eq(item, {
             value = "/tmp/harpoon-test",
             context = {
