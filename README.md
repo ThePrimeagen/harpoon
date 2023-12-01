@@ -49,7 +49,7 @@ You will want to add your style of remaps and such to your neovim dotfiles with
 the shortcuts you like.  My shortcuts are for me.  Me alone.  Which also means
 they are designed with dvorak in mind (My layout btw, I use dvorak btw).
 
-### harpoon:setup
+### harpoon:setup() IS REQUIRED
 it is a requirement to call `harpoon:setup()`.  This is required due to
 autocmds setup.
 
@@ -59,7 +59,9 @@ Here is my basic setup
 ```lua
 local harpoon = require("harpoon")
 
+-- REQUIRED
 harpoon:setup()
+-- REQUIRED
 
 vim.keymap.set("n", "<leader>a", function() harpoon:list():append() end)
 vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
@@ -125,6 +127,38 @@ harpoon:setup({
 })
 
 ```
+
+### Config
+There is quite a bit of behavior you can configure via `harpoon:setup()`
+
+* `settings`: is the global settings.  as of now there isn't a global setting in use, but once we have some custom behavior i'll put them here
+* `default`: the default configuration for any list.  it is simply a file harpoon
+* `[name] = HarpoonPartialConfigItem`: any named lists config.  it will be merged with `default` and override any behavior
+
+**HarpoonPartialConfigItem Definition**
+```
+---@class HarpoonPartialConfigItem
+---@field encode? (fun(list_item: HarpoonListItem): string)
+---@field decode? (fun(obj: string): any)
+---@field display? (fun(list_item: HarpoonListItem): string)
+---@field select? (fun(list_item: HarpoonListItem, options: any?): nil)
+---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
+---@field add? fun(item: any?): HarpoonListItem
+---@field BufLeave? fun(evt: any, list: HarpoonList): nil
+---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
+---@field get_root_dir? fun(): string
+```
+
+**Detailed Definitions**
+* `encode`: how to encode the list item to the harpoon file.  if encode is `false`, then the list will not be saved to disk (think terminals)
+* `decode`: how to decode the list
+* `display`: how to display the list item in the ui menu
+* `select`: the action taken when selecting a list item. called from `list:select(idx, options)`
+* `equals`: how to compare two list items for equality
+* `add`: called when `list:append()` or `list:prepend()` is called.  called with an item, which will be a string, when adding through the ui menu
+* `BufLeave`: this function is called for every list on BufLeave.  if you need custom behavior, this is the place
+* `VimLeavePre`: this function is called for every list on VimLeavePre.
+* `get_root_dir`: used for creating relative paths.  defaults to `vim.loop.cwd()`
 
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.

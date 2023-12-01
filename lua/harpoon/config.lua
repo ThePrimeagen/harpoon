@@ -1,9 +1,12 @@
 local Path = require("plenary.path")
-local function normalize_path(buf_name)
-    return Path:new(buf_name):make_relative(vim.loop.cwd())
+local function normalize_path(buf_name, root)
+    return Path:new(buf_name):make_relative(root)
 end
 
+
 local M = {}
+local DEFAULT_LIST = "__harpoon_files"
+M.DEFAULT_LIST = DEFAULT_LIST
 
 ---@alias HarpoonListItem {value: any, context: any}
 ---@alias HarpoonListFileItem {value: string, context: {row: number, col: number}}
@@ -15,7 +18,7 @@ local M = {}
 ---@field display? (fun(list_item: HarpoonListItem): string)
 ---@field select? (fun(list_item: HarpoonListItem, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
----@field add? fun(item: any?): HarpoonListItem
+---@field add? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
 ---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
 ---@field get_root_dir? fun(): string
@@ -123,9 +126,10 @@ function M.get_default_config()
                 return vim.loop.cwd()
             end,
 
-            ---@param name any
+            ---@param config HarpoonPartialConfigItem
+            ---@param name? any
             ---@return HarpoonListItem
-            add = function(name)
+            add = function(config, name)
                 name = name
                     -- TODO: should we do path normalization???
                     -- i know i have seen sometimes it becoming an absolute
@@ -135,7 +139,8 @@ function M.get_default_config()
                     or normalize_path(
                         vim.api.nvim_buf_get_name(
                             vim.api.nvim_get_current_buf()
-                        )
+                        ),
+                        config.get_root_dir()
                     )
 
                 local bufnr = vim.fn.bufnr(name, false)

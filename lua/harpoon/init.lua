@@ -5,14 +5,6 @@ local List = require("harpoon.list")
 local Listeners = require("harpoon.listeners")
 local HarpoonGroup = require("harpoon.autocmd")
 
--- setup
--- read from a config file
---
-
--- TODO: rename lists into something better...
-
-local DEFAULT_LIST = "__harpoon_files"
-
 ---@class Harpoon
 ---@field config HarpoonConfig
 ---@field ui HarpoonUI
@@ -75,7 +67,7 @@ end
 ---@param name string?
 ---@return HarpoonList
 function Harpoon:list(name)
-    name = name or DEFAULT_LIST
+    name = name or Config.DEFAULT_LIST
 
     local key = self.config.settings.key()
     local lists = self.lists[key]
@@ -119,6 +111,10 @@ end
 function Harpoon:sync()
     local key = self.config.settings.key()
     self:_for_each_list(function(list, _, list_name)
+        if list.encode == false then
+            return
+        end
+
         local encoded = list:encode()
         self.data:update(key, list_name, encoded)
     end)

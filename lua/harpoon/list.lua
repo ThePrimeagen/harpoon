@@ -48,7 +48,7 @@ end
 
 ---@return HarpoonList
 function HarpoonList:append(item)
-    item = item or self.config.add()
+    item = item or self.config.add(self.config)
 
     local index = index_of(self.items, item, self.config)
     if index == -1 then
@@ -64,7 +64,7 @@ end
 
 ---@return HarpoonList
 function HarpoonList:prepend(item)
-    item = item or self.config.add()
+    item = item or self.config.add(self.config)
     local index = index_of(self.items, item, self.config)
     if index == -1 then
         Listeners.listeners:emit(
@@ -139,7 +139,7 @@ function HarpoonList:resolve_displayed(displayed)
                 Listeners.event_names.ADD,
                 { list = self, item = v, idx = i }
             )
-            new_list[i] = self.config.add(v)
+            new_list[i] = self.config.add(self.config, v)
         else
             local index_in_new_list =
                 index_of(new_list, self.items[index], self.config)
