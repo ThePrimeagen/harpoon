@@ -120,8 +120,9 @@ harpoon:setup({
         --- This function gets invoked with the options being passed in from
         --- list:select(index, <...options...>)
         --- @param list_item {value: any, context: any}
+        --- @param list { ... }
         --- @param option any
-        select = function(list_item, option)
+        select = function(list_item, list, option)
             -- WOAH, IS THIS HTMX LEVEL XSS ATTACK??
             vim.cmd(list_item.value)
         end
@@ -144,7 +145,7 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 ---@field encode? (fun(list_item: HarpoonListItem): string)
 ---@field decode? (fun(obj: string): any)
 ---@field display? (fun(list_item: HarpoonListItem): string)
----@field select? (fun(list_item: HarpoonListItem, options: any?): nil)
+---@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
 ---@field add? fun(item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil

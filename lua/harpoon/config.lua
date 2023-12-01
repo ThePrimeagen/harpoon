@@ -16,7 +16,7 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@field encode? (fun(list_item: HarpoonListItem): string)
 ---@field decode? (fun(obj: string): any)
 ---@field display? (fun(list_item: HarpoonListItem): string)
----@field select? (fun(list_item?: HarpoonListItem, options: any?): nil)
+---@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
 ---@field add? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
@@ -80,8 +80,9 @@ function M.get_default_config()
 
             --- the select function is called when a user selects an item from the corresponding list and can be nil if select_with_nil is true
             ---@param list_item? HarpoonListFileItem
+            ---@param list HarpoonList
             ---@param options HarpoonListFileOptions
-            select = function(list_item, options)
+            select = function(list_item, list, options)
                 options = options or {}
                 if list_item == nil then
                     return

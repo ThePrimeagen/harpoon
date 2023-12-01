@@ -160,7 +160,7 @@ function HarpoonList:select(index, options)
             Listeners.event_names.SELECT,
             { list = self, item = item, idx = index }
         )
-        self.config.select(item, options)
+        self.config.select(item, self, options)
     end
 end
 
