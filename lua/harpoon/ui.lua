@@ -97,6 +97,9 @@ function HarpoonUI:toggle_quick_menu(list)
     count = count + 1
 
     if list == nil or self.win_id ~= nil then
+        if self.settings.save_on_toggle then
+            self:save()
+        end
         self:close_menu()
         return
     end
