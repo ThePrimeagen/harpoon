@@ -2,6 +2,7 @@ local M = {}
 
 ---@alias HarpoonListItem {value: any, context: any}
 ---@alias HarpoonListFileItem {value: string, context: {row: number, col: number}}
+---@alias HarpoonListFileOptions {split: boolean, vsplit: boolean}
 
 ---@class HarpoonPartialConfigItem
 ---@field encode? (fun(list_item: HarpoonListItem): string)
@@ -74,18 +75,19 @@ function M.get_default_config()
                 return list_item.value
             end,
 
-            ---@param file_item HarpoonListFileItem
-            select = function(file_item, options)
+            ---@param list_item HarpoonListFileItem
+            ---@param options HarpoonListFileOptions
+            select = function(list_item, options)
                 options = options or {}
-                if file_item == nil then
+                if list_item == nil then
                     return
                 end
 
-                local bufnr = vim.fn.bufnr(file_item.value)
+                local bufnr = vim.fn.bufnr(list_item.value)
                 local set_position = false
                 if bufnr == -1 then
                     set_position = true
-                    bufnr = vim.fn.bufnr(file_item.value, true)
+                    bufnr = vim.fn.bufnr(list_item.value, true)
                 end
 
                 if options.vsplit then
@@ -100,8 +102,8 @@ function M.get_default_config()
 
                 if set_position then
                     vim.api.nvim_win_set_cursor(0, {
-                        file_item.context.row or 1,
-                        file_item.context.col or 0,
+                        list_item.context.row or 1,
+                        list_item.context.col or 0,
                     })
                 end
             end,

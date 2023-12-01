@@ -108,7 +108,8 @@ function HarpoonUI:toggle_quick_menu(list)
     vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, contents)
 end
 
-function HarpoonUI:select_menu_item()
+---@param options? any
+function HarpoonUI:select_menu_item(options)
     local idx = vim.fn.line(".")
 
     -- must first save any updates potentially made to the list before
@@ -116,7 +117,7 @@ function HarpoonUI:select_menu_item()
     local list = Buffer.get_contents(self.bufnr)
     self.active_list:resolve_displayed(list)
 
-    self.active_list:select(idx)
+    self.active_list:select(idx, options)
     self:close_menu()
 end
 

@@ -70,6 +70,62 @@ vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
 vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
 ```
 
+### Custom Lists
+You can define custom behavior of a harpoon list by providing your own calls.
+
+Here is a simple example where i create a list named `cmd` that takes the
+current line in the editor and adds it to harpoon menu.  When
+`list:select(...)` is called, we take the contents of the line and execute it
+as a vim command
+
+I don't think this is a great use of harpoon, but its meant to show how to add
+your own custom lists.  You could imagine that a terminal list would be just as
+easy to create.
+
+```lua
+local harpoon = require("harpoon")
+
+harpoon:setup({
+    -- Setting up custom behavior for a list named "cmd"
+    "cmd" = {
+
+        -- When you call list:append() this function is called and the return
+        -- value will be put in the list at the end.
+        --
+        -- which means same behavior for prepend except where in the list the
+        -- return value is added
+        --
+        -- @param possible_value string only passed in when you alter the ui manual
+        add = function(possible_value)
+            -- get the current line idx
+            local idx = vim.fn.line(".")
+
+            -- read the current line
+            local cmd = vim.api.nvim_buf_get_lines(0, idx - 1, idx, false)[1]
+            if cmd == nil then
+                return nil
+            end
+
+            return {
+                value = cmd,
+                context = { ... any data you want ... },
+            }
+        end,
+
+        --- This function gets invoked with the options being passed in from
+        --- list:select(index, <...options...>)
+        --- @param list_item {value: any, context: any}
+        --- @param option any
+        select = function(list_item, option)
+            -- WOAH, IS THIS HTMX LEVEL XSS ATTACK??
+            vim.cmd(list_item.value)
+        end
+
+    }
+})
+
+```
+
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
