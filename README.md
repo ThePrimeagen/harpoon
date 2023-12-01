@@ -29,9 +29,8 @@ persistent terminals that can be easily navigated to, send commands to other
 tmux windows, or dream up your own custom action and execute with a single key
 
 ## ⇁ The Solutions
-1. The ability to specify, or on the fly, mark and create persisting key strokes
-to go to the files you want.
-1. Unlimited terminals and navigation.
+1. Specify either by altering a ui or by adding via hot key files
+1. Unlimited lists and items within the lists
 
 ## ⇁ Installation
 * neovim 0.8.0+ required
