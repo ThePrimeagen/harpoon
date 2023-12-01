@@ -71,7 +71,7 @@ end
 function M.fill_list_with_files(count, list)
     local files = {}
 
-    for i = 1, count do
+    for _ = 1, count do
         local name = os.tmpname()
         table.insert(files, name)
         M.create_file(name, { "test" })

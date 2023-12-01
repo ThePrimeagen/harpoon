@@ -94,17 +94,20 @@ describe("harpoon", function()
         eq(harpoon.ui.win_id, nil)
     end)
 
-    it("closing toggle_quick_menu with save_on_toggle should save contents", function()
-        harpoon:setup({ settings = { save_on_toggle = true }})
-        local list = harpoon:list()
-        local created_files = utils.fill_list_with_files(3, list)
+    it(
+        "closing toggle_quick_menu with save_on_toggle should save contents",
+        function()
+            harpoon:setup({ settings = { save_on_toggle = true } })
+            local list = harpoon:list()
+            local created_files = utils.fill_list_with_files(3, list)
 
-        harpoon.ui:toggle_quick_menu(list)
-        table.remove(created_files, 2)
-        Buffer.set_contents(harpoon.ui.bufnr, created_files)
-        harpoon.ui:toggle_quick_menu()
+            harpoon.ui:toggle_quick_menu(list)
+            table.remove(created_files, 2)
+            Buffer.set_contents(harpoon.ui.bufnr, created_files)
+            harpoon.ui:toggle_quick_menu()
 
-        eq(list:length(), 2)
-        eq(list:display(), created_files)
-    end)
+            eq(list:length(), 2)
+            eq(list:display(), created_files)
+        end
+    )
 end)
