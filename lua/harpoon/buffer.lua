@@ -21,16 +21,15 @@ end
 ---@param bufnr number
 function M.setup_autocmds_and_keymaps(bufnr)
     local curr_file = vim.api.nvim_buf_get_name(0)
-    local cmd =
-        string.format(
-            "autocmd Filetype harpoon "
-                .. "let path = '%s' | call clearmatches() | "
-                -- move the cursor to the line containing the current filename
-                .. "call search('\\V'.path.'\\$') | "
-                -- add a hl group to that line
-                .. "call matchadd('HarpoonCurrentFile', '\\V'.path.'\\$')",
-            curr_file:gsub("\\", "\\\\")
-        )
+    local cmd = string.format(
+        "autocmd Filetype harpoon "
+            .. "let path = '%s' | call clearmatches() | "
+            -- move the cursor to the line containing the current filename
+            .. "call search('\\V'.path.'\\$') | "
+            -- add a hl group to that line
+            .. "call matchadd('HarpoonCurrentFile', '\\V'.path.'\\$')",
+        curr_file:gsub("\\", "\\\\")
+    )
     vim.cmd(cmd)
 
     if vim.api.nvim_buf_get_name(bufnr) == "" then
@@ -90,7 +89,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
             vim.schedule(function()
                 require("harpoon").ui:toggle_quick_menu()
             end)
-        end
+        end,
     })
 
     vim.api.nvim_create_autocmd({ "BufLeave" }, {
@@ -98,7 +97,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
         pattern = "__harpoon*",
         callback = function()
             require("harpoon").ui:toggle_quick_menu()
-        end
+        end,
     })
 end
 

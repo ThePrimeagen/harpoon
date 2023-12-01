@@ -1,4 +1,3 @@
-
 local M = {}
 
 function M.is_white_space(str)

@@ -72,7 +72,6 @@ describe("harpoon", function()
 
         eq(list:length(), 3)
         eq(created_files, list:display())
-
     end)
 
     it("using :q to leave harpoon should quit everything", function()
@@ -85,12 +84,11 @@ describe("harpoon", function()
         eq(vim.api.nvim_win_is_valid(win_id), true)
         eq(vim.api.nvim_get_current_buf(), bufnr)
 
-        vim.cmd [[ q! ]] -- TODO: I shouldn't need q! here
+        vim.cmd([[ q! ]]) -- TODO: I shouldn't need q! here
 
         eq(vim.api.nvim_buf_is_valid(bufnr), false)
         eq(vim.api.nvim_win_is_valid(win_id), false)
         eq(harpoon.ui.bufnr, nil)
         eq(harpoon.ui.win_id, nil)
     end)
-
 end)

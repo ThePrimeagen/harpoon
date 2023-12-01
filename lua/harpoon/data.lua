@@ -26,7 +26,6 @@ function M.set_data_path(path)
 end
 
 local function has_keys(t)
-
     -- luacheck: ignore 512
     for _ in pairs(t) do
         return true

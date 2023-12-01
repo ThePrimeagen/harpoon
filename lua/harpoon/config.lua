@@ -3,7 +3,6 @@ local function normalize_path(buf_name)
     return Path:new(buf_name):make_relative(vim.loop.cwd())
 end
 
-
 local M = {}
 
 ---@alias HarpoonListItem {value: any, context: any}
@@ -133,7 +132,11 @@ function M.get_default_config()
                     -- path, if that is the case we can use the context to
                     -- store the bufname and then have value be the normalized
                     -- value
-                    or normalize_path(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+                    or normalize_path(
+                        vim.api.nvim_buf_get_name(
+                            vim.api.nvim_get_current_buf()
+                        )
+                    )
 
                 local bufnr = vim.fn.bufnr(name, false)
 

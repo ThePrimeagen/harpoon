@@ -39,7 +39,10 @@ function HarpoonUI:close_menu()
         vim.api.nvim_win_close(self.win_id, true)
     end
 
-    if self.border_win_id ~= nil and vim.api.nvim_win_is_valid(self.border_win_id) then
+    if
+        self.border_win_id ~= nil
+        and vim.api.nvim_win_is_valid(self.border_win_id)
+    then
         vim.api.nvim_win_close(self.border_win_id, true)
     end
 
