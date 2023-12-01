@@ -29,12 +29,10 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---notehunthoeunthoeunthoeunthoeunthoeunth
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to true
----@field jump_to_file_location boolean defaults to true
 ---@field key (fun(): string)
 
 ---@class HarpoonPartialSettings
 ---@field save_on_toggle? boolean
----@field jump_to_file_location? boolean
 ---@field key? (fun(): string)
 
 ---@class HarpoonConfig
@@ -58,7 +56,6 @@ function M.get_default_config()
 
         settings = {
             save_on_toggle = false,
-            jump_to_file_location = true,
             key = function()
                 return vim.loop.cwd()
             end,

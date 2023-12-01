@@ -159,6 +159,10 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 * `VimLeavePre`: this function is called for every list on VimLeavePre.
 * `get_root_dir`: used for creating relative paths.  defaults to `vim.loop.cwd()`
 
+### Settings
+Settings can alter the experience of harpoon
+
+
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
