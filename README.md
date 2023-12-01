@@ -14,6 +14,9 @@
 * [The Solutions](#-The-Solutions)
 * [Installation](#-Installation)
 * [Getting Started](#-Getting-Started)
+* [API](#-API)
+    * [Config](#config)
+    * [Settings](#settings)
 * [Social](#-Social)
 * [Note to legacy Harpoon 1 users](#-Note-to-legacy-Harpoon-1-users)
 
@@ -71,7 +74,7 @@ vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
 vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
 ```
 
-### Custom Lists
+## ⇁ API
 You can define custom behavior of a harpoon list by providing your own calls.
 
 Here is a simple example where i create a list named `cmd` that takes the
