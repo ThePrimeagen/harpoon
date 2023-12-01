@@ -4,6 +4,22 @@ local M = {}
 
 M.created_files = {}
 
+local checkpoint_file = nil
+local checkpoint_file_bufnr = nil
+function M.create_checkpoint_file()
+    checkpoint_file = os.tmpname()
+    checkpoint_file_bufnr = M.create_file(checkpoint_file, { "test" })
+end
+
+function M.return_to_checkpoint()
+    if checkpoint_file_bufnr == nil then
+        return
+    end
+
+    vim.api.nvim_set_current_buf(checkpoint_file_bufnr)
+    M.clean_files()
+end
+
 ---@param name string
 function M.before_each(name)
     return function()
@@ -15,7 +31,7 @@ function M.before_each(name)
         Data.set_data_path(name)
         local harpoon = require("harpoon")
 
-        M.clean_files()
+        M.return_to_checkpoint()
 
         harpoon:setup({
             settings = {
@@ -39,6 +55,7 @@ end
 ---@param contents string[]
 function M.create_file(name, contents, row, col)
     local bufnr = vim.fn.bufnr(name, true)
+    vim.api.nvim_buf_set_option(bufnr, "bufhidden", "hide")
     vim.api.nvim_set_current_buf(bufnr)
     vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, contents)
     if row then
@@ -54,7 +71,7 @@ end
 function M.fill_list_with_files(count, list)
     local files = {}
 
-    for _ = 1, count do
+    for i = 1, count do
         local name = os.tmpname()
         table.insert(files, name)
         M.create_file(name, { "test" })

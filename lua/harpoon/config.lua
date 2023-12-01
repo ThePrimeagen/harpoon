@@ -57,7 +57,7 @@ function M.get_default_config()
     return {
 
         settings = {
-            save_on_toggle = true,
+            save_on_toggle = false,
             jump_to_file_location = true,
             key = function()
                 return vim.loop.cwd()
