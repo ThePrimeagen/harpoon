@@ -24,8 +24,9 @@
 1. You're working on a codebase. medium, large, tiny, whatever. You find
 yourself frequenting a small set of files and you are tired of using a fuzzy finder,
 `:bnext` & `:bprev` are getting too repetitive, alternate file doesn't quite cut it, etc etc.
-1. You want to execute some project specific commands or have any number of
-persistent terminals that can be easily navigated to.
+1. You want to execute some project specific commands, have any number of
+persistent terminals that can be easily navigated to, send commands to other
+tmux windows, or dream up your own custom action and execute with a single key
 
 ## ⇁ The Solutions
 1. The ability to specify, or on the fly, mark and create persisting key strokes
