@@ -3,7 +3,6 @@ local function normalize_path(buf_name, root)
     return Path:new(buf_name):make_relative(root)
 end
 
-
 local M = {}
 local DEFAULT_LIST = "__harpoon_files"
 M.DEFAULT_LIST = DEFAULT_LIST

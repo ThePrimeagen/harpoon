@@ -125,7 +125,7 @@ end
 function Harpoon:info()
     return {
         paths = Data.info(),
-        default_list_name = DEFAULT_LIST,
+        default_list_name = Config.DEFAULT_LIST,
     }
 end
 
