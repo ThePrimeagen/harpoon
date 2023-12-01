@@ -43,6 +43,10 @@ function HarpoonList:length()
     return #self.items
 end
 
+function HarpoonList:clear()
+    self.items = {}
+end
+
 ---@return HarpoonList
 function HarpoonList:append(item)
     item = item or self.config.add()
