@@ -162,6 +162,27 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 ### Settings
 Settings can alter the experience of harpoon
 
+**Definition**
+```lua
+---@class HarpoonSettings
+---@field save_on_toggle boolean defaults to true
+---@field key (fun(): string)
+
+```
+
+**Descriptions**
+* `save_on_toggle`: any time the ui menu is closed then we will sync the state back to the backing list
+* `key` how the out list key is looked up.  This can be useful when using worktrees and using git remote instead of file path
+
+**Defaults**
+```lua
+settings = {
+    save_on_toggle = false,
+    key = function()
+        return vim.loop.cwd()
+    end,
+},
+```
 
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
