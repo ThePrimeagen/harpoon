@@ -155,7 +155,7 @@ end
 
 function HarpoonList:select(index, options)
     local item = self.items[index]
-    if item then
+    if item or self.config.select_with_nil then
         Listeners.listeners:emit(
             Listeners.event_names.SELECT,
             { list = self, item = item, idx = index }

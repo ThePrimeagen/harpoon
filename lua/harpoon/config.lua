@@ -12,21 +12,17 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@alias HarpoonListFileOptions {split: boolean, vsplit: boolean}
 
 ---@class HarpoonPartialConfigItem
+---@field select_with_nil? boolean defaults to false
 ---@field encode? (fun(list_item: HarpoonListItem): string)
 ---@field decode? (fun(obj: string): any)
 ---@field display? (fun(list_item: HarpoonListItem): string)
----@field select? (fun(list_item: HarpoonListItem, options: any?): nil)
+---@field select? (fun(list_item?: HarpoonListItem, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
 ---@field add? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
 ---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
 ---@field get_root_dir? fun(): string
 
----@class HarpoonWindowSettings
----@field width number
----@field height number
-
----notehunthoeunthoeunthoeunthoeunthoeunth
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to true
 ---@field key (fun(): string)
@@ -62,6 +58,9 @@ function M.get_default_config()
         },
 
         default = {
+            --- select_with_nill allows for a list to call select even if the provided item is nil
+            select_with_nil = false,
+
             ---@param obj HarpoonListItem
             ---@return string
             encode = function(obj)
@@ -79,7 +78,8 @@ function M.get_default_config()
                 return list_item.value
             end,
 
-            ---@param list_item HarpoonListFileItem
+            --- the select function is called when a user selects an item from the corresponding list and can be nil if select_with_nil is true
+            ---@param list_item? HarpoonListFileItem
             ---@param options HarpoonListFileOptions
             select = function(list_item, options)
                 options = options or {}
