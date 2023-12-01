@@ -104,5 +104,4 @@ describe("harpoon", function()
             { value = file_name_1, context = { row = row_1, col = col_1 } },
         })
     end)
-
 end)
