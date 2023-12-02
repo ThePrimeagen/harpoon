@@ -38,15 +38,15 @@ describe("list", function()
         local config = Config.merge_config({
             foo = {
                 select_with_nil = true,
-                select = function (list_item, options)
-                    foo_selected = {list_item, options}
-                end
+                select = function(list_item, options)
+                    foo_selected = { list_item, options }
+                end,
             },
             bar = {
-                select = function (list_item, options)
-                    bar_selected = {list_item, options}
-                end
-            }
+                select = function(list_item, options)
+                    bar_selected = { list_item, options }
+                end,
+            },
         })
         local fooc = Config.get_config(config, "foo")
         local barc = Config.get_config(config, "bar")
@@ -57,7 +57,7 @@ describe("list", function()
         foo:select(4, {})
         bar:select(4, {})
 
-        eq({nil, {}}, foo_selected)
+        eq({ nil, {} }, foo_selected)
         eq(nil, bar_selected)
     end)
 end)
