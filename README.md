@@ -189,6 +189,10 @@ settings = {
 },
 ```
 
+### Highlight Groups
+Currently available highlight groups are
+`HarpoonWindow`, `HarpoonBorder`, and `HarpoonTitle`.
+
 ## ⇁ Contribution
 This project is officially open source, not just public source.  If you wish to
 contribute start with an issue and I am totally willing for PRs, but I will be
