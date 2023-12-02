@@ -5,12 +5,11 @@ local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
 local harpoon = require("harpoon")
-local harpoon_mark = require("harpoon.mark")
 
 local function filter_empty_string(list)
     local next = {}
     for idx = 1, #list do
-        if list[idx].filename ~= "" then
+        if list[idx].value ~= "" then
             table.insert(next, list[idx])
         end
     end
@@ -20,9 +19,13 @@ end
 
 local generate_new_finder = function()
     return finders.new_table({
-        results = filter_empty_string(harpoon.get_mark_config().marks),
+        results = filter_empty_string(harpoon:list().items),
         entry_maker = function(entry)
-            local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
+            local line = entry.value
+                .. ":"
+                .. entry.context.row
+                .. ":"
+                .. entry.context.col
             local displayer = entry_display.create({
                 separator = " - ",
                 items = {
@@ -43,7 +46,7 @@ local generate_new_finder = function()
                 display = make_display,
                 lnum = entry.row,
                 col = entry.col,
-                filename = entry.filename,
+                filename = entry.value,
             }
         end,
     })
@@ -61,7 +64,7 @@ local delete_harpoon_mark = function(prompt_bufnr)
     end
 
     local selection = action_state.get_selected_entry()
-    harpoon_mark.rm_file(selection.filename)
+    harpoon:list():remove(selection.value)
 
     local function get_selections()
         local results = {}
@@ -73,7 +76,7 @@ local delete_harpoon_mark = function(prompt_bufnr)
 
     local selections = get_selections()
     for _, current_selection in ipairs(selections) do
-        harpoon_mark.rm_file(current_selection.filename)
+        harpoon:list():remove(current_selection.value)
     end
 
     local current_picker = action_state.get_current_picker(prompt_bufnr)
@@ -82,13 +85,13 @@ end
 
 local move_mark_up = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
-    local length = harpoon_mark.get_length()
+    local length = harpoon:list():length()
 
     if selection.index == length then
         return
     end
 
-    local mark_list = harpoon.get_mark_config().marks
+    local mark_list = harpoon:list().items
 
     table.remove(mark_list, selection.index)
     table.insert(mark_list, selection.index + 1, selection.value)
@@ -102,7 +105,7 @@ local move_mark_down = function(prompt_bufnr)
     if selection.index == 1 then
         return
     end
-    local mark_list = harpoon.get_mark_config().marks
+    local mark_list = harpoon:list().items
     table.remove(mark_list, selection.index)
     table.insert(mark_list, selection.index - 1, selection.value)
     local current_picker = action_state.get_current_picker(prompt_bufnr)
