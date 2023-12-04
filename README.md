@@ -195,6 +195,14 @@ settings = {
 Currently available highlight groups are
 `HarpoonWindow`, `HarpoonBorder`, and `HarpoonTitle`.
 
+### Logger
+This can help debug issues on other's computer.  To get your debug log please do the following.
+
+1. open up a new instance of vim
+1. perform exact operation to cause bug
+1. execute vim command `:lua require("harpoon").logger:show()` and copy the buffer
+1. paste the buffer as part of the bug creation
+
 ## ⇁ Contribution
 This project is officially open source, not just public source.  If you wish to
 contribute start with an issue and I am totally willing for PRs, but I will be
