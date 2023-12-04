@@ -38,6 +38,15 @@ function Harpoon:setup(partial_config)
     self.config = Config.merge_config(partial_config, self.config)
     self.ui:configure(self.config.settings)
 
+    local highlights = {
+        HarpoonWindow = { default = true, link = "NormalFloat" },
+        HarpoonBorder = { default = true, link = "FloatBorder" },
+        HarpoonTitle = { default = true, link = "FloatTitle" },
+    }
+    for k, v in pairs(highlights) do
+        vim.api.nvim_set_hl(0, k, v)
+    end
+
     ---TODO: should we go through every seen list and update its config?
 
     if self.hooks_setup == false then
