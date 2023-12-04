@@ -1,3 +1,4 @@
+local Log = require("harpoon.logger")
 local Listeners = require("harpoon.listeners")
 
 local function index_of(items, element, config)

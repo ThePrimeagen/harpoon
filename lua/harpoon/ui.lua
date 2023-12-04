@@ -1,5 +1,6 @@
 local popup = require("plenary").popup
 local Buffer = require("harpoon.buffer")
+local Logger = require("harpoon.logger")
 local DEFAULT_WINDOW_WIDTH = 69 -- nice
 
 ---@class HarpoonUI
@@ -30,6 +31,10 @@ function HarpoonUI:close_menu()
     end
 
     self.closing = true
+    Logger:log("ui#close_menu name: ", self.active_list.name, "win and bufnr", {
+        win = self.win_id,
+        bufnr = self.bufnr
+    })
 
     if self.bufnr ~= nil and vim.api.nvim_buf_is_valid(self.bufnr) then
         vim.api.nvim_buf_delete(self.bufnr, { force = true })
@@ -90,11 +95,10 @@ function HarpoonUI:_create_window()
     return win_id, bufnr
 end
 
-local count = 0
-
 ---@param list? HarpoonList
 function HarpoonUI:toggle_quick_menu(list)
-    count = count + 1
+
+    Logger:log("ui#toggle_quick_menu", list and list.name)
 
     if list == nil or self.win_id ~= nil then
         if self.settings.save_on_toggle then
@@ -129,6 +133,7 @@ end
 
 function HarpoonUI:save()
     local list = Buffer.get_contents(self.bufnr)
+    Logger:log("ui#save", list)
     self.active_list:resolve_displayed(list)
 end
 

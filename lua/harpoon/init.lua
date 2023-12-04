@@ -1,3 +1,4 @@
+local Log = require("harpoon.logger")
 local Ui = require("harpoon.ui")
 local Data = require("harpoon.data")
 local Config = require("harpoon.config")
@@ -10,6 +11,7 @@ local HarpoonGroup = require("harpoon.autocmd")
 ---@field ui HarpoonUI
 ---@field listeners HarpoonListeners
 ---@field data HarpoonData
+---@field logger HarpoonLog
 ---@field lists {[string]: {[string]: HarpoonList}}
 ---@field hooks_setup boolean
 local Harpoon = {}
@@ -23,6 +25,7 @@ function Harpoon:new()
     local harpoon = setmetatable({
         config = config,
         data = Data.Data:new(),
+        logger = Log,
         ui = Ui:new(config.settings),
         listeners = Listeners.listeners,
         lists = {},
@@ -37,15 +40,6 @@ end
 function Harpoon:setup(partial_config)
     self.config = Config.merge_config(partial_config, self.config)
     self.ui:configure(self.config.settings)
-
-    local highlights = {
-        HarpoonWindow = { default = true, link = "NormalFloat" },
-        HarpoonBorder = { default = true, link = "FloatBorder" },
-        HarpoonTitle = { default = true, link = "FloatTitle" },
-    }
-    for k, v in pairs(highlights) do
-        vim.api.nvim_set_hl(0, k, v)
-    end
 
     ---TODO: should we go through every seen list and update its config?
 

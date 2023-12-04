@@ -1,3 +1,4 @@
+local Logger = require("harpoon.logger")
 local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
     return Path:new(buf_name):make_relative(root)
@@ -85,6 +86,7 @@ function M.get_default_config()
             ---@param list HarpoonList
             ---@param options HarpoonListFileOptions
             select = function(list_item, list, options)
+                Logger:log("config_default#select", list_item, list.name, options)
                 options = options or {}
                 if list_item == nil then
                     return
@@ -142,6 +144,8 @@ function M.get_default_config()
                         config.get_root_dir()
                     )
 
+                Logger:log("config_default#add", name)
+
                 local bufnr = vim.fn.bufnr(name, false)
 
                 local pos = { 1, 0 }
@@ -165,8 +169,12 @@ function M.get_default_config()
 
                 if item then
                     local pos = vim.api.nvim_win_get_cursor(0)
+
+                    Logger:log("config_default#BufLeave updating position", bufnr, bufname, item, "to position", pos)
+
                     item.context.row = pos[1]
                     item.context.col = pos[2]
+
                 end
             end,
 
