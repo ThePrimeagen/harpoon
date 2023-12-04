@@ -127,6 +127,8 @@ function HarpoonUI:select_menu_item(options)
     local list = Buffer.get_contents(self.bufnr)
     self.active_list:resolve_displayed(list)
 
+    Logger:log("ui#select_menu_item selecting item", idx, "from", list, "options", options)
+
     self.active_list:select(idx, options)
     self:close_menu()
 end

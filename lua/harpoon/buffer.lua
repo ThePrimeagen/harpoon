@@ -1,3 +1,4 @@
+local Logger = require("harpoon.logger")
 local utils = require("harpoon.utils")
 local HarpoonGroup = require("harpoon.autocmd")
 
@@ -44,21 +45,21 @@ function M.setup_autocmds_and_keymaps(bufnr)
         bufnr,
         "n",
         "q",
-        "<Cmd>lua require('harpoon').ui:toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon').logger:log('toggle by keymap \'q\''); require('harpoon').ui:toggle_quick_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",
         "<ESC>",
-        "<Cmd>lua require('harpoon').ui:toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon').logger:log('toggle by keymap \'<Esc>\''); require('harpoon').ui:toggle_quick_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",
         "<CR>",
-        "<Cmd>lua require('harpoon').ui:select_menu_item()<CR>",
+        "<Cmd>lua require('harpoon').logger:log('select by keymap \'<CR>\''); require('harpoon').ui:select_menu_item()<CR>",
         {}
     )
 
@@ -87,6 +88,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
         callback = function()
             require("harpoon").ui:save()
             vim.schedule(function()
+                require("harpoon").logger:log("toggle by BufWriteCmd")
                 require("harpoon").ui:toggle_quick_menu()
             end)
         end,
@@ -96,6 +98,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
         group = HarpoonGroup,
         pattern = "__harpoon*",
         callback = function()
+            require("harpoon").logger:log("toggle by BufLeave")
             require("harpoon").ui:toggle_quick_menu()
         end,
     })
