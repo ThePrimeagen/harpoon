@@ -177,12 +177,14 @@ Settings can alter the experience of harpoon
 
 **Descriptions**
 * `save_on_toggle`: any time the ui menu is closed then we will sync the state back to the backing list
+* `border_chars`: the ui's border characters to be displayed
 * `key` how the out list key is looked up.  This can be useful when using worktrees and using git remote instead of file path
 
 **Defaults**
 ```lua
 settings = {
     save_on_toggle = false,
+    border_chars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
     key = function()
         return vim.loop.cwd()
     end,
