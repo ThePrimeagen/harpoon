@@ -24,6 +24,7 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@field get_root_dir? fun(): string
 
 ---@class HarpoonSettings
+---@field border_chars string[] defaults to { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
 ---@field save_on_toggle boolean defaults to true
 ---@field key (fun(): string)
 
@@ -52,6 +53,7 @@ function M.get_default_config()
 
         settings = {
             save_on_toggle = false,
+            border_chars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
             key = function()
                 return vim.loop.cwd()
             end,

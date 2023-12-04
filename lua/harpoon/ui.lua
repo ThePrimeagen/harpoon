@@ -66,8 +66,7 @@ function HarpoonUI:_create_window()
     end
 
     local height = 8
-    local borderchars =
-        { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
+    local borderchars = self.settings.border_chars
     local bufnr = vim.api.nvim_create_buf(false, false)
     local _, popup_info = popup.create(bufnr, {
         title = "Harpoon",
