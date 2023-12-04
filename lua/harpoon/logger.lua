@@ -19,7 +19,8 @@ function HarpoonLog:log(...)
 
     local msg = {}
     for i = 1, select("#", ...) do
-        table.insert(msg, vim.inspect(select(i, ...)))
+        local item = select(i, ...)
+        table.insert(msg, vim.inspect(item))
     end
 
     table.insert(self.lines, table.concat(msg, " "))

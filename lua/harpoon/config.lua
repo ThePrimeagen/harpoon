@@ -170,7 +170,14 @@ function M.get_default_config()
                 if item then
                     local pos = vim.api.nvim_win_get_cursor(0)
 
-                    Logger:log("config_default#BufLeave updating position", bufnr, bufname, item, "to position", pos)
+                    Logger:log(
+                        "config_default#BufLeave updating position",
+                        bufnr,
+                        bufname,
+                        item,
+                        "to position",
+                        pos
+                    )
 
                     item.context.row = pos[1]
                     item.context.col = pos[2]

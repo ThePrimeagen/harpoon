@@ -38,7 +38,7 @@ describe("list", function()
         local config = Config.merge_config({
             foo = {
                 select_with_nil = true,
-                select = function(list_item, options)
+                select = function(list_item, _, options)
                     foo_selected = { list_item, options }
                 end,
             },
