@@ -56,7 +56,16 @@ function M.get_default_config()
 
         settings = {
             save_on_toggle = false,
-            border_chars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+            border_chars = {
+                "─",
+                "│",
+                "─",
+                "│",
+                "╭",
+                "╮",
+                "╯",
+                "╰",
+            },
             ui_fallback_width = 69,
             ui_width_ratio = 0.62569,
             key = function()
@@ -85,12 +94,18 @@ function M.get_default_config()
                 return list_item.value
             end,
 
-            --- the select function is called when a user selects an item from the corresponding list and can be nil if select_with_nil is true
+            --- the select function is called when a user selects an item from
+            --- the corresponding list and can be nil if select_with_nil is true
             ---@param list_item? HarpoonListFileItem
             ---@param list HarpoonList
             ---@param options HarpoonListFileOptions
             select = function(list_item, list, options)
-                Logger:log("config_default#select", list_item, list.name, options)
+                Logger:log(
+                    "config_default#select",
+                    list_item,
+                    list.name,
+                    options
+                )
                 options = options or {}
                 if list_item == nil then
                     return
@@ -185,7 +200,6 @@ function M.get_default_config()
 
                     item.context.row = pos[1]
                     item.context.col = pos[2]
-
                 end
             end,
 

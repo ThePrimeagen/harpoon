@@ -1,4 +1,3 @@
-local Logger = require("harpoon.logger")
 local utils = require("harpoon.utils")
 local HarpoonGroup = require("harpoon.autocmd")
 
@@ -18,16 +17,15 @@ end
 
 function M.run_select_command()
     local harpoon = require("harpoon")
-    harpoon.logger:log('select by keymap \'<CR>\'')
+    harpoon.logger:log("select by keymap '<CR>'")
     harpoon.ui:select_menu_item()
 end
 
 function M.run_toggle_command(key)
     local harpoon = require("harpoon")
-    harpoon.logger:log('toggle by keymap \'' .. key .. '\'')
+    harpoon.logger:log("toggle by keymap '" .. key .. "'")
     harpoon.ui:select_menu_item()
 end
-
 
 ---TODO: I don't know how to do what i want to do, but i want to be able to
 ---make this so we use callbacks for these buffer actions instead of using

@@ -36,10 +36,15 @@ function HarpoonUI:close_menu()
     end
 
     self.closing = true
-    Logger:log("ui#close_menu name: ", list_name(self.active_list), "win and bufnr", {
-        win = self.win_id,
-        bufnr = self.bufnr
-    })
+    Logger:log(
+        "ui#close_menu name: ",
+        list_name(self.active_list),
+        "win and bufnr",
+        {
+            win = self.win_id,
+            bufnr = self.bufnr,
+        }
+    )
 
     if self.bufnr ~= nil and vim.api.nvim_buf_is_valid(self.bufnr) then
         vim.api.nvim_buf_delete(self.bufnr, { force = true })
@@ -102,7 +107,6 @@ end
 
 ---@param list? HarpoonList
 function HarpoonUI:toggle_quick_menu(list)
-
     Logger:log("ui#toggle_quick_menu", list and list.name)
 
     if list == nil or self.win_id ~= nil then
@@ -132,7 +136,14 @@ function HarpoonUI:select_menu_item(options)
     local list = Buffer.get_contents(self.bufnr)
     self.active_list:resolve_displayed(list)
 
-    Logger:log("ui#select_menu_item selecting item", idx, "from", list, "options", options)
+    Logger:log(
+        "ui#select_menu_item selecting item",
+        idx,
+        "from",
+        list,
+        "options",
+        options
+    )
 
     self.active_list:select(idx, options)
     self:close_menu()

@@ -52,7 +52,7 @@ describe("list", function()
         local barc = Config.get_config(config, "bar")
 
         local foo = List.decode(fooc, "foo", {})
-        local bar = List.decode(fooc, "bar", {})
+        local bar = List.decode(barc, "bar", {})
 
         foo:select(4, {})
         bar:select(4, {})

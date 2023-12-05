@@ -1,4 +1,3 @@
-
 ---@class HarpoonLog
 ---@field lines string[]
 local HarpoonLog = {}
@@ -16,7 +15,6 @@ end
 
 ---@vararg any
 function HarpoonLog:log(...)
-
     local msg = {}
     for i = 1, select("#", ...) do
         local item = select(i, ...)
