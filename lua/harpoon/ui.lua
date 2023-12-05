@@ -1,7 +1,6 @@
 local popup = require("plenary").popup
 local Buffer = require("harpoon.buffer")
 local Logger = require("harpoon.logger")
-local DEFAULT_WINDOW_WIDTH = 69 -- nice
 
 ---@class HarpoonUI
 ---@field win_id number
@@ -69,11 +68,11 @@ end
 function HarpoonUI:_create_window()
     local win = vim.api.nvim_list_uis()
 
-    local width = DEFAULT_WINDOW_WIDTH
+    local width = self.settings.ui_fallback_width
     if #win > 0 then
         -- no ackshual reason for 0.62569, just looks complicated, and i want
         -- to make my boss think i am smart
-        width = math.floor(win[1].width * 0.62569)
+        width = math.floor(win[1].width * self.settings.ui_width_ratio)
     end
 
     local height = 8
