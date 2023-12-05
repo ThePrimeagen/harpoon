@@ -25,13 +25,21 @@ function HarpoonUI:new(settings)
     }, self)
 end
 
+local function get_name(list)
+    if list ~= nil then
+        return list.name
+    end
+
+    return "(list nil)"
+end
+
 function HarpoonUI:close_menu()
     if self.closing then
         return
     end
 
     self.closing = true
-    Logger:log("ui#close_menu name: ", self.active_list.name, "win and bufnr", {
+    Logger:log("ui#close_menu name: ", get_name(self.active_list), "win and bufnr", {
         win = self.win_id,
         bufnr = self.bufnr
     })
