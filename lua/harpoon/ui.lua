@@ -11,6 +11,12 @@ local DEFAULT_WINDOW_WIDTH = 69 -- nice
 ---@field active_list HarpoonList
 local HarpoonUI = {}
 
+---@param list HarpoonList
+---@return string
+local function list_name(list)
+    return list and list.name or "nil"
+end
+
 HarpoonUI.__index = HarpoonUI
 
 ---@param settings HarpoonSettings
@@ -25,21 +31,13 @@ function HarpoonUI:new(settings)
     }, self)
 end
 
-local function get_name(list)
-    if list ~= nil then
-        return list.name
-    end
-
-    return "(list nil)"
-end
-
 function HarpoonUI:close_menu()
     if self.closing then
         return
     end
 
     self.closing = true
-    Logger:log("ui#close_menu name: ", get_name(self.active_list), "win and bufnr", {
+    Logger:log("ui#close_menu name: ", list_name(self.active_list), "win and bufnr", {
         win = self.win_id,
         bufnr = self.bufnr
     })
@@ -151,60 +149,5 @@ end
 function HarpoonUI:configure(settings)
     self.settings = settings
 end
-
---[[
-function M.location_window(options)
-    local default_options = {
-        relative = "editor",
-        style = "minimal",
-        width = 30,
-        height = 15,
-        row = 2,
-        col = 2,
-    }
-    options = vim.tbl_extend("keep", options, default_options)
-
-    local bufnr = options.bufnr or vim.api.nvim_create_buf(false, true)
-    local win_id = vim.api.nvim_open_win(bufnr, true, options)
-
-    return {
-        bufnr = bufnr,
-        win_id = win_id,
-    }
-end
-
--- TODO: What is this used for?
-function M.notification(text)
-    local win_stats = vim.api.nvim_list_uis()[1]
-    local win_width = win_stats.width
-
-    local prev_win = vim.api.nvim_get_current_win()
-
-    local info = M.location_window({
-        width = 20,
-        height = 2,
-        row = 1,
-        col = win_width - 21,
-    })
-
-    vim.api.nvim_buf_set_lines(
-        info.bufnr,
-        0,
-        5,
-        false,
-        { "!!! Notification", text }
-    )
-    vim.api.nvim_set_current_win(prev_win)
-
-    return {
-        bufnr = info.bufnr,
-        win_id = info.win_id,
-    }
-end
-
-function M.close_notification(bufnr)
-    vim.api.nvim_buf_delete(bufnr)
-end
---]]
 
 return HarpoonUI

@@ -16,6 +16,19 @@ local function get_harpoon_menu_name()
     return HARPOON_MENU .. harpoon_menu_id
 end
 
+function M.run_select_command()
+    local harpoon = require("harpoon")
+    harpoon.logger:log('select by keymap \'<CR>\'')
+    harpoon.ui:select_menu_item()
+end
+
+function M.run_toggle_command(key)
+    local harpoon = require("harpoon")
+    harpoon.logger:log('toggle by keymap \'' .. key .. '\'')
+    harpoon.ui:select_menu_item()
+end
+
+
 ---TODO: I don't know how to do what i want to do, but i want to be able to
 ---make this so we use callbacks for these buffer actions instead of using
 ---strings back into the ui.  it feels gross and it puts odd coupling
@@ -45,21 +58,21 @@ function M.setup_autocmds_and_keymaps(bufnr)
         bufnr,
         "n",
         "q",
-        "<Cmd>lua require('harpoon').logger:log('toggle by keymap \'q\''); require('harpoon').ui:toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon.buffer').run_toggle_command('q')<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",
         "<ESC>",
-        "<Cmd>lua require('harpoon').logger:log('toggle by keymap \'<Esc>\''); require('harpoon').ui:toggle_quick_menu()<CR>",
+        "<Cmd>lua require('harpoon.buffer').run_toggle_command('<ESC>')<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",
         "<CR>",
-        "<Cmd>lua require('harpoon').logger:log('select by keymap \'<CR>\''); require('harpoon').ui:select_menu_item()<CR>",
+        "<Cmd>lua require('harpoon.buffer').run_select_command()<CR>",
         {}
     )
 
