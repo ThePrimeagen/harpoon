@@ -107,9 +107,9 @@ end
 
 ---@param list? HarpoonList
 function HarpoonUI:toggle_quick_menu(list)
-    Logger:log("ui#toggle_quick_menu", list and list.name)
 
     if list == nil or self.win_id ~= nil then
+        Logger:log("ui#toggle_quick_menu#closing", list and list.name)
         if self.settings.save_on_toggle then
             self:save()
         end
@@ -117,6 +117,7 @@ function HarpoonUI:toggle_quick_menu(list)
         return
     end
 
+    Logger:log("ui#toggle_quick_menu#opening", list and list.name)
     local win_id, bufnr = self:_create_window()
 
     self.win_id = win_id
