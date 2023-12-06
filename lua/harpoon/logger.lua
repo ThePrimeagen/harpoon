@@ -1,5 +1,8 @@
+local utils = require("harpoon.utils")
+
 ---@class HarpoonLog
 ---@field lines string[]
+---@field enabled boolean not used yet, but if we get reports of slow, we will use this
 local HarpoonLog = {}
 
 HarpoonLog.__index = HarpoonLog
@@ -8,20 +11,42 @@ HarpoonLog.__index = HarpoonLog
 function HarpoonLog:new()
     local logger = setmetatable({
         lines = {},
+        enabled = true,
     }, self)
 
     return logger
 end
 
+function HarpoonLog:disable()
+    self.enabled = false
+end
+
+function HarpoonLog:enable()
+    self.enabled = true
+end
+
 ---@vararg any
 function HarpoonLog:log(...)
-    local msg = {}
+    local processed = {}
     for i = 1, select("#", ...) do
         local item = select(i, ...)
-        table.insert(msg, vim.inspect(item))
+        if type(item) == "table" then
+            item = vim.inspect(item)
+        end
+        table.insert(processed, item)
     end
 
-    table.insert(self.lines, table.concat(msg, " "))
+    local lines = {}
+    for _, line in ipairs(processed) do
+        local split = utils.split(line, "\n")
+        for _, l in ipairs(split) do
+            if not utils.is_white_space(l) then
+                table.insert(lines, utils.trim(utils.remove_duplicate_whitespace(l)))
+            end
+        end
+    end
+
+    table.insert(self.lines, table.concat(lines, " "))
 end
 
 function HarpoonLog:clear()
