@@ -18,5 +18,13 @@ describe("harpoon", function()
         eq({ "{ hello = \"world\", world = \"hello\" }" }, Logger.lines)
     end)
 
+    it("max lines", function()
+        Logger.max_lines = 1
+        Logger:log("one")
+        eq({ "one" }, Logger.lines)
+        Logger:log("two")
+        eq({ "two" }, Logger.lines)
+    end)
+
 end)
 

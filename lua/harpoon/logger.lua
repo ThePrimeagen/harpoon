@@ -2,6 +2,7 @@ local utils = require("harpoon.utils")
 
 ---@class HarpoonLog
 ---@field lines string[]
+---@field max_lines number
 ---@field enabled boolean not used yet, but if we get reports of slow, we will use this
 local HarpoonLog = {}
 
@@ -12,6 +13,7 @@ function HarpoonLog:new()
     local logger = setmetatable({
         lines = {},
         enabled = true,
+        max_lines = 50,
     }, self)
 
     return logger
@@ -41,12 +43,17 @@ function HarpoonLog:log(...)
         local split = utils.split(line, "\n")
         for _, l in ipairs(split) do
             if not utils.is_white_space(l) then
-                table.insert(lines, utils.trim(utils.remove_duplicate_whitespace(l)))
+                local ll = utils.trim(utils.remove_duplicate_whitespace(l))
+                table.insert(lines, ll)
             end
         end
     end
 
     table.insert(self.lines, table.concat(lines, " "))
+
+    while #self.lines > self.max_lines  do
+        table.remove(self.lines, 1)
+    end
 end
 
 function HarpoonLog:clear()
@@ -55,7 +62,6 @@ end
 
 function HarpoonLog:show()
     local bufnr = vim.api.nvim_create_buf(false, true)
-    print(vim.inspect(self.lines))
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, self.lines)
     vim.api.nvim_win_set_buf(0, bufnr)
 end
