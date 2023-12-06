@@ -110,7 +110,6 @@ function M.setup_autocmds_and_keymaps(bufnr)
         pattern = "__harpoon*",
         callback = function()
             require("harpoon").logger:log("toggle by BufLeave")
-            require("harpoon").ui:toggle_quick_menu()
         end,
     })
 end
