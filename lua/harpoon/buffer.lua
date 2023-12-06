@@ -24,6 +24,10 @@ end
 function M.run_toggle_command(key)
     local harpoon = require("harpoon")
     harpoon.logger:log("toggle by keymap '" .. key .. "'")
+    if key == 'q' or key == '<Esc>' then
+        harpoon.ui:close_menu()
+        return
+    end
     harpoon.ui:select_menu_item()
 end
 
@@ -59,11 +63,12 @@ function M.setup_autocmds_and_keymaps(bufnr)
         "<Cmd>lua require('harpoon.buffer').run_toggle_command('q')<CR>",
         { silent = true }
     )
+    -- For some reason, even if mapped to escape, this comes through as <CR>, so will nav
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",
         "<ESC>",
-        "<Cmd>lua require('harpoon.buffer').run_toggle_command('<ESC>')<CR>",
+        "<Cmd>lua require('harpoon').ui:close_menu()<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
