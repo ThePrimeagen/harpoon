@@ -58,6 +58,12 @@ local function read_data()
     end
 
     local out_data = path:read()
+
+    if not out_data or out_data == '' then
+        write_data({})
+        out_data = path:read()
+    end
+
     local data = vim.json.decode(out_data)
     return data
 end
