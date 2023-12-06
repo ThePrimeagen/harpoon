@@ -74,6 +74,7 @@ function M.get_default_config()
         },
 
         default = {
+            harpoon_wrap = true,
             --- select_with_nill allows for a list to call select even if the provided item is nil
             select_with_nil = false,
 
