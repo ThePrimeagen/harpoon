@@ -24,11 +24,10 @@ end
 function M.run_toggle_command(key)
     local harpoon = require("harpoon")
     harpoon.logger:log("toggle by keymap '" .. key .. "'")
-    if key == 'q' or key == '<Esc>' then
+    if key == 'q' or key == 'Esc' then
         harpoon.ui:close_menu()
         return
     end
-    harpoon.ui:select_menu_item()
 end
 
 ---TODO: I don't know how to do what i want to do, but i want to be able to
@@ -63,12 +62,12 @@ function M.setup_autocmds_and_keymaps(bufnr)
         "<Cmd>lua require('harpoon.buffer').run_toggle_command('q')<CR>",
         { silent = true }
     )
-    -- For some reason, even if mapped to escape, this comes through as <CR>, so will nav
+    -- For some reason, even if mapped to <Esc>, this comes through as <CR>, so Esc it is
     vim.api.nvim_buf_set_keymap(
         bufnr,
         "n",
         "<ESC>",
-        "<Cmd>lua require('harpoon').ui:close_menu()<CR>",
+        "<Cmd>lua require('harpoon.buffer').run_toggle_command('Esc')<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
