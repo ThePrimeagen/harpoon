@@ -19,7 +19,7 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@field display? (fun(list_item: HarpoonListItem): string)
 ---@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
----@field add? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
+---@field create_list_item? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
 ---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
 ---@field get_root_dir? fun(): string
@@ -149,7 +149,7 @@ function M.get_default_config()
             ---@param config HarpoonPartialConfigItem
             ---@param name? any
             ---@return HarpoonListItem
-            add = function(config, name)
+            create_list_item = function(config, name)
                 name = name
                     -- TODO: should we do path normalization???
                     -- i know i have seen sometimes it becoming an absolute
@@ -163,7 +163,7 @@ function M.get_default_config()
                         config.get_root_dir()
                     )
 
-                Logger:log("config_default#add", name)
+                Logger:log("config_default#create_list_item", name)
 
                 local bufnr = vim.fn.bufnr(name, false)
 

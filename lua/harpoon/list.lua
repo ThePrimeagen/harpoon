@@ -1,3 +1,4 @@
+local Logger = require("harpoon.logger")
 local Listeners = require("harpoon.listeners")
 
 local function index_of(items, element, config)
@@ -48,9 +49,10 @@ end
 
 ---@return HarpoonList
 function HarpoonList:append(item)
-    item = item or self.config.add(self.config)
+    item = item or self.config.create_list_item(self.config)
 
     local index = index_of(self.items, item, self.config)
+    Logger:log("HarpoonList:append", { item = item, index = index })
     if index == -1 then
         Listeners.listeners:emit(
             Listeners.event_names.ADD,
@@ -64,8 +66,9 @@ end
 
 ---@return HarpoonList
 function HarpoonList:prepend(item)
-    item = item or self.config.add(self.config)
+    item = item or self.config.create_list_item(self.config)
     local index = index_of(self.items, item, self.config)
+    Logger:log("HarpoonList:prepend", { item = item, index = index })
     if index == -1 then
         Listeners.listeners:emit(
             Listeners.event_names.ADD,
@@ -79,13 +82,14 @@ end
 
 ---@return HarpoonList
 function HarpoonList:remove(item)
-    item = item or self.config.add(self.config)
+    item = item or self.config.create_list_item(self.config)
     for i, v in ipairs(self.items) do
         if self.config.equals(v, item) then
             Listeners.listeners:emit(
                 Listeners.event_names.REMOVE,
                 { list = self, item = item, idx = i }
             )
+            Logger:log("HarpoonList:remove", { item = item, index = i })
             table.remove(self.items, i)
             break
         end
@@ -99,6 +103,7 @@ function HarpoonList:removeAt(index)
         Listeners.event_names.REMOVE,
         { list = self, item = self.items[index], idx = index }
     )
+    Logger:log("HarpoonList:removeAt", { item = self.items[index], index = index })
     table.remove(self.items, index)
     return self
 end
@@ -140,7 +145,7 @@ function HarpoonList:resolve_displayed(displayed)
                 Listeners.event_names.ADD,
                 { list = self, item = v, idx = i }
             )
-            new_list[i] = self.config.add(self.config, v)
+            new_list[i] = self.config.create_list_item(self.config, v)
         else
             local index_in_new_list =
                 index_of(new_list, self.items[index], self.config)
