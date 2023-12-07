@@ -107,7 +107,6 @@ end
 
 ---@param list? HarpoonList
 function HarpoonUI:toggle_quick_menu(list)
-
     if list == nil or self.win_id ~= nil then
         Logger:log("ui#toggle_quick_menu#closing", list and list.name)
         if self.settings.save_on_toggle then
@@ -154,6 +153,7 @@ function HarpoonUI:save()
     local list = Buffer.get_contents(self.bufnr)
     Logger:log("ui#save", list)
     self.active_list:resolve_displayed(list)
+    require("harpoon"):sync()
 end
 
 ---@param settings HarpoonSettings
