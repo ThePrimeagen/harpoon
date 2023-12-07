@@ -35,38 +35,6 @@ function Harpoon:new()
     return harpoon
 end
 
----@param partial_config HarpoonPartialConfig
----@return Harpoon
-function Harpoon:setup(partial_config)
-    self.config = Config.merge_config(partial_config, self.config)
-    self.ui:configure(self.config.settings)
-
-    ---TODO: should we go through every seen list and update its config?
-
-    if self.hooks_setup == false then
-        vim.api.nvim_create_autocmd({ "BufLeave", "VimLeavePre" }, {
-            group = HarpoonGroup,
-            pattern = "*",
-            callback = function(ev)
-                self:_for_each_list(function(list, config)
-                    local fn = config[ev.event]
-                    if fn ~= nil then
-                        fn(ev, list)
-                    end
-
-                    if ev.event == "VimLeavePre" then
-                        self:sync()
-                    end
-                end)
-            end,
-        })
-
-        self.hooks_setup = true
-    end
-
-    return self
-end
-
 ---@param name string?
 ---@return HarpoonList
 function Harpoon:list(name)
@@ -141,4 +109,46 @@ function Harpoon:__debug_reset()
     require("plenary.reload").reload_module("harpoon")
 end
 
-return Harpoon:new()
+local the_harpoon = Harpoon:new()
+
+---@param self Harpoon
+---@param partial_config HarpoonPartialConfig
+---@return Harpoon
+function Harpoon.setup(self, partial_config)
+    if self ~= the_harpoon then
+        ---@diagnostic disable-next-line: cast-local-type
+        partial_config = self
+        self = the_harpoon
+    end
+
+    ---@diagnostic disable-next-line: param-type-mismatch
+    self.config = Config.merge_config(partial_config, self.config)
+    self.ui:configure(self.config.settings)
+
+    ---TODO: should we go through every seen list and update its config?
+
+    if self.hooks_setup == false then
+        vim.api.nvim_create_autocmd({ "BufLeave", "VimLeavePre" }, {
+            group = HarpoonGroup,
+            pattern = "*",
+            callback = function(ev)
+                self:_for_each_list(function(list, config)
+                    local fn = config[ev.event]
+                    if fn ~= nil then
+                        fn(ev, list)
+                    end
+
+                    if ev.event == "VimLeavePre" then
+                        self:sync()
+                    end
+                end)
+            end,
+        })
+
+        self.hooks_setup = true
+    end
+
+    return self
+end
+
+return the_harpoon
