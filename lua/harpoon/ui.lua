@@ -110,7 +110,7 @@ function HarpoonUI:toggle_quick_menu(list)
 
     if list == nil or self.win_id ~= nil then
         Logger:log("ui#toggle_quick_menu#closing", list and list.name)
-        if self.settings.save_on_toggle then
+        if self.settings.save_on_toggle and self.bufnr then
             self:save()
         end
         self:close_menu()
