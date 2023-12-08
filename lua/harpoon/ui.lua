@@ -153,7 +153,6 @@ function HarpoonUI:save()
     local list = Buffer.get_contents(self.bufnr)
     Logger:log("ui#save", list)
     self.active_list:resolve_displayed(list)
-    require("harpoon"):sync()
 end
 
 ---@param settings HarpoonSettings
