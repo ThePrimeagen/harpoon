@@ -171,9 +171,9 @@ end
 
 function HarpoonList:next()
     self._index = self._index + 1
-    if self._index > #self.items and self.config.harpoon_wrap then
+    if self._index > #self.items and self.config.ui_nav_wrap then
         self._index = 1
-    elseif self._index > #self.items and not self.config.harpoon_wrap then
+    elseif self._index > #self.items and not self.config.ui_nav_wrap then
         self._index = #self.items
     end
 
@@ -182,9 +182,9 @@ end
 
 function HarpoonList:prev()
     self._index = self._index - 1
-    if self._index < 1 and self.config.harpoon_wrap then
+    if self._index < 1 and self.config.ui_nav_wrap then
         self._index = #self.items
-    elseif self._index < 1 and not self.config.harpoon_wrap then
+    elseif self._index < 1 and not self.config.ui_nav_wrap then
         self._index = 1
     end
 
