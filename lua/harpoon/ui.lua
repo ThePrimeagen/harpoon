@@ -1,4 +1,5 @@
 local popup = require("plenary").popup
+local Path = require("plenary.path")
 local Buffer = require("harpoon.buffer")
 local Logger = require("harpoon.logger")
 
@@ -117,6 +118,9 @@ function HarpoonUI:toggle_quick_menu(list)
         return
     end
 
+    local current_buf =
+        vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+
     Logger:log("ui#toggle_quick_menu#opening", list and list.name)
     local win_id, bufnr = self:_create_window()
 
@@ -126,6 +130,21 @@ function HarpoonUI:toggle_quick_menu(list)
 
     local contents = self.active_list:display()
     vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, contents)
+
+    -- Highlight the current file
+    for line, file in pairs(contents) do
+        if Path:new(file):absolute() == current_buf then
+            vim.api.nvim_buf_add_highlight(
+                bufnr,
+                -1,
+                "HarpoonCurrentFile",
+                line - 1,
+                0,
+                -1
+            )
+            break
+        end
+    end
 end
 
 ---@param options? any
