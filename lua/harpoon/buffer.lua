@@ -24,7 +24,7 @@ end
 function M.run_toggle_command(key)
     local harpoon = require("harpoon")
     harpoon.logger:log("toggle by keymap '" .. key .. "'")
-    harpoon.ui:select_menu_item()
+    harpoon.ui:toggle_quick_menu()
 end
 
 ---TODO: I don't know how to do what i want to do, but i want to be able to
@@ -51,7 +51,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
         bufnr,
         "n",
         "<ESC>",
-        "<Cmd>lua require('harpoon.buffer').run_toggle_command('<ESC>')<CR>",
+        "<Cmd>lua require('harpoon.buffer').run_toggle_command('Esc')<CR>",
         { silent = true }
     )
     vim.api.nvim_buf_set_keymap(
@@ -74,16 +74,17 @@ function M.setup_autocmds_and_keymaps(bufnr)
         )
     end
     --]]
-    vim.cmd(
-        string.format(
-            "autocmd BufModifiedSet <buffer=%s> set nomodified",
-            bufnr
-        )
-    )
+    vim.api.nvim_create_autocmd("BufModifiedSet", {
+        buffer = bufnr,
+        group = HarpoonGroup,
+        callback = function()
+            vim.api.nvim_buf_set_option(bufnr, "modified", false)
+        end,
+    })
 
     vim.api.nvim_create_autocmd({ "BufWriteCmd" }, {
         group = HarpoonGroup,
-        pattern = "__harpoon*",
+        buffer = bufnr,
         callback = function()
             require("harpoon").ui:save()
             vim.schedule(function()
@@ -95,7 +96,7 @@ function M.setup_autocmds_and_keymaps(bufnr)
 
     vim.api.nvim_create_autocmd({ "BufLeave" }, {
         group = HarpoonGroup,
-        pattern = "__harpoon*",
+        buffer = bufnr,
         callback = function()
             require("harpoon").logger:log("toggle by BufLeave")
             require("harpoon").ui:toggle_quick_menu()
