@@ -51,6 +51,10 @@ function Harpoon:list(name)
     local existing_list = lists[name]
 
     if existing_list then
+        if not self.data.seen[key] then
+            self.data.seen[key] = {}
+        end
+        self.data.seen[key][name] = true
         return existing_list
     end
 

@@ -27,12 +27,14 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@class HarpoonSettings
 ---@field border_chars string[] defaults to { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
 ---@field save_on_toggle boolean defaults to true
+---@field sync_on_ui_close? boolean
 ---@field ui_fallback_width number defaults 69, nice
 ---@field ui_width_ratio number defaults to 0.62569
 ---@field key (fun(): string)
 
 ---@class HarpoonPartialSettings
 ---@field save_on_toggle? boolean
+---@field sync_on_ui_close? boolean
 ---@field key? (fun(): string)
 
 ---@class HarpoonConfig
@@ -56,6 +58,7 @@ function M.get_default_config()
 
         settings = {
             save_on_toggle = false,
+            sync_on_ui_close = false,
             border_chars = {
                 "─",
                 "│",
@@ -116,6 +119,10 @@ function M.get_default_config()
                 if bufnr == -1 then
                     set_position = true
                     bufnr = vim.fn.bufnr(list_item.value, true)
+                end
+                if not vim.api.nvim_buf_is_loaded(bufnr) then
+                    vim.fn.bufload(bufnr)
+                    vim.api.nvim_buf_set_option(bufnr, "buflisted", true)
                 end
 
                 if options.vsplit then
