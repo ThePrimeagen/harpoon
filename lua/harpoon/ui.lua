@@ -3,7 +3,6 @@ local Buffer = require("harpoon.buffer")
 local Logger = require("harpoon.logger")
 local utils = require("harpoon.utils")
 
-
 ---@class HarpoonUI
 ---@field win_id number
 ---@field border_win_id number
@@ -110,9 +109,8 @@ end
 ---@param list? HarpoonList
 function HarpoonUI:toggle_quick_menu(list)
     local currentFileName = utils.normalize_path(
-        vim.api.nvim_buf_get_name(
-            vim.api.nvim_get_current_buf()
-        ))
+        vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+    )
 
     if list == nil or self.win_id ~= nil then
         Logger:log("ui#toggle_quick_menu#closing", list and list.name)
@@ -134,7 +132,14 @@ function HarpoonUI:toggle_quick_menu(list)
     vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, contents)
     for idx, line in ipairs(contents) do
         if line == currentFileName then
-            vim.api.nvim_buf_add_highlight(self.bufnr, -1, "HarpoonCurrentFile", idx - 1, 0, -1)
+            vim.api.nvim_buf_add_highlight(
+                self.bufnr,
+                -1,
+                "HarpoonCurrentFile",
+                idx - 1,
+                0,
+                -1
+            )
             if self.settings.select_current then
                 vim.api.nvim_win_set_cursor(self.win_id, { idx, 0 })
             end
