@@ -158,8 +158,6 @@ function HarpoonList:resolve_displayed(displayed)
     end
 
     self.items = new_list
-
-    require("harpoon"):sync()
 end
 
 function HarpoonList:select(index, options)

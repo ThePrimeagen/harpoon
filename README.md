@@ -170,7 +170,8 @@ Settings can alter the experience of harpoon
 **Definition**
 ```lua
 ---@class HarpoonSettings
----@field save_on_toggle boolean defaults to true
+---@field save_on_toggle boolean defaults to false
+---@field sync_on_ui_close boolean defaults to false
 ---@field key (fun(): string)
 
 ```
@@ -184,6 +185,7 @@ Settings can alter the experience of harpoon
 ```lua
 settings = {
     save_on_toggle = false,
+    sync_on_ui_close = false,
     border_chars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
     key = function()
         return vim.loop.cwd()
