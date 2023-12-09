@@ -129,11 +129,11 @@ function HarpoonList:resolve_displayed(displayed)
     local list_displayed = self:display()
 
     for i, v in ipairs(list_displayed) do
-        local index = index_of(list_displayed, v)
+        local index = index_of(displayed, v)
         if index == -1 then
             Listeners.listeners:emit(
                 Listeners.event_names.REMOVE,
-                { list = self, item = v, idx = i }
+                { list = self, item = self.items[i], idx = i }
             )
         end
     end
@@ -141,11 +141,11 @@ function HarpoonList:resolve_displayed(displayed)
     for i, v in ipairs(displayed) do
         local index = index_of(list_displayed, v)
         if index == -1 then
+            new_list[i] = self.config.create_list_item(self.config, v)
             Listeners.listeners:emit(
                 Listeners.event_names.ADD,
-                { list = self, item = v, idx = i }
+                { list = self, item = new_list[i], idx = i }
             )
-            new_list[i] = self.config.create_list_item(self.config, v)
         else
             local index_in_new_list =
                 index_of(new_list, self.items[index], self.config)
