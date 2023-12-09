@@ -1,9 +1,5 @@
 local Logger = require("harpoon.logger")
-local Path = require("plenary.path")
-local function normalize_path(buf_name, root)
-    return Path:new(buf_name):make_relative(root)
-end
-
+local utils = require("harpoon.utils")
 local M = {}
 local DEFAULT_LIST = "__harpoon_files"
 M.DEFAULT_LIST = DEFAULT_LIST
@@ -28,11 +24,13 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@field border_chars string[] defaults to { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
 ---@field save_on_toggle boolean defaults to true
 ---@field ui_fallback_width number defaults 69, nice
+---@field select_current boolean default to false
 ---@field ui_width_ratio number defaults to 0.62569
 ---@field key (fun(): string)
 
 ---@class HarpoonPartialSettings
 ---@field save_on_toggle? boolean
+---@field select_current? boolean
 ---@field key? (fun(): string)
 
 ---@class HarpoonConfig
@@ -56,6 +54,7 @@ function M.get_default_config()
 
         settings = {
             save_on_toggle = false,
+            select_current = false,
             border_chars = {
                 "─",
                 "│",
@@ -156,7 +155,7 @@ function M.get_default_config()
                     -- path, if that is the case we can use the context to
                     -- store the bufname and then have value be the normalized
                     -- value
-                    or normalize_path(
+                    or utils.normalize_path(
                         vim.api.nvim_buf_get_name(
                             vim.api.nvim_get_current_buf()
                         ),
