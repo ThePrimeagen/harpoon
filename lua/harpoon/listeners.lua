@@ -52,5 +52,6 @@ return {
         ADD = "ADD",
         SELECT = "SELECT",
         REMOVE = "REMOVE",
+        REORDER = "REORDER",
     },
 }
