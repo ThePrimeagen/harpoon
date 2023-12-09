@@ -147,6 +147,12 @@ function HarpoonList:resolve_displayed(displayed)
             )
             new_list[i] = self.config.create_list_item(self.config, v)
         else
+            if index ~= i then
+                Listeners.listeners:emit(
+                    Listeners.event_names.REORDER,
+                    { list = self, item = self.items[index], idx = i }
+                )
+            end
             local index_in_new_list =
                 index_of(new_list, self.items[index], self.config)
             if index_in_new_list == -1 then
