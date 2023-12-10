@@ -171,6 +171,7 @@ Settings can alter the experience of harpoon
 ```lua
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to false
+---@field select_current boolean defalts to false
 ---@field sync_on_ui_close boolean defaults to false
 ---@field key (fun(): string)
 
@@ -178,6 +179,7 @@ Settings can alter the experience of harpoon
 
 **Descriptions**
 * `save_on_toggle`: any time the ui menu is closed then we will sync the state back to the backing list
+* `select_current`: when the ui menu is opened, if the current file is present on the list, select it
 * `border_chars`: the ui's border characters to be displayed
 * `key` how the out list key is looked up.  This can be useful when using worktrees and using git remote instead of file path
 
@@ -185,6 +187,7 @@ Settings can alter the experience of harpoon
 ```lua
 settings = {
     save_on_toggle = false,
+    select_current = false,
     sync_on_ui_close = false,
     border_chars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
     key = function()

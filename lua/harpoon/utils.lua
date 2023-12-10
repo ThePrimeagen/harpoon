@@ -1,8 +1,14 @@
+local Path = require("plenary.path")
 local M = {}
+
+function M.normalize_path(buf_name, root)
+    return Path:new(buf_name):make_relative(root)
+end
 
 function M.trim(str)
     return str:gsub("^%s+", ""):gsub("%s+$", "")
 end
+
 function M.remove_duplicate_whitespace(str)
     return str:gsub("%s+", " ")
 end
