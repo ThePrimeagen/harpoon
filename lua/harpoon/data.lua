@@ -59,7 +59,7 @@ local function read_data()
 
     local out_data = path:read()
 
-    if not out_data or out_data == '' then
+    if not out_data or out_data == "" then
         write_data({})
         out_data = path:read()
     end

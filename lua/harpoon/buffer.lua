@@ -49,26 +49,17 @@ function M.setup_autocmds_and_keymaps(bufnr)
     end
 
     vim.api.nvim_buf_set_option(bufnr, "filetype", "harpoon")
-    vim.keymap.set(
-        "n",
-        "q",
-        function() M.run_toggle_command("q") end,
-        { buffer = bufnr,  silent = true }
-    )
+    vim.keymap.set("n", "q", function()
+        M.run_toggle_command("q")
+    end, { buffer = bufnr, silent = true })
 
-    vim.keymap.set(
-        "n",
-        "<Esc>",
-        function() M.run_toggle_command("Esc") end,
-        { buffer = bufnr,  silent = true }
-    )
+    vim.keymap.set("n", "<Esc>", function()
+        M.run_toggle_command("Esc")
+    end, { buffer = bufnr, silent = true })
 
-    vim.keymap.set(
-        "n",
-        "<CR>",
-        function() M.run_select_command() end,
-        { buffer = bufnr,  silent = true }
-    )
+    vim.keymap.set("n", "<CR>", function()
+        M.run_select_command()
+    end, { buffer = bufnr, silent = true })
 
     vim.api.nvim_create_autocmd({ "BufWriteCmd" }, {
         group = HarpoonGroup,

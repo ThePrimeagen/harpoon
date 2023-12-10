@@ -14,8 +14,8 @@ describe("harpoon", function()
     end)
 
     it("new lines with vim.inspect get removed too", function()
-        Logger:log({hello = "world", world = "hello"})
-        eq({ "{ hello = \"world\", world = \"hello\" }" }, Logger.lines)
+        Logger:log({ hello = "world", world = "hello" })
+        eq({ '{ hello = "world", world = "hello" }' }, Logger.lines)
     end)
 
     it("max lines", function()
@@ -25,6 +25,4 @@ describe("harpoon", function()
         Logger:log("two")
         eq({ "two" }, Logger.lines)
     end)
-
 end)
-

@@ -100,7 +100,10 @@ end
 ---@return HarpoonList
 function HarpoonList:removeAt(index)
     if self.items[index] then
-        Logger:log("HarpoonList:removeAt", { item = self.items[index], index = index })
+        Logger:log(
+            "HarpoonList:removeAt",
+            { item = self.items[index], index = index }
+        )
         Listeners.listeners:emit(
             Listeners.event_names.REMOVE,
             { list = self, item = self.items[index], idx = index }

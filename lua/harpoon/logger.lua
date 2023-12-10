@@ -51,7 +51,7 @@ function HarpoonLog:log(...)
 
     table.insert(self.lines, table.concat(lines, " "))
 
-    while #self.lines > self.max_lines  do
+    while #self.lines > self.max_lines do
         table.remove(self.lines, 1)
     end
 end
