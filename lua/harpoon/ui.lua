@@ -82,7 +82,8 @@ function HarpoonUI:_create_window()
 
     local height = 8
     local borderchars = self.settings.border_chars
-    local bufnr = vim.api.nvim_create_buf(false, false)
+    local bufnr = vim.api.nvim_create_buf(false, true)
+    -- TODO: Remove popup and just use nvim_open_win
     local _, popup_info = popup.create(bufnr, {
         title = "Harpoon",
         highlight = "HarpoonWindow",

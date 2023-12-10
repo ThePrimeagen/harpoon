@@ -5,6 +5,11 @@ local harpoon = require("harpoon")
 local eq = assert.are.same
 local be = utils.before_each(os.tmpname())
 
+local function key(k)
+    k = vim.api.nvim_replace_termcodes(k, true, false, true)
+    vim.api.nvim_feedkeys(k, "m", false)
+end
+
 describe("harpoon", function()
     before_each(function()
         be()
