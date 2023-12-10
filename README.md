@@ -177,8 +177,8 @@ Settings can alter the experience of harpoon
 ```
 
 **Descriptions**
-* `save_on_toggle`: any time the ui menu is closed then we will sync the state back to the backing list
-* `border_chars`: the ui's border characters to be displayed
+* `save_on_toggle`: any time the ui menu is closed then we will save the state back to the backing list, not to the fs
+* `sync_on_ui_close`: any time the ui menu is closed then the state of the list will be sync'd back to the fs
 * `key` how the out list key is looked up.  This can be useful when using worktrees and using git remote instead of file path
 
 **Defaults**
@@ -186,7 +186,6 @@ Settings can alter the experience of harpoon
 settings = {
     save_on_toggle = false,
     sync_on_ui_close = false,
-    border_chars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
     key = function()
         return vim.loop.cwd()
     end,
@@ -194,8 +193,7 @@ settings = {
 ```
 
 ### Highlight Groups
-Currently available highlight groups are
-`HarpoonWindow`, `HarpoonBorder`, and `HarpoonTitle`.
+TODO: Fill in the idea that we will emit out window information
 
 ### Logger
 This can help debug issues on other's computer.  To get your debug log please do the following.

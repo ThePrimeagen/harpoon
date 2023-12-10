@@ -1,5 +1,7 @@
 ---@alias HarpoonListener fun(type: string, args: any[] | any | nil): nil
 
+--- TODO: Rename this... its an odd name "listeners"
+
 ---@class HarpoonListeners
 ---@field listeners (HarpoonListener)[]
 ---@field listenersByType (table<string, HarpoonListener>)[]
@@ -53,5 +55,6 @@ return {
         SELECT = "SELECT",
         REMOVE = "REMOVE",
         REORDER = "REORDER",
+        UI_CREATE = "UI_CREATE",
     },
 }

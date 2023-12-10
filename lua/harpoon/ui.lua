@@ -1,10 +1,12 @@
-local popup = require("plenary").popup
 local Buffer = require("harpoon.buffer")
 local Logger = require("harpoon.logger")
+local Listeners = require("harpoon.listeners")
+
+---@class HarpoonToggleOptions
+---TODO: Finish.
 
 ---@class HarpoonUI
 ---@field win_id number
----@field border_win_id number
 ---@field bufnr number
 ---@field settings HarpoonSettings
 ---@field active_list HarpoonList
@@ -23,7 +25,6 @@ HarpoonUI.__index = HarpoonUI
 function HarpoonUI:new(settings)
     return setmetatable({
         win_id = nil,
-        border_win_id = nil,
         bufnr = nil,
         active_list = nil,
         settings = settings,
@@ -54,23 +55,18 @@ function HarpoonUI:close_menu()
         vim.api.nvim_win_close(self.win_id, true)
     end
 
-    if
-        self.border_win_id ~= nil
-        and vim.api.nvim_win_is_valid(self.border_win_id)
-    then
-        vim.api.nvim_win_close(self.border_win_id, true)
-    end
-
     self.active_list = nil
     self.win_id = nil
-    self.border_win_id = nil
     self.bufnr = nil
 
     self.closing = false
 end
 
+--- TODO: Toggle_opts should be where we get extra style and border options
+--- and we should create a nice minimum window
+---@param toggle_opts HarpoonToggleOptions
 ---@return number,number
-function HarpoonUI:_create_window()
+function HarpoonUI:_create_window(toggle_opts)
     local win = vim.api.nvim_list_uis()
 
     local width = self.settings.ui_fallback_width
@@ -81,33 +77,40 @@ function HarpoonUI:_create_window()
     end
 
     local height = 8
-    local borderchars = self.settings.border_chars
     local bufnr = vim.api.nvim_create_buf(false, true)
-    -- TODO: Remove popup and just use nvim_open_win
-    local _, popup_info = popup.create(bufnr, {
+    local win_id = vim.api.nvim_open_win(bufnr, true, {
+        relative = "editor",
         title = "Harpoon",
-        highlight = "HarpoonWindow",
-        borderhighlight = "HarpoonBorder",
-        titlehighlight = "HarpoonTitle",
-        line = math.floor(((vim.o.lines - height) / 2) - 1),
+        row = math.floor(((vim.o.lines - height) / 2) - 1),
         col = math.floor((vim.o.columns - width) / 2),
-        minwidth = width,
-        minheight = height,
-        borderchars = borderchars,
+        width = width,
+        height = height,
+        style = "minimal",
+        border = "single",
     })
-    local win_id = popup_info.win_id
+
+    if win_id == 0 then
+        Logger:log("ui#_create_window failed to create window, win_id returned 0")
+        error("Failed to create window")
+    end
 
     Buffer.setup_autocmds_and_keymaps(bufnr)
 
     self.win_id = win_id
-    self.border_win_id = popup_info.border.win_id
     vim.api.nvim_win_set_option(win_id, "number", true)
+
+    Listeners.listeners:emit(Listeners.event_names.UI_CREATE, {
+        win_id = win_id,
+        bufnr = bufnr,
+    })
 
     return win_id, bufnr
 end
 
 ---@param list? HarpoonList
+---TODO: @param opts? HarpoonToggleOptions
 function HarpoonUI:toggle_quick_menu(list)
+    opts = opts or {}
     if list == nil or self.win_id ~= nil then
         Logger:log("ui#toggle_quick_menu#closing", list and list.name)
         if self.settings.save_on_toggle then

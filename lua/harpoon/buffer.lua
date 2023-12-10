@@ -27,9 +27,6 @@ function M.run_toggle_command(key)
     harpoon.ui:toggle_quick_menu()
 end
 
----TODO: I don't know how to do what i want to do, but i want to be able to
----make this so we use callbacks for these buffer actions instead of using
----strings back into the ui.  it feels gross and it puts odd coupling
 ---@param bufnr number
 function M.setup_autocmds_and_keymaps(bufnr)
     local curr_file = vim.api.nvim_buf_get_name(0)

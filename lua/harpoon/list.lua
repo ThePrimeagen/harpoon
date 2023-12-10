@@ -1,6 +1,9 @@
 local Logger = require("harpoon.logger")
 local Listeners = require("harpoon.listeners")
 
+--- @class HarpoonNavOptions
+--- @field ui_nav_wrap? boolean
+
 local function index_of(items, element, config)
     local equals = config and config.equals
         or function(a, b)
@@ -180,23 +183,35 @@ function HarpoonList:select(index, options)
     end
 end
 
-function HarpoonList:next()
+---
+--- @param opts? HarpoonNavOptions
+function HarpoonList:next(opts)
+    opts = opts or {}
+
     self._index = self._index + 1
-    if self._index > #self.items and self.config.ui_nav_wrap then
-        self._index = 1
-    elseif self._index > #self.items and not self.config.ui_nav_wrap then
-        self._index = #self.items
+    if self._index > #self.items then
+        if opts.ui_nav_wrap then
+            self._index = 1
+        else
+            self._index = #self.items
+        end
     end
 
     self:select(self._index)
 end
 
-function HarpoonList:prev()
+---
+--- @param opts? HarpoonNavOptions
+function HarpoonList:prev(opts)
+    opts = opts or {}
+
     self._index = self._index - 1
-    if self._index < 1 and self.config.ui_nav_wrap then
-        self._index = #self.items
-    elseif self._index < 1 and not self.config.ui_nav_wrap then
-        self._index = 1
+    if self._index < 1 then
+        if opts.ui_nav_wrap then
+            self._index = #self.items
+        else
+            self._index = 1
+        end
     end
 
     self:select(self._index)
