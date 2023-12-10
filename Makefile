@@ -6,4 +6,9 @@ lint:
 	echo "===> Linting"
 	luacheck lua/ --globals vim
 
-pr-ready: fmt lint
+test:
+	echo "===> Testing"
+    nvim --headless -c "PlenaryBustedDirectory lua/harpoon/test"
+
+
+pr-ready: fmt lint test
