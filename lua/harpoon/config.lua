@@ -77,6 +77,9 @@ function M.get_default_config()
         },
 
         default = {
+            --- ui_nav_wrap allows the ability to enable(true) or disable(false) wrapping on prev and next list calls.
+            ui_nav_wrap = true,
+
             --- select_with_nill allows for a list to call select even if the provided item is nil
             select_with_nil = false,
 
