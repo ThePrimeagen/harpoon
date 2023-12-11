@@ -12,9 +12,8 @@ local function toggle_config(config)
     return vim.tbl_extend("force", {
         ui_fallback_width = 69,
         ui_width_ratio = 0.62569,
-    }, config)
+    }, config or {})
 end
-
 
 ---@class HarpoonUI
 ---@field win_id number
@@ -102,7 +101,9 @@ function HarpoonUI:_create_window(toggle_opts)
     })
 
     if win_id == 0 then
-        Logger:log("ui#_create_window failed to create window, win_id returned 0")
+        Logger:log(
+            "ui#_create_window failed to create window, win_id returned 0"
+        )
         self.bufnr = bufnr
         self:close_menu()
         error("Failed to create window")
