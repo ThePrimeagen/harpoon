@@ -3,6 +3,8 @@ local Logger = require("harpoon.logger")
 local Listeners = require("harpoon.listeners")
 
 ---@class HarpoonToggleOptions
+---@field border string | string[]
+---@field title_pos "center" | "left" | "right"
 ---TODO: Finish.
 
 ---@class HarpoonUI
@@ -62,8 +64,6 @@ function HarpoonUI:close_menu()
     self.closing = false
 end
 
---- TODO: Toggle_opts should be where we get extra style and border options
---- and we should create a nice minimum window
 ---@param toggle_opts HarpoonToggleOptions
 ---@return number,number
 function HarpoonUI:_create_window(toggle_opts)
@@ -86,11 +86,14 @@ function HarpoonUI:_create_window(toggle_opts)
         width = width,
         height = height,
         style = "minimal",
-        border = "single",
+        border = toggle_opts.border or self.settings.ui_border,
+        title_pos = toggle_opts.title_pos or self.settings.ui_title_pos,
     })
 
     if win_id == 0 then
-        Logger:log("ui#_create_window failed to create window, win_id returned 0")
+        Logger:log(
+            "ui#_create_window failed to create window, win_id returned 0"
+        )
         error("Failed to create window")
     end
 
@@ -98,7 +101,7 @@ function HarpoonUI:_create_window(toggle_opts)
 
     self.win_id = win_id
     vim.api.nvim_set_option_value("number", true, {
-        win = win_id
+        win = win_id,
     })
 
     Listeners.listeners:emit(Listeners.event_names.UI_CREATE, {
@@ -110,8 +113,8 @@ function HarpoonUI:_create_window(toggle_opts)
 end
 
 ---@param list? HarpoonList
----TODO: @param opts? HarpoonToggleOptions
-function HarpoonUI:toggle_quick_menu(list)
+---@param opts? HarpoonToggleOptions
+function HarpoonUI:toggle_quick_menu(list, opts)
     opts = opts or {}
     if list == nil or self.win_id ~= nil then
         Logger:log("ui#toggle_quick_menu#closing", list and list.name)
@@ -123,7 +126,7 @@ function HarpoonUI:toggle_quick_menu(list)
     end
 
     Logger:log("ui#toggle_quick_menu#opening", list and list.name)
-    local win_id, bufnr = self:_create_window()
+    local win_id, bufnr = self:_create_window(opts)
 
     self.win_id = win_id
     self.bufnr = bufnr

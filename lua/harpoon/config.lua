@@ -29,6 +29,8 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@field sync_on_ui_close? boolean
 ---@field ui_fallback_width number defaults 69, nice
 ---@field ui_width_ratio number defaults to 0.62569
+---@field ui_border string | string[] defaults to "single"
+---@field ui_title_pos string defaults to "center"
 ---@field key (fun(): string)
 
 ---@class HarpoonPartialSettings
@@ -60,6 +62,8 @@ function M.get_default_config()
             sync_on_ui_close = false,
             ui_fallback_width = 69,
             ui_width_ratio = 0.62569,
+            ui_border = "single",
+            ui_title_pos = "center",
             key = function()
                 return vim.loop.cwd()
             end,

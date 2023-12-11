@@ -172,8 +172,9 @@ Settings can alter the experience of harpoon
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to false
 ---@field sync_on_ui_close boolean defaults to false
+---@field border string | string[8] defaults to "single"
+---@field title_pos "center" | "left" | "right" defaults to "center"
 ---@field key (fun(): string)
-
 ```
 
 **Descriptions**
@@ -186,6 +187,8 @@ Settings can alter the experience of harpoon
 settings = {
     save_on_toggle = false,
     sync_on_ui_close = false,
+    border = "single",
+    title_pos = "center"
     key = function()
         return vim.loop.cwd()
     end,
