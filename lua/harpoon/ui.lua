@@ -124,6 +124,14 @@ function HarpoonUI:_create_window(toggle_opts)
     return win_id, bufnr
 end
 
+function HarpoonUI:update_contents()
+    if not self.active_list or not self.bufnr then
+        return
+    end
+    local contents = self.active_list:display()
+    vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, contents)
+end
+
 ---@param list? HarpoonList
 ---TODO: @param opts? HarpoonToggleOptions
 function HarpoonUI:toggle_quick_menu(list, opts)
@@ -144,8 +152,7 @@ function HarpoonUI:toggle_quick_menu(list, opts)
     self.bufnr = bufnr
     self.active_list = list
 
-    local contents = self.active_list:display()
-    vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, contents)
+    self:update_contents()
 end
 
 ---@param options? any
