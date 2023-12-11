@@ -55,7 +55,9 @@ end
 ---@param contents string[]
 function M.create_file(name, contents, row, col)
     local bufnr = vim.fn.bufnr(name, true)
-    vim.api.nvim_buf_set_option(bufnr, "bufhidden", "hide")
+    vim.api.nvim_set_option_value("bufhidden", "hide", {
+        buf = bufnr,
+    })
     vim.api.nvim_set_current_buf(bufnr)
     vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, contents)
     if row then
