@@ -45,7 +45,9 @@ function M.setup_autocmds_and_keymaps(bufnr)
         vim.api.nvim_buf_set_name(bufnr, get_harpoon_menu_name())
     end
 
-    vim.api.nvim_buf_set_option(bufnr, "filetype", "harpoon")
+    vim.api.nvim_set_option_value("filetype", "harpoon", {
+        buf = bufnr,
+    })
     vim.keymap.set("n", "q", function()
         M.run_toggle_command("q")
     end, { buffer = bufnr, silent = true })

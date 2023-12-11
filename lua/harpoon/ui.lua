@@ -97,7 +97,9 @@ function HarpoonUI:_create_window(toggle_opts)
     Buffer.setup_autocmds_and_keymaps(bufnr)
 
     self.win_id = win_id
-    vim.api.nvim_win_set_option(win_id, "number", true)
+    vim.api.nvim_set_option_value("number", true, {
+        win = win_id
+    })
 
     Listeners.listeners:emit(Listeners.event_names.UI_CREATE, {
         win_id = win_id,
