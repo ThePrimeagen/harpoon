@@ -113,7 +113,7 @@ function HarpoonUI:_create_window(toggle_opts)
 
     self.win_id = win_id
     vim.api.nvim_set_option_value("number", true, {
-        win = win_id
+        win = win_id,
     })
 
     Listeners.listeners:emit(Listeners.event_names.UI_CREATE, {
