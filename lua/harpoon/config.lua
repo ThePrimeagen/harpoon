@@ -14,6 +14,7 @@ M.DEFAULT_LIST = DEFAULT_LIST
 
 ---@class HarpoonPartialConfigItem
 ---@field select_with_nil? boolean defaults to false
+---@field prepopulate? fun():(HarpoonListItem[])
 ---@field encode? (fun(list_item: HarpoonListItem): string)
 ---@field decode? (fun(obj: string): any)
 ---@field display? (fun(list_item: HarpoonListItem): string)

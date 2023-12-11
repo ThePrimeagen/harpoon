@@ -64,6 +64,13 @@ function Harpoon:list(name)
     local list = List.decode(list_config, name, data)
     lists[name] = list
 
+    if list.config.prepopulate and list:length() == 0 then
+        local items = list.config.prepopulate() or {}
+        for _, item in ipairs(items) do
+            list:append(item)
+        end
+    end
+
     return list
 end
 

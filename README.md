@@ -148,6 +148,7 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 ---@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
 ---@field add? fun(item: any?): HarpoonListItem
+---@field prepopulate? fun(): HarpoonListItem[]
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
 ---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
 ---@field get_root_dir? fun(): string
@@ -160,6 +161,7 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 * `select`: the action taken when selecting a list item. called from `list:select(idx, options)`
 * `equals`: how to compare two list items for equality
 * `add`: called when `list:append()` or `list:prepend()` is called.  called with an item, which will be a string, when adding through the ui menu
+* `prepopulate`: if present, called the first time `Harpoon:list()` is called for a given *empty* list.
 * `BufLeave`: this function is called for every list on BufLeave.  if you need custom behavior, this is the place
 * `VimLeavePre`: this function is called for every list on VimLeavePre.
 * `get_root_dir`: used for creating relative paths.  defaults to `vim.loop.cwd()`
