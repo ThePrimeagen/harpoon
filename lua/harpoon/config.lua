@@ -27,8 +27,6 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@class HarpoonSettings
 ---@field save_on_toggle boolean defaults to true
 ---@field sync_on_ui_close? boolean
----@field ui_fallback_width number defaults 69, nice
----@field ui_width_ratio number defaults to 0.62569
 ---@field key (fun(): string)
 
 ---@class HarpoonPartialSettings
@@ -58,16 +56,12 @@ function M.get_default_config()
         settings = {
             save_on_toggle = false,
             sync_on_ui_close = false,
-            ui_fallback_width = 69,
-            ui_width_ratio = 0.62569,
             key = function()
                 return vim.loop.cwd()
             end,
         },
 
         default = {
-            --- ui_nav_wrap allows the ability to enable(true) or disable(false) wrapping on prev and next list calls.
-            ui_nav_wrap = true,
 
             --- select_with_nill allows for a list to call select even if the provided item is nil
             select_with_nil = false,

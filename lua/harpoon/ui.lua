@@ -3,7 +3,18 @@ local Logger = require("harpoon.logger")
 local Listeners = require("harpoon.listeners")
 
 ---@class HarpoonToggleOptions
----TODO: Finish.
+---@field border? any this value is directly passed to nvim_open_win
+---@field ui_fallback_width? number
+---@field ui_width_ratio? number
+
+---@return HarpoonToggleOptions
+local function toggle_config(config)
+    return vim.tbl_extend("force", {
+        ui_fallback_width = 69,
+        ui_width_ratio = 0.62569,
+    }, config)
+end
+
 
 ---@class HarpoonUI
 ---@field win_id number
@@ -69,11 +80,12 @@ end
 function HarpoonUI:_create_window(toggle_opts)
     local win = vim.api.nvim_list_uis()
 
-    local width = self.settings.ui_fallback_width
+    local width = toggle_opts.ui_fallback_width
+
     if #win > 0 then
         -- no ackshual reason for 0.62569, just looks complicated, and i want
         -- to make my boss think i am smart
-        width = math.floor(win[1].width * self.settings.ui_width_ratio)
+        width = math.floor(win[1].width * toggle_opts.ui_width_ratio)
     end
 
     local height = 8
@@ -86,11 +98,13 @@ function HarpoonUI:_create_window(toggle_opts)
         width = width,
         height = height,
         style = "minimal",
-        border = "single",
+        border = toggle_opts.border or "single",
     })
 
     if win_id == 0 then
         Logger:log("ui#_create_window failed to create window, win_id returned 0")
+        self.bufnr = bufnr
+        self:close_menu()
         error("Failed to create window")
     end
 
@@ -111,8 +125,8 @@ end
 
 ---@param list? HarpoonList
 ---TODO: @param opts? HarpoonToggleOptions
-function HarpoonUI:toggle_quick_menu(list)
-    opts = opts or {}
+function HarpoonUI:toggle_quick_menu(list, opts)
+    opts = toggle_config(opts)
     if list == nil or self.win_id ~= nil then
         Logger:log("ui#toggle_quick_menu#closing", list and list.name)
         if self.settings.save_on_toggle then
@@ -123,7 +137,7 @@ function HarpoonUI:toggle_quick_menu(list)
     end
 
     Logger:log("ui#toggle_quick_menu#opening", list and list.name)
-    local win_id, bufnr = self:_create_window()
+    local win_id, bufnr = self:_create_window(opts)
 
     self.win_id = win_id
     self.bufnr = bufnr
