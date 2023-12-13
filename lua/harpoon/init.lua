@@ -86,7 +86,7 @@ end
 function Harpoon:sync()
     local key = self.config.settings.key()
     self:_for_each_list(function(list, _, list_name)
-        if list.encode == false then
+        if list.config.encode == false then
             return
         end
 
