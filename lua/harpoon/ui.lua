@@ -4,6 +4,7 @@ local Listeners = require("harpoon.listeners")
 
 ---@class HarpoonToggleOptions
 ---@field border? any this value is directly passed to nvim_open_win
+---@field title_pos? any this value is directly passed to nvim_open_win
 ---@field ui_fallback_width? number
 ---@field ui_width_ratio? number
 
