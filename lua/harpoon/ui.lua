@@ -6,6 +6,7 @@ local Listeners = require("harpoon.listeners")
 ---@field border? any this value is directly passed to nvim_open_win
 ---@field ui_fallback_width? number
 ---@field ui_width_ratio? number
+---@field bg_highlight? string
 
 ---@return HarpoonToggleOptions
 local function toggle_config(config)
@@ -87,6 +88,14 @@ function HarpoonUI:_create_window(toggle_opts)
         width = math.floor(win[1].width * toggle_opts.ui_width_ratio)
     end
 
+    local bg_highlight
+    if toggle_opts.bg_highlight then
+        bg_highlight = toggle_opts.bg_highlight
+        assert(type(bg_highlight) == "string", "bg_highlight must be a string")
+    else
+        bg_highlight = vim.api.nvim_get_hl(0, { name = "Normal" }).bg
+    end
+
     local height = 8
     local bufnr = vim.api.nvim_create_buf(false, true)
     local win_id = vim.api.nvim_open_win(bufnr, true, {
@@ -108,6 +117,8 @@ function HarpoonUI:_create_window(toggle_opts)
         self:close_menu()
         error("Failed to create window")
     end
+
+    vim.api.nvim_win_set_option(win_id, "winhl", "Normal:" .. bg_highlight)
 
     Buffer.setup_autocmds_and_keymaps(bufnr)
 
