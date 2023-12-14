@@ -28,6 +28,7 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@field save_on_toggle boolean defaults to false
 ---@field sync_on_ui_close? boolean
 ---@field key (fun(): string)
+---@field keep_window_on_select boolean defaults to false
 
 ---@class HarpoonPartialSettings
 ---@field save_on_toggle? boolean
@@ -59,6 +60,7 @@ function M.get_default_config()
             key = function()
                 return vim.loop.cwd()
             end,
+            keep_window_on_select = false,
         },
 
         default = {

@@ -167,7 +167,10 @@ function HarpoonUI:select_menu_item(options)
     )
 
     self.active_list:select(idx, options)
-    self:close_menu()
+
+    if not self.settings.keep_window_on_select then
+        self:close_menu()
+    end
 end
 
 function HarpoonUI:save()
