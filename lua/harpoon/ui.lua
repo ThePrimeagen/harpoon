@@ -4,6 +4,7 @@ local Extensions = require("harpoon.extensions")
 
 ---@class HarpoonToggleOptions
 ---@field border? any this value is directly passed to nvim_open_win
+---@field title_pos? any this value is directly passed to nvim_open_win
 ---@field ui_fallback_width? number
 ---@field ui_width_ratio? number
 
@@ -92,6 +93,7 @@ function HarpoonUI:_create_window(toggle_opts)
     local win_id = vim.api.nvim_open_win(bufnr, true, {
         relative = "editor",
         title = "Harpoon",
+        title_pos = toggle_opts.title_pos or "left",
         row = math.floor(((vim.o.lines - height) / 2) - 1),
         col = math.floor((vim.o.columns - width) / 2),
         width = width,
