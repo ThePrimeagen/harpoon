@@ -1,5 +1,7 @@
 local utils = require("harpoon.test.utils")
 local harpoon = require("harpoon")
+local Extensions = require("harpoon.extensions")
+local Config = require("harpoon.config")
 
 local eq = assert.are.same
 
@@ -104,4 +106,36 @@ describe("harpoon", function()
             { value = file_name_1, context = { row = row_1, col = col_1 } },
         })
     end)
+
+    it("extension testing: setup and create list", function()
+        local list_created = false
+        local list_name = ""
+        local setup = false
+        local config = {}
+
+        harpoon:extend({
+            [Extensions.event_names.LIST_CREATED] = function(list)
+                list_created = true
+                list_name = list.name
+            end,
+            [Extensions.event_names.SETUP_CALLED] = function(c)
+                setup = true
+                config = c
+            end,
+        });
+
+        harpoon:setup({
+            foo = { }
+        });
+        harpoon:list()
+
+        eq(true, setup)
+        eq({}, config.foo)
+
+        eq(true, list_created)
+        eq(Config.DEFAULT_LIST, list_name)
+
+    end)
+
+
 end)
