@@ -76,7 +76,7 @@ vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
 ```
 
 ## ⇁ API
-You can define custom behavior of a harpoon list by providing your own calls.
+You can define custom behavior of a harpoon list by providing your own functions.
 
 Here is a simple example where i create a list named `cmd` that takes the
 current line in the editor and adds it to harpoon menu.  When
@@ -192,8 +192,80 @@ settings = {
 },
 ```
 
-### Highlight Groups
-TODO: Fill in the idea that we will emit out window information
+### Extensions
+Extensions allow you to listen in on events that happen in harpoon, and respond with custom behavior.
+
+To register an extension, call `harpoon:extend({...})`.
+
+In the below example, we listen for the `LIST_CREATED` event, and add some files from
+`mini.visits` frecency database if the list is empty:
+
+```lua
+local harpoon = require("harpoon")
+local Path = require("plenary.path")
+
+harpoon:extend({
+    LIST_CREATED = function(list)
+        local list_name = require("harpoon.config").DEFAULT_LIST
+        if list.name ~= list_name -- replace with your list name
+            or list:length() > 0  -- only add files if the list is empty
+        then
+            return
+        end
+
+        local cwd = vim.loop.cwd() -- vim.uv in 0.10
+        local limit = 3 -- max files to add from mini.visits
+
+        for i, path in ipairs(require("mini.visits").list_paths()) do
+            if i > limit then
+                break
+            end
+            -- check if we've already opened this file
+            local buf = vim.fn.bufnr(path, false)
+            local row, col = 1, 1
+            if buf and vim.api.nvim_buf_is_valid(buf) then
+              -- if the buffer has a mark for "last exited," use that.
+              row, col = unpack(vim.api.nvim_buf_get_mark(buf, '"'))
+            end
+            list:append({
+              value = Path:new(path):make_relative(cwd),
+              context = {
+                row = row,
+                col = col,
+              },
+            })
+        end
+    end
+})
+```
+
+#### Events
+
+- `LIST_CREATED` - `fun(list: HarpoonList)`:
+    - Called when a list is created.
+    - This is a good place to modify the list before it is used.
+
+- `SETUP_CALLED` - `fun(config: HarpoonConfig)`:
+    - Called in `harpoon:setup()`.
+    - This could be used to configure for your extension.
+
+- `UI_CREATE` - `fun(info: { win_id: integer, bufnr: integer })`:
+    - Called when the ui menu is opened.
+    - This is a good place to add window highlighting or set `winblend`.
+
+- `ADD` - `fun({ list: HarpoonList, item: HarpoonListItem, idx: integer })`:
+    - Called when an item is added to a list.
+    - Useful for triggering notifications or statusline updates.
+
+- `REMOVE` - `fun({ list: HarpoonList, item: HarpoonListItem, idx: integer })`:
+    - Called when an item is removed from a list.
+
+- `SELECT` - `fun({ list: HarpoonList, item: HarpoonListItem, idx: integer })`:
+    - Called when an item is selected.
+
+- `REORDER` - `fun({ list: HarpoonList, item: HarpoonListItem, idx: integer })`:
+    - Called when the list is reordered.
+    - Note: called for *each* element that is moved, not once for all of them.
 
 ### Logger
 This can help debug issues on other's computer.  To get your debug log please do the following.
