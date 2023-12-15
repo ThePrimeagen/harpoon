@@ -3,13 +3,13 @@ local Ui = require("harpoon.ui")
 local Data = require("harpoon.data")
 local Config = require("harpoon.config")
 local List = require("harpoon.list")
-local Listeners = require("harpoon.listeners")
+local Extensions = require("harpoon.extensions")
 local HarpoonGroup = require("harpoon.autocmd")
 
 ---@class Harpoon
 ---@field config HarpoonConfig
 ---@field ui HarpoonUI
----@field listeners HarpoonListeners
+---@field _extensions HarpoonExtensions
 ---@field data HarpoonData
 ---@field logger HarpoonLog
 ---@field lists {[string]: {[string]: HarpoonList}}
@@ -27,7 +27,7 @@ function Harpoon:new()
         data = Data.Data:new(),
         logger = Log,
         ui = Ui:new(config.settings),
-        listeners = Listeners.listeners,
+        _extensions = Extensions.extensions,
         lists = {},
         hooks_setup = false,
     }, self)
@@ -62,6 +62,7 @@ function Harpoon:list(name)
     local list_config = Config.get_config(self.config, name)
 
     local list = List.decode(list_config, name, data)
+    self._extensions:emit(Extensions.event_names.LIST_CREATED, list)
     lists[name] = list
 
     return list
@@ -109,6 +110,11 @@ function Harpoon:dump()
     return self.data._data
 end
 
+---@param extension HarpoonExtension
+function Harpoon:extend(extension)
+    self._extensions:add_listener(extension)
+end
+
 function Harpoon:__debug_reset()
     require("plenary.reload").reload_module("harpoon")
 end
@@ -128,6 +134,7 @@ function Harpoon.setup(self, partial_config)
     ---@diagnostic disable-next-line: param-type-mismatch
     self.config = Config.merge_config(partial_config, self.config)
     self.ui:configure(self.config.settings)
+    self._extensions:emit(Extensions.event_names.SETUP_CALLED, self.config)
 
     ---TODO: should we go through every seen list and update its config?
 

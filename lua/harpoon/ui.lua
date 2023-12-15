@@ -1,6 +1,6 @@
 local Buffer = require("harpoon.buffer")
 local Logger = require("harpoon.logger")
-local Listeners = require("harpoon.listeners")
+local Extensions = require("harpoon.extensions")
 
 ---@class HarpoonToggleOptions
 ---@field border? any this value is directly passed to nvim_open_win
@@ -116,7 +116,7 @@ function HarpoonUI:_create_window(toggle_opts)
         win = win_id,
     })
 
-    Listeners.listeners:emit(Listeners.event_names.UI_CREATE, {
+    Extensions.extensions:emit(Extensions.event_names.UI_CREATE, {
         win_id = win_id,
         bufnr = bufnr,
     })

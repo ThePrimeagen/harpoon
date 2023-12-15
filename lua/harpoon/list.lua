@@ -1,5 +1,5 @@
 local Logger = require("harpoon.logger")
-local Listeners = require("harpoon.listeners")
+local Extensions = require("harpoon.extensions")
 
 --- @class HarpoonNavOptions
 --- @field ui_nav_wrap? boolean
@@ -57,8 +57,8 @@ function HarpoonList:append(item)
     local index = index_of(self.items, item, self.config)
     Logger:log("HarpoonList:append", { item = item, index = index })
     if index == -1 then
-        Listeners.listeners:emit(
-            Listeners.event_names.ADD,
+        Extensions.extensions:emit(
+            Extensions.event_names.ADD,
             { list = self, item = item, idx = #self.items + 1 }
         )
         table.insert(self.items, item)
@@ -73,8 +73,8 @@ function HarpoonList:prepend(item)
     local index = index_of(self.items, item, self.config)
     Logger:log("HarpoonList:prepend", { item = item, index = index })
     if index == -1 then
-        Listeners.listeners:emit(
-            Listeners.event_names.ADD,
+        Extensions.extensions:emit(
+            Extensions.event_names.ADD,
             { list = self, item = item, idx = 1 }
         )
         table.insert(self.items, 1, item)
@@ -88,8 +88,8 @@ function HarpoonList:remove(item)
     item = item or self.config.create_list_item(self.config)
     for i, v in ipairs(self.items) do
         if self.config.equals(v, item) then
-            Listeners.listeners:emit(
-                Listeners.event_names.REMOVE,
+            Extensions.extensions:emit(
+                Extensions.event_names.REMOVE,
                 { list = self, item = item, idx = i }
             )
             Logger:log("HarpoonList:remove", { item = item, index = i })
@@ -107,8 +107,8 @@ function HarpoonList:removeAt(index)
             "HarpoonList:removeAt",
             { item = self.items[index], index = index }
         )
-        Listeners.listeners:emit(
-            Listeners.event_names.REMOVE,
+        Extensions.extensions:emit(
+            Extensions.event_names.REMOVE,
             { list = self, item = self.items[index], idx = index }
         )
         table.remove(self.items, index)
@@ -139,8 +139,8 @@ function HarpoonList:resolve_displayed(displayed)
     for i, v in ipairs(list_displayed) do
         local index = index_of(displayed, v)
         if index == -1 then
-            Listeners.listeners:emit(
-                Listeners.event_names.REMOVE,
+            Extensions.extensions:emit(
+                Extensions.event_names.REMOVE,
                 { list = self, item = self.items[i], idx = i }
             )
         end
@@ -150,14 +150,14 @@ function HarpoonList:resolve_displayed(displayed)
         local index = index_of(list_displayed, v)
         if index == -1 then
             new_list[i] = self.config.create_list_item(self.config, v)
-            Listeners.listeners:emit(
-                Listeners.event_names.ADD,
+            Extensions.extensions:emit(
+                Extensions.event_names.ADD,
                 { list = self, item = new_list[i], idx = i }
             )
         else
             if index ~= i then
-                Listeners.listeners:emit(
-                    Listeners.event_names.REORDER,
+                Extensions.extensions:emit(
+                    Extensions.event_names.REORDER,
                     { list = self, item = self.items[index], idx = i }
                 )
             end
@@ -175,8 +175,8 @@ end
 function HarpoonList:select(index, options)
     local item = self.items[index]
     if item or self.config.select_with_nil then
-        Listeners.listeners:emit(
-            Listeners.event_names.SELECT,
+        Extensions.extensions:emit(
+            Extensions.event_names.SELECT,
             { list = self, item = item, idx = index }
         )
         self.config.select(item, self, options)
