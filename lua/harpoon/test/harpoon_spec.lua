@@ -122,11 +122,11 @@ describe("harpoon", function()
                 setup = true
                 config = c
             end,
-        });
+        })
 
         harpoon:setup({
-            foo = { }
-        });
+            foo = {},
+        })
         harpoon:list()
 
         eq(true, setup)
@@ -134,8 +134,5 @@ describe("harpoon", function()
 
         eq(true, list_created)
         eq(Config.DEFAULT_LIST, list_name)
-
     end)
-
-
 end)
