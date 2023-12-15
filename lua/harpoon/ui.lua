@@ -6,12 +6,14 @@ local Extensions = require("harpoon.extensions")
 ---@field border? any this value is directly passed to nvim_open_win
 ---@field title_pos? any this value is directly passed to nvim_open_win
 ---@field ui_fallback_width? number
+---@field ui_fallback_height? number
 ---@field ui_width_ratio? number
 
 ---@return HarpoonToggleOptions
 local function toggle_config(config)
     return vim.tbl_extend("force", {
         ui_fallback_width = 69,
+        ui_fallback_height = 8,
         ui_width_ratio = 0.62569,
     }, config or {})
 end
@@ -88,7 +90,8 @@ function HarpoonUI:_create_window(toggle_opts)
         width = math.floor(win[1].width * toggle_opts.ui_width_ratio)
     end
 
-    local height = 8
+    local height = toggle_opts.ui_fallback_height
+
     local bufnr = vim.api.nvim_create_buf(false, true)
     local win_id = vim.api.nvim_open_win(bufnr, true, {
         relative = "editor",
