@@ -33,9 +33,12 @@ jobs:
             mkdir -p _neovim
             curl -sL "https://github.com/neovim/neovim/releases/download/${{ matrix.rev }}" | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
           }
+      - name: Dependencies
+        run: |
+            git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
+            ln -s "$(pwd)" ~/.local/share/nvim/site/pack/vendor/start
       - name: Run tests
         run: |
           export PATH="${PWD}/_neovim/bin:${PATH}"
-          export VIM="${PWD}/_neovim/share/nvim/runtime"
           nvim --version
           make test

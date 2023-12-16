@@ -8,6 +8,7 @@ lint:
 
 test:
 	echo "===> Testing"
-	nvim --headless -c "PlenaryBustedDirectory lua/harpoon/test"
+	nvim --headless --noplugin -u scripts/tests/minimal.vim \
+        -c "PlenaryBustedDirectory lua/harpoon/test/ {minimal_init = 'scripts/tests/minimal.vim'}"
 
 pr-ready: fmt lint test
