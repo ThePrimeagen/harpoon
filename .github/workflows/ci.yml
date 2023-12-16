@@ -14,10 +14,6 @@ jobs:
             rev: nightly/nvim-linux64.tar.gz
           - os: ubuntu-22.04
             rev: v0.9.0/nvim-linux64.tar.gz
-          - os: macos-12
-            rev: nightly/nvim-macos.tar.gz
-          - os: macos-12
-            rev: v0.9.0/nvim-macos.tar.gz
     steps:
       - uses: actions/checkout@v3
       - run: date +%F > todays-date
