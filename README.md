@@ -246,7 +246,7 @@ Result:
 ![tabline](https://i.imgur.com/8i8mKJD.png)
 
 ## ⇁ Social
-For questions about Harpoon, there's a #harpoon channel on [the Primagen's Discord](https://discord.gg/theprimeagen) server.
+For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
 * [Twitch](https://www.twitch.tv/theprimeagen)
 * [Twitter](https://twitter.com/ThePrimeagen)
