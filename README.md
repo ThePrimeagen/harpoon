@@ -192,6 +192,27 @@ settings = {
 },
 ```
 
+### Extend
+The 'extend' functionality can be used to add keymaps for opening files in splits & tabs.
+
+```lua
+harpoon:extend({
+  UI_CREATE = function(cx)
+    vim.keymap.set("n", "<C-v>", function()
+      harpoon.ui:select_menu_item({ vsplit = true })
+    end, { buffer = cx.bufnr })
+
+    vim.keymap.set("n", "<C-x>", function()
+      harpoon.ui:select_menu_item({ split = true })
+    end, { buffer = cx.bufnr })
+
+    vim.keymap.set("n", "<C-t>", function()
+      harpoon.ui:select_menu_item({ tabedit = true })
+    end, { buffer = cx.bufnr })
+  end,
+})
+```
+
 ### Highlight Groups
 TODO: Fill in the idea that we will emit out window information
 

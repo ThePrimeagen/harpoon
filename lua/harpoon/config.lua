@@ -10,7 +10,7 @@ M.DEFAULT_LIST = DEFAULT_LIST
 
 ---@alias HarpoonListItem {value: any, context: any}
 ---@alias HarpoonListFileItem {value: string, context: {row: number, col: number}}
----@alias HarpoonListFileOptions {split: boolean, vsplit: boolean}
+---@alias HarpoonListFileOptions {split: boolean, vsplit: boolean, tabedit: boolean}
 
 ---@class HarpoonPartialConfigItem
 ---@field select_with_nil? boolean defaults to false
@@ -115,13 +115,13 @@ function M.get_default_config()
 
                 if options.vsplit then
                     vim.cmd("vsplit")
-                    vim.api.nvim_set_current_buf(bufnr)
                 elseif options.split then
                     vim.cmd("split")
-                    vim.api.nvim_set_current_buf(bufnr)
-                else
-                    vim.api.nvim_set_current_buf(bufnr)
+                elseif options.tabedit then
+                    vim.cmd("tabedit")
                 end
+
+                vim.api.nvim_set_current_buf(bufnr)
 
                 if set_position then
                     vim.api.nvim_win_set_cursor(0, {
