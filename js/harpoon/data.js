@@ -3,7 +3,6 @@ local Path = require("plenary.path")
 local data_path = vim.fn.stdpath("data")
 local full_data_path = string.format("%s/harpoon.json", data_path)
 
----@param data any
 local function write_data(data)
     Path:new(full_data_path):write(vim.json.encode(data), "w")
 end
@@ -34,12 +33,6 @@ local function has_keys(t)
     return false
 end
 
---- @alias HarpoonRawData {[string]: {[string]: string[]}}
-
---- @class HarpoonData
---- @field seen {[string]: {[string]: boolean}}
---- @field _data HarpoonRawData
---- @field has_error boolean
 local Data = {}
 
 -- 1. load the data
@@ -48,7 +41,6 @@ local Data = {}
 
 Data.__index = Data
 
----@return HarpoonRawData
 local function read_data()
     local path = Path:new(full_data_path)
     local exists = path:exists()
@@ -68,7 +60,6 @@ local function read_data()
     return data
 end
 
----@return HarpoonData
 function Data:new()
     local ok, data = pcall(read_data)
 
@@ -79,9 +70,6 @@ function Data:new()
     }, self)
 end
 
----@param key string
----@param name string
----@return string[]
 function Data:_get_data(key, name)
     if not self._data[key] then
         self._data[key] = {}
@@ -90,9 +78,6 @@ function Data:_get_data(key, name)
     return self._data[key][name] or {}
 end
 
----@param key string
----@param name string
----@return string[]
 function Data:data(key, name)
     if self.has_error then
         error(
@@ -109,8 +94,6 @@ function Data:data(key, name)
     return self:_get_data(key, name)
 end
 
----@param name string
----@param values string[]
 function Data:update(key, name, values)
     if self.has_error then
         error(

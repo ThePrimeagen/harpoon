@@ -9,48 +9,11 @@ local M = {}
 local DEFAULT_LIST = "__harpoon_files"
 M.DEFAULT_LIST = DEFAULT_LIST
 
----@alias HarpoonListItem {value: any, context: any}
----@alias HarpoonListFileItem {value: string, context: {row: number, col: number}}
----@alias HarpoonListFileOptions {split: boolean, vsplit: boolean, tabedit: boolean}
 
----@class HarpoonPartialConfigItem
----@field select_with_nil? boolean defaults to false
----@field encode? (fun(list_item: HarpoonListItem): string) | boolean
----@field decode? (fun(obj: string): any)
----@field display? (fun(list_item: HarpoonListItem): string)
----@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
----@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
----@field create_list_item? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
----@field BufLeave? fun(evt: any, list: HarpoonList): nil
----@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
----@field get_root_dir? fun(): string
-
----@class HarpoonSettings
----@field save_on_toggle boolean defaults to false
----@field sync_on_ui_close? boolean
----@field key (fun(): string)
-
----@class HarpoonPartialSettings
----@field save_on_toggle? boolean
----@field sync_on_ui_close? boolean
----@field key? (fun(): string)
-
----@class HarpoonConfig
----@field default HarpoonPartialConfigItem
----@field settings HarpoonSettings
----@field [string] HarpoonPartialConfigItem
-
----@class HarpoonPartialConfig
----@field default? HarpoonPartialConfigItem
----@field settings? HarpoonPartialSettings
----@field [string] HarpoonPartialConfigItem
-
----@return HarpoonPartialConfigItem
 function M.get_config(config, name)
     return vim.tbl_extend("force", {}, config.default, config[name] or {})
 end
 
----@return HarpoonConfig
 function M.get_default_config()
     return {
 
@@ -67,28 +30,20 @@ function M.get_default_config()
             --- select_with_nill allows for a list to call select even if the provided item is nil
             select_with_nil = false,
 
-            ---@param obj HarpoonListItem
-            ---@return string
             encode = function(obj)
                 return vim.json.encode(obj)
             end,
 
-            ---@param str string
-            ---@return HarpoonListItem
             decode = function(str)
                 return vim.json.decode(str)
             end,
 
-            ---@param list_item HarpoonListItem
             display = function(list_item)
                 return list_item.value
             end,
 
             --- the select function is called when a user selects an item from
             --- the corresponding list and can be nil if select_with_nil is true
-            ---@param list_item? HarpoonListFileItem
-            ---@param list HarpoonList
-            ---@param options HarpoonListFileOptions
             select = function(list_item, list, options)
                 Logger:log(
                     "config_default#select",
@@ -136,8 +91,6 @@ function M.get_default_config()
                 })
             end,
 
-            ---@param list_item_a HarpoonListItem
-            ---@param list_item_b HarpoonListItem
             equals = function(list_item_a, list_item_b)
                 return list_item_a.value == list_item_b.value
             end,
@@ -146,9 +99,6 @@ function M.get_default_config()
                 return vim.loop.cwd()
             end,
 
-            ---@param config HarpoonPartialConfigItem
-            ---@param name? any
-            ---@return HarpoonListItem
             create_list_item = function(config, name)
                 name = name
                     -- TODO: should we do path normalization???
@@ -208,9 +158,6 @@ function M.get_default_config()
     }
 end
 
----@param partial_config HarpoonPartialConfig
----@param latest_config HarpoonConfig?
----@return HarpoonConfig
 function M.merge_config(partial_config, latest_config)
     partial_config = partial_config or {}
     local config = latest_config or M.get_default_config()

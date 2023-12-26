@@ -20,7 +20,6 @@ function M.return_to_checkpoint()
     M.clean_files()
 end
 
----@param name string
 function M.before_each(name)
     return function()
         Data.set_data_path(name)
@@ -51,8 +50,6 @@ function M.clean_files()
     M.created_files = {}
 end
 
----@param name string
----@param contents string[]
 function M.create_file(name, contents, row, col)
     local bufnr = vim.fn.bufnr(name, true)
     vim.api.nvim_set_option_value("bufhidden", "hide", {
@@ -68,8 +65,6 @@ function M.create_file(name, contents, row, col)
     return bufnr
 end
 
----@param count number
----@param list HarpoonList
 function M.fill_list_with_files(count, list)
     local files = {}
 

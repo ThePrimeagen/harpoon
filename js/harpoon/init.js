@@ -6,19 +6,10 @@ local List = require("harpoon.list")
 local Extensions = require("harpoon.extensions")
 local HarpoonGroup = require("harpoon.autocmd")
 
----@class Harpoon
----@field config HarpoonConfig
----@field ui HarpoonUI
----@field _extensions HarpoonExtensions
----@field data HarpoonData
----@field logger HarpoonLog
----@field lists {[string]: {[string]: HarpoonList}}
----@field hooks_setup boolean
 local Harpoon = {}
 
 Harpoon.__index = Harpoon
 
----@return Harpoon
 function Harpoon:new()
     local config = Config.get_default_config()
 
@@ -35,8 +26,6 @@ function Harpoon:new()
     return harpoon
 end
 
----@param name string?
----@return HarpoonList
 function Harpoon:list(name)
     name = name or Config.DEFAULT_LIST
 
@@ -68,7 +57,6 @@ function Harpoon:list(name)
     return list
 end
 
----@param cb fun(list: HarpoonList, config: HarpoonPartialConfigItem, name: string)
 function Harpoon:_for_each_list(cb)
     local key = self.config.settings.key()
     local seen = self.data.seen[key]
@@ -97,7 +85,7 @@ function Harpoon:sync()
     self.data:sync()
 end
 
---luacheck: ignore 212/self
+--jsignore: ignore 212/self
 function Harpoon:info()
     return {
         paths = Data.info(),
@@ -110,7 +98,6 @@ function Harpoon:dump()
     return self.data._data
 end
 
----@param extension HarpoonExtension
 function Harpoon:extend(extension)
     self._extensions:add_listener(extension)
 end
@@ -121,17 +108,14 @@ end
 
 local the_harpoon = Harpoon:new()
 
----@param self Harpoon
----@param partial_config HarpoonPartialConfig
----@return Harpoon
 function Harpoon.setup(self, partial_config)
     if self ~= the_harpoon then
-        ---@diagnostic disable-next-line: cast-local-type
+        ---@jsignore disable-next-line: cast-local-type
         partial_config = self
         self = the_harpoon
     end
 
-    ---@diagnostic disable-next-line: param-type-mismatch
+    ---@jsingore disable-next-line: param-type-mismatch
     self.config = Config.merge_config(partial_config, self.config)
     self.ui:configure(self.config.settings)
     self._extensions:emit(Extensions.event_names.SETUP_CALLED, self.config)

@@ -27,7 +27,6 @@ function M.run_toggle_command(key)
     harpoon.ui:toggle_quick_menu()
 end
 
----@param bufnr number
 function M.setup_autocmds_and_keymaps(bufnr)
     local curr_file = vim.api.nvim_buf_get_name(0)
     local cmd = string.format(
@@ -83,7 +82,6 @@ function M.setup_autocmds_and_keymaps(bufnr)
     })
 end
 
----@param bufnr number
 function M.get_contents(bufnr)
     local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, true)
     local indices = {}

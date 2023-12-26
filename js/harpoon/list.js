@@ -1,9 +1,6 @@
 local Logger = require("harpoon.logger")
 local Extensions = require("harpoon.extensions")
 
---- @class HarpoonNavOptions
---- @field ui_nav_wrap? boolean
-
 local function index_of(items, element, config)
     local equals = config and config.equals
         or function(a, b)
@@ -20,15 +17,7 @@ local function index_of(items, element, config)
     return index
 end
 
---- @class HarpoonItem
---- @field value string
---- @field context any
 
---- @class HarpoonList
---- @field config HarpoonPartialConfigItem
---- @field name string
---- @field _index number
---- @field items HarpoonItem[]
 local HarpoonList = {}
 
 HarpoonList.__index = HarpoonList
@@ -41,7 +30,6 @@ function HarpoonList:new(config, name, items)
     }, self)
 end
 
----@return number
 function HarpoonList:length()
     return #self.items
 end
@@ -50,7 +38,6 @@ function HarpoonList:clear()
     self.items = {}
 end
 
----@return HarpoonList
 function HarpoonList:append(item)
     item = item or self.config.create_list_item(self.config)
 
@@ -67,7 +54,6 @@ function HarpoonList:append(item)
     return self
 end
 
----@return HarpoonList
 function HarpoonList:prepend(item)
     item = item or self.config.create_list_item(self.config)
     local index = index_of(self.items, item, self.config)
@@ -83,7 +69,6 @@ function HarpoonList:prepend(item)
     return self
 end
 
----@return HarpoonList
 function HarpoonList:remove(item)
     item = item or self.config.create_list_item(self.config)
     for i, v in ipairs(self.items) do
@@ -100,7 +85,6 @@ function HarpoonList:remove(item)
     return self
 end
 
----@return HarpoonList
 function HarpoonList:removeAt(index)
     if self.items[index] then
         Logger:log(
@@ -130,7 +114,6 @@ function HarpoonList:get_by_display(name)
 end
 
 --- much inefficiencies.  dun care
----@param displayed string[]
 function HarpoonList:resolve_displayed(displayed)
     local new_list = {}
 
@@ -184,7 +167,6 @@ function HarpoonList:select(index, options)
 end
 
 ---
---- @param opts? HarpoonNavOptions
 function HarpoonList:next(opts)
     opts = opts or {}
 
@@ -201,7 +183,6 @@ function HarpoonList:next(opts)
 end
 
 ---
---- @param opts? HarpoonNavOptions
 function HarpoonList:prev(opts)
     opts = opts or {}
 
@@ -217,7 +198,6 @@ function HarpoonList:prev(opts)
     self:select(self._index)
 end
 
---- @return string[]
 function HarpoonList:display()
     local out = {}
     for _, v in ipairs(self.items) do
@@ -227,7 +207,6 @@ function HarpoonList:display()
     return out
 end
 
---- @return string[]
 function HarpoonList:encode()
     local out = {}
     for _, v in ipairs(self.items) do
@@ -237,10 +216,7 @@ function HarpoonList:encode()
     return out
 end
 
---- @return HarpoonList
---- @param list_config HarpoonPartialConfigItem
---- @param name string
---- @param items string[]
+
 function HarpoonList.decode(list_config, name, items)
     local list_items = {}
 

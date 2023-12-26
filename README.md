@@ -3,7 +3,6 @@
 # Harpoon
 ##### Getting you where you want with the fewest keystrokes.
 
-[![Lua](https://img.shields.io/badge/Lua-blue.svg?style=for-the-badge&logo=lua)](http://www.lua.org)
 [![Neovim](https://img.shields.io/badge/Neovim%200.8+-green.svg?style=for-the-badge&logo=neovim)](https://neovim.io)
 
 <img alt="Harpoon Man" height="280" src="/assets/harpoon-icon.png" />
@@ -36,14 +35,7 @@ tmux windows, or dream up your own custom action and execute with a single key
 ## ⇁ Installation
 * neovim 0.8.0+ required
 * install using your favorite plugin manager (i am using `packer` in this case)
-```lua
-use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
-use {
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    requires = { {"nvim-lua/plenary.nvim"} }
-}
-```
+
 
 ## ⇁ Getting Started
 
@@ -59,56 +51,13 @@ autocmds setup.
 ### Basic Setup
 Here is my basic setup
 
-```lua
-local harpoon = require("harpoon")
 
--- REQUIRED
-harpoon:setup()
--- REQUIRED
-
-vim.keymap.set("n", "<leader>a", function() harpoon:list():append() end)
-vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-
-vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
-vim.keymap.set("n", "<C-t>", function() harpoon:list():select(2) end)
-vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
-vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
-
--- Toggle previous & next buffers stored within Harpoon list
-vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
-vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
-```
 
 ### Telescope
 
 In order to use [Telescope](https://github.com/nvim-telescope/telescope.nvim) as a UI, 
 make sure to add `telescope` to your dependencies and paste this following snippet into your configuration.
 
-```lua
-local harpoon = require('harpoon')
-harpoon:setup({})
-
--- basic telescope configuration
-local conf = require("telescope.config").values
-local function toggle_telescope(harpoon_files)
-    local file_paths = {}
-    for _, item in ipairs(harpoon_files.items) do
-        table.insert(file_paths, item.value)
-    end
-
-    require("telescope.pickers").new({}, {
-        prompt_title = "Harpoon",
-        finder = require("telescope.finders").new_table({
-            results = file_paths,
-        }),
-        previewer = conf.file_previewer({}),
-        sorter = conf.generic_sorter({}),
-    }):find()
-end
-
-vim.keymap.set("n", "<C-e>", function() toggle_telescope(harpoon:list()) end,
-    { desc = "Open harpoon window" })
-```
 
 ## ⇁ API
 You can define custom behavior of a harpoon list by providing your own calls.
@@ -122,50 +71,6 @@ I don't think this is a great use of harpoon, but its meant to show how to add
 your own custom lists.  You could imagine that a terminal list would be just as
 easy to create.
 
-```lua
-local harpoon = require("harpoon")
-
-harpoon:setup({
-    -- Setting up custom behavior for a list named "cmd"
-    "cmd" = {
-
-        -- When you call list:append() this function is called and the return
-        -- value will be put in the list at the end.
-        --
-        -- which means same behavior for prepend except where in the list the
-        -- return value is added
-        --
-        -- @param possible_value string only passed in when you alter the ui manual
-        add = function(possible_value)
-            -- get the current line idx
-            local idx = vim.fn.line(".")
-
-            -- read the current line
-            local cmd = vim.api.nvim_buf_get_lines(0, idx - 1, idx, false)[1]
-            if cmd == nil then
-                return nil
-            end
-
-            return {
-                value = cmd,
-                context = { ... any data you want ... },
-            }
-        end,
-
-        --- This function gets invoked with the options being passed in from
-        --- list:select(index, <...options...>)
-        --- @param list_item {value: any, context: any}
-        --- @param list { ... }
-        --- @param option any
-        select = function(list_item, list, option)
-            -- WOAH, IS THIS HTMX LEVEL XSS ATTACK??
-            vim.cmd(list_item.value)
-        end
-
-    }
-})
-
-```
 
 ### Config
 There is quite a bit of behavior you can configure via `harpoon:setup()`
@@ -203,13 +108,7 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 Settings can alter the experience of harpoon
 
 **Definition**
-```lua
----@class HarpoonSettings
----@field save_on_toggle boolean defaults to false
----@field sync_on_ui_close boolean defaults to false
----@field key (fun(): string)
 
-```
 
 **Descriptions**
 * `save_on_toggle`: any time the ui menu is closed then we will save the state back to the backing list, not to the fs
@@ -217,36 +116,12 @@ Settings can alter the experience of harpoon
 * `key` how the out list key is looked up.  This can be useful when using worktrees and using git remote instead of file path
 
 **Defaults**
-```lua
-settings = {
-    save_on_toggle = false,
-    sync_on_ui_close = false,
-    key = function()
-        return vim.loop.cwd()
-    end,
-},
-```
+
 
 ### Extend
 The 'extend' functionality can be used to add keymaps for opening files in splits & tabs.
 
-```lua
-harpoon:extend({
-  UI_CREATE = function(cx)
-    vim.keymap.set("n", "<C-v>", function()
-      harpoon.ui:select_menu_item({ vsplit = true })
-    end, { buffer = cx.bufnr })
 
-    vim.keymap.set("n", "<C-x>", function()
-      harpoon.ui:select_menu_item({ split = true })
-    end, { buffer = cx.bufnr })
-
-    vim.keymap.set("n", "<C-t>", function()
-      harpoon.ui:select_menu_item({ tabedit = true })
-    end, { buffer = cx.bufnr })
-  end,
-})
-```
 
 ### Highlight Groups
 TODO: Fill in the idea that we will emit out window information
@@ -256,19 +131,12 @@ This can help debug issues on other's computer.  To get your debug log please do
 
 1. open up a new instance of vim
 1. perform exact operation to cause bug
-1. execute vim command `:lua require("harpoon").logger:show()` and copy the buffer
 1. paste the buffer as part of the bug creation
 
 ## Extends
 THIS PART OF THE DOCS NEEDS FILLING OUT
 
-```lua
-local harpoon = require("harpoon");
-local extensions = require("harpoon.extensions");
 
-harpoon:setup()
-harpoon:extend(extensions.builtins.command_on_nav("foo bar"));
-```
 
 ## ⇁ Contribution
 This project is officially open source, not just public source.  If you wish to

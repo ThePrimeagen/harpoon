@@ -2,13 +2,6 @@ local Buffer = require("harpoon.buffer")
 local Logger = require("harpoon.logger")
 local Extensions = require("harpoon.extensions")
 
----@class HarpoonToggleOptions
----@field border? any this value is directly passed to nvim_open_win
----@field title_pos? any this value is directly passed to nvim_open_win
----@field ui_fallback_width? number
----@field ui_width_ratio? number
-
----@return HarpoonToggleOptions
 local function toggle_config(config)
     return vim.tbl_extend("force", {
         ui_fallback_width = 69,
@@ -16,23 +9,14 @@ local function toggle_config(config)
     }, config or {})
 end
 
----@class HarpoonUI
----@field win_id number
----@field bufnr number
----@field settings HarpoonSettings
----@field active_list HarpoonList
 local HarpoonUI = {}
 
----@param list HarpoonList
----@return string
 local function list_name(list)
     return list and list.name or "nil"
 end
 
 HarpoonUI.__index = HarpoonUI
 
----@param settings HarpoonSettings
----@return HarpoonUI
 function HarpoonUI:new(settings)
     return setmetatable({
         win_id = nil,
@@ -75,8 +59,6 @@ end
 
 --- TODO: Toggle_opts should be where we get extra style and border options
 --- and we should create a nice minimum window
----@param toggle_opts HarpoonToggleOptions
----@return number,number
 function HarpoonUI:_create_window(toggle_opts)
     local win = vim.api.nvim_list_uis()
 
@@ -126,7 +108,6 @@ function HarpoonUI:_create_window(toggle_opts)
     return win_id, bufnr
 end
 
----@param list? HarpoonList
 ---TODO: @param opts? HarpoonToggleOptions
 function HarpoonUI:toggle_quick_menu(list, opts)
     opts = toggle_config(opts)
@@ -150,7 +131,6 @@ function HarpoonUI:toggle_quick_menu(list, opts)
     vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, contents)
 end
 
----@param options? any
 function HarpoonUI:select_menu_item(options)
     local idx = vim.fn.line(".")
 
@@ -182,7 +162,6 @@ function HarpoonUI:save()
     end
 end
 
----@param settings HarpoonSettings
 function HarpoonUI:configure(settings)
     self.settings = settings
 end
