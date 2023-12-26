@@ -42,8 +42,7 @@ function HarpoonExtensions:emit(type, ...)
 end
 
 local extensions = HarpoonExtensions:new()
-local Builtins = {
-};
+local Builtins = {}
 
 function Builtins.command_on_nav(cmd)
     return {
