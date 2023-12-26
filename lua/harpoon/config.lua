@@ -1,3 +1,4 @@
+local Extensions = require("harpoon.extensions")
 local Logger = require("harpoon.logger")
 local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
@@ -129,6 +130,10 @@ function M.get_default_config()
                         list_item.context.col or 0,
                     })
                 end
+
+                Extensions.extensions:emit(Extensions.event_names.NAVIGATE, {
+                    buffer = bufnr,
+                })
             end,
 
             ---@param list_item_a HarpoonListItem
