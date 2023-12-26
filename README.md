@@ -203,6 +203,17 @@ This can help debug issues on other's computer.  To get your debug log please do
 1. execute vim command `:lua require("harpoon").logger:show()` and copy the buffer
 1. paste the buffer as part of the bug creation
 
+## Extends
+THIS PART OF THE DOCS NEEDS FILLING OUT
+
+```lua
+local harpoon = require("harpoon");
+local extensions = require("harpoon.extensions");
+
+harpoon:setup()
+harpoon:extend(extensions.builtins.command_on_nav("foo bar"));
+```
+
 ## ⇁ Contribution
 This project is officially open source, not just public source.  If you wish to
 contribute start with an issue and I am totally willing for PRs, but I will be

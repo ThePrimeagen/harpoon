@@ -12,6 +12,7 @@ local HarpoonExtensions = {}
 ---@field UI_CREATE? fun(...): nil
 ---@field SETUP_CALLED? fun(...): nil
 ---@field LIST_CREATED? fun(...): nil
+---@field NAVIGATE? fun(...): nil
 
 HarpoonExtensions.__index = HarpoonExtensions
 
@@ -40,8 +41,21 @@ function HarpoonExtensions:emit(type, ...)
     end
 end
 
+local extensions = HarpoonExtensions:new()
+local Builtins = {
+};
+
+function Builtins.command_on_nav(cmd)
+    return {
+        NAVIGATE = function()
+            vim.cmd(cmd)
+        end,
+    }
+end
+
 return {
-    extensions = HarpoonExtensions:new(),
+    builtins = Builtins,
+    extensions = extensions,
     event_names = {
         ADD = "ADD",
         SELECT = "SELECT",
@@ -50,5 +64,6 @@ return {
         UI_CREATE = "UI_CREATE",
         SETUP_CALLED = "SETUP_CALLED",
         LIST_CREATED = "LIST_CREATED",
+        NAVIGATE = "NAVIGATE",
     },
 }
