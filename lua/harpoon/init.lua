@@ -267,7 +267,9 @@ function M.refresh_projects_b4update()
     c_config = { projects = c_config.projects }
 
     -- erase our own project, will be merged in from current_p_config later
-    c_config.projects[cwd] = nil
+    if c_config.projects ~= nil and cwd ~= nil then
+        c_config.projects[cwd] = nil
+    end
 
     local complete_config = merge_tables(
         HarpoonConfig,
