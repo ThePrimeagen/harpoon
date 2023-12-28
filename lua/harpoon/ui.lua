@@ -118,11 +118,6 @@ function HarpoonUI:_create_window(toggle_opts)
         win = win_id,
     })
 
-    Extensions.extensions:emit(Extensions.event_names.UI_CREATE, {
-        win_id = win_id,
-        bufnr = bufnr,
-    })
-
     return win_id, bufnr
 end
 
@@ -148,6 +143,11 @@ function HarpoonUI:toggle_quick_menu(list, opts)
 
     local contents = self.active_list:display()
     vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, contents)
+
+    Extensions.extensions:emit(Extensions.event_names.UI_CREATE, {
+        win_id = win_id,
+        bufnr = bufnr,
+    })
 end
 
 ---@param options? any
