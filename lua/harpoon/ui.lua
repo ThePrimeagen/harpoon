@@ -134,6 +134,9 @@ function HarpoonUI:toggle_quick_menu(list, opts)
         return
     end
 
+    -- grab the current file before opening the quick menu
+    local current_file = vim.api.nvim_buf_get_name(0)
+
     Logger:log("ui#toggle_quick_menu#opening", list and list.name)
     local win_id, bufnr = self:_create_window(opts)
 
@@ -147,6 +150,7 @@ function HarpoonUI:toggle_quick_menu(list, opts)
     Extensions.extensions:emit(Extensions.event_names.UI_CREATE, {
         win_id = win_id,
         bufnr = bufnr,
+        current_file = current_file,
     })
 end
 
