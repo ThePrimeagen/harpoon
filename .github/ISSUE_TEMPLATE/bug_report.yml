@@ -25,7 +25,7 @@ body:
       description: Reproduce the issue exactly in a new neovim session, then run the neovim command `lua require("harpoon.logger"):show()`
     validations:
       required: true
-  -type: input
+  - type: input
     id: version
     attributes:
       label: Neovim Version
