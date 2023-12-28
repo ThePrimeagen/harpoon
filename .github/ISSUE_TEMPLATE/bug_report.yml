@@ -2,7 +2,7 @@ name: Bug Report
 description: File a bug report
 title: "[Bug]"
 labels: bug
-body:
+body: 
   - type: textarea
     id: issue
     attributes:
