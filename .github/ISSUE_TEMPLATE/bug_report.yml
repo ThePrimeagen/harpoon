@@ -31,7 +31,9 @@ body:
       label: Neovim Version
       description: In your terminal, run `nvim --version`
       placeholder: "e.g. 0.9.4"
-  - type: input
+    validations:
+      required: true
+  - type: textarea
     id: config
     attributes:
       label: Minimal Config
