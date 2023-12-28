@@ -22,7 +22,7 @@ body:
     id: log
     attributes:
       label: Log file
-      description: Reproduce the issue exactly in a new neovim session, then run the neovim command `lua require("harpoon.logger"):show()`
+      description: Reproduce the issue exactly in a new neovim session, then run the neovim command `:lua require("harpoon.logger"):show()`
     validations:
       required: true
   - type: input
