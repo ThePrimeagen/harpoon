@@ -44,6 +44,14 @@ use {
     requires = { {"nvim-lua/plenary.nvim"} }
 }
 ```
+* install using [lazy.nvim](https://github.com/folke/lazy.nvim)
+```lua
+{
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" }
+}
+```
 
 ## ⇁ Getting Started
 
