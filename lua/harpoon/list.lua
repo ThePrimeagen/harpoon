@@ -120,8 +120,15 @@ function HarpoonList:get(index)
     return self.items[index]
 end
 
-function HarpoonList:get_by_display(name)
-    local displayed = self:display()
+--TODO: I don't think it makes sense to have these display methods in the list
+--module. I think they should be in the UI module, the list module should not
+--have anything to do with the display value. IMHO
+
+---@param ui_context any
+---@param name string
+---@return HarpoonItem|nil
+function HarpoonList:get_by_display(ui_context, name)
+    local displayed = self:display(ui_context)
     local index = index_of(displayed, name)
     if index == -1 then
         return nil
@@ -129,12 +136,16 @@ function HarpoonList:get_by_display(name)
     return self.items[index]
 end
 
+--TODO: I feel like it would make more sense to resolve by value and have a
+--reverse function for display to get to the value or something like that.
+
 --- much inefficiencies.  dun care
+---@param ui_context any
 ---@param displayed string[]
-function HarpoonList:resolve_displayed(displayed)
+function HarpoonList:resolve_displayed(ui_context, displayed)
     local new_list = {}
 
-    local list_displayed = self:display()
+    local list_displayed = self:display(ui_context)
 
     for i, v in ipairs(list_displayed) do
         local index = index_of(displayed, v)
@@ -218,10 +229,11 @@ function HarpoonList:prev(opts)
 end
 
 --- @return string[]
-function HarpoonList:display()
+--- @param ui_context any
+function HarpoonList:display(ui_context)
     local out = {}
     for _, v in ipairs(self.items) do
-        table.insert(out, self.config.display(v))
+        table.insert(out, self.config.display(ui_context, v))
     end
 
     return out
