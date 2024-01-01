@@ -177,24 +177,26 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 **HarpoonPartialConfigItem Definition**
 ```
 ---@class HarpoonPartialConfigItem
----@field encode? (fun(list_item: HarpoonListItem): string)
+---@field select_with_nil? boolean defaults to false
+---@field encode? (fun(list_item: HarpoonListItem): string) | boolean
 ---@field decode? (fun(obj: string): any)
 ---@field display? (fun(list_item: HarpoonListItem): string)
 ---@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
----@field add? fun(item: any?): HarpoonListItem
+---@field create_list_item? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
 ---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
 ---@field get_root_dir? fun(): string
 ```
 
 **Detailed Definitions**
+* `select_with_nil`: allows for a list to call select even if the provided item is nil
 * `encode`: how to encode the list item to the harpoon file.  if encode is `false`, then the list will not be saved to disk (think terminals)
 * `decode`: how to decode the list
 * `display`: how to display the list item in the ui menu
 * `select`: the action taken when selecting a list item. called from `list:select(idx, options)`
 * `equals`: how to compare two list items for equality
-* `add`: called when `list:append()` or `list:prepend()` is called.  called with an item, which will be a string, when adding through the ui menu
+* `create_list_item`: called when `list:append()` or `list:prepend()` is called.  called with an item, which will be a string, when adding through the ui menu
 * `BufLeave`: this function is called for every list on BufLeave.  if you need custom behavior, this is the place
 * `VimLeavePre`: this function is called for every list on VimLeavePre.
 * `get_root_dir`: used for creating relative paths.  defaults to `vim.loop.cwd()`
