@@ -81,7 +81,7 @@ function M.get_default_config()
 
             ---@param list_item HarpoonListItem
             display = function(list_item)
-                return list_item.value
+                return normalize_path(list_item.value, vim.loop.cwd())
             end,
 
             --- the select function is called when a user selects an item from
@@ -150,18 +150,14 @@ function M.get_default_config()
             ---@param name? any
             ---@return HarpoonListItem
             create_list_item = function(config, name)
+                if name ~= nil and string.sub(name, 1, 1) ~= "/" then
+                    if string.sub(name, 1, 2) == "./" then
+                        name = string.sub(name, 3)
+                    end
+                    name = config.get_root_dir() .. "/" .. name
+                end
                 name = name
-                    -- TODO: should we do path normalization???
-                    -- i know i have seen sometimes it becoming an absolute
-                    -- path, if that is the case we can use the context to
-                    -- store the bufname and then have value be the normalized
-                    -- value
-                    or normalize_path(
-                        vim.api.nvim_buf_get_name(
-                            vim.api.nvim_get_current_buf()
-                        ),
-                        config.get_root_dir()
-                    )
+                    or vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
 
                 Logger:log("config_default#create_list_item", name)
 
@@ -184,8 +180,14 @@ function M.get_default_config()
             BufLeave = function(arg, list)
                 local bufnr = arg.buf
                 local bufname = vim.api.nvim_buf_get_name(bufnr)
-                local item = list:get_by_display(bufname)
-
+                local item = nil
+                for _, it in ipairs(list.items) do
+                    local value = it.value
+                    if value == bufname then
+                        item = it
+                        break
+                    end
+                end
                 if item then
                     local pos = vim.api.nvim_win_get_cursor(0)
 

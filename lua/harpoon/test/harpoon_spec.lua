@@ -13,35 +13,74 @@ describe("harpoon", function()
         harpoon = require("harpoon")
     end)
 
-    it("when we change buffers we update the row and column", function()
-        local file_name = "/tmp/harpoon-test"
-        local row = 1
-        local col = 0
-        local target_buf = utils.create_file(file_name, {
-            "foo",
-            "bar",
-            "baz",
-            "qux",
-        }, row, col)
+    it(
+        "when we change buffers from relative filepath we update the row and column",
+        function()
+            local file_name = vim.loop.cwd() .. "/tmp-harpoon-file"
+            local row = 1
+            local col = 0
+            local target_buf = utils.create_file(file_name, {
+                "foo",
+                "bar",
+                "baz",
+                "qux",
+            }, row, col)
 
-        local list = harpoon:list():append()
-        local other_buf = utils.create_file("other-file", {
-            "foo",
-            "bar",
-            "baz",
-            "qux",
-        }, row, col)
+            local list = harpoon:list():append()
+            local other_buf = utils.create_file("other-file", {
+                "foo",
+                "bar",
+                "baz",
+                "qux",
+            }, row, col)
 
-        vim.api.nvim_set_current_buf(target_buf)
-        vim.api.nvim_win_set_cursor(0, { row + 1, col })
-        vim.api.nvim_set_current_buf(other_buf)
+            vim.api.nvim_set_current_buf(target_buf)
+            vim.api.nvim_win_set_cursor(0, { row + 1, col })
+            vim.api.nvim_set_current_buf(other_buf)
 
-        local expected = {
-            { value = file_name, context = { row = row + 1, col = col } },
-        }
+            local expected = {
+                {
+                    value = file_name,
+                    context = { row = row + 1, col = col },
+                },
+            }
 
-        eq(expected, list.items)
-    end)
+            eq(expected, list.items)
+        end
+    )
+
+    it(
+        "when we change buffers from root filepath we update row and column",
+        function()
+            local file_name = "/tmp/harpoon-test"
+            local row = 1
+            local col = 0
+            local target_buf = utils.create_file(file_name, {
+                "foo",
+                "bar",
+                "baz",
+                "qux",
+            }, row, col)
+
+            local list = harpoon:list():append()
+            local other_buf = utils.create_file("another-file", {
+                "foo",
+                "bar",
+                "baz",
+                "qux",
+            }, row, col)
+
+            vim.api.nvim_set_current_buf(target_buf)
+            vim.api.nvim_win_set_cursor(0, { row + 1, col })
+            vim.api.nvim_set_current_buf(other_buf)
+
+            local expected = {
+                { value = file_name, context = { row = row + 1, col = col } },
+            }
+
+            eq(expected, list.items)
+        end
+    )
 
     it("full harpoon add sync cycle", function()
         local file_name = "/tmp/harpoon-test"

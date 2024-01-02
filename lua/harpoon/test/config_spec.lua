@@ -6,7 +6,8 @@ describe("config", function()
         local config = Config.get_default_config()
         local config_item = Config.get_config(config, "foo")
 
-        local bufnr = vim.fn.bufnr("/tmp/harpoon-test", true)
+        local filename = os.tmpname()
+        local bufnr = vim.fn.bufnr(filename, true)
 
         vim.api.nvim_set_current_buf(bufnr)
         vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, {
@@ -19,7 +20,7 @@ describe("config", function()
 
         local item = config_item.create_list_item(config_item)
         eq(item, {
-            value = "/tmp/harpoon-test",
+            value = filename,
             context = {
                 row = 3,
                 col = 1,

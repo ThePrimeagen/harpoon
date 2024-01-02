@@ -67,6 +67,30 @@ describe("harpoon", function()
         eq(list:display(), created_files)
     end)
 
+    it("add relative files from ui contents and save", function()
+        local list = harpoon:list()
+        local created_files = utils.fill_list_with_files(3, list)
+
+        table.insert(created_files, "../relative_file_for_testing1")
+        created_files[4] = "../relative_file_for_testing1"
+        table.insert(created_files, "../harpoon/relative_file_for_testing2")
+        created_files[5] = "relative_file_for_testing2"
+        table.insert(created_files, "lua/relative_file_for_testing3")
+        created_files[6] = "lua/relative_file_for_testing3"
+        table.insert(created_files, "./lua/relative_file_for_testing3")
+        created_files[7] = "lua/relative_file_for_testing4"
+
+        eq(list:length(), 3)
+
+        harpoon.ui:toggle_quick_menu(list)
+        Buffer.set_contents(harpoon.ui.bufnr, created_files)
+        harpoon.ui:save()
+        harpoon.ui:toggle_quick_menu()
+
+        eq(list:length(), 7)
+        eq(list:display(), created_files)
+    end)
+
     it("edit ui but toggle should not save", function()
         local list = harpoon:list()
         local created_files = utils.fill_list_with_files(3, list)
