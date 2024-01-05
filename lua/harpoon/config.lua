@@ -17,7 +17,7 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@field select_with_nil? boolean defaults to false
 ---@field encode? (fun(list_item: HarpoonListItem): string) | boolean
 ---@field decode? (fun(obj: string): any)
----@field display? (fun(list_item: HarpoonListItem): string)
+---@field display? (fun(ui_context?: any, list_item: HarpoonListItem): string)
 ---@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
 ---@field create_list_item? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
@@ -80,7 +80,7 @@ function M.get_default_config()
             end,
 
             ---@param list_item HarpoonListItem
-            display = function(list_item)
+            display = function(ui_context, list_item)
                 return list_item.value
             end,
 
