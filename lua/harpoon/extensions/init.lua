@@ -51,6 +51,18 @@ function Builtins.command_on_nav(cmd)
     }
 end
 
+function Builtins.navigate_with_number()
+    return {
+        UI_CREATE = function(cx)
+            for i = 1, 9 do
+                vim.keymap.set("n", "" .. i, function()
+                    require("harpoon"):list():select(i)
+                end, { buffer = cx.bufnr })
+            end
+        end,
+    }
+end
+
 return {
     builtins = Builtins,
     extensions = extensions,
