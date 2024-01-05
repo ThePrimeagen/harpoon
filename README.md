@@ -287,6 +287,9 @@ contribute start with an issue and I am totally willing for PRs, but I will be
 very conservative on what I take.  I don't want Harpoon _solving_ specific
 issues, I want it to create the proper hooks to solve any problem
 
+**Running Tests**  
+To run the tests make sure [plenary](https://github.com/nvim-lua/plenary.nvim) is checked out in the parent directory of *this* repository, then run `make test`.
+
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
@@ -298,4 +301,3 @@ Original Harpoon will remain in a frozen state and i will merge PRs in with _no
 code review_ for those that wish to remain on that.  Harpoon 2 is significantly
 better and allows for MUCH greater control.  Please migrate to that (will
 become `master` within the next few months).
-
