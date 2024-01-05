@@ -1,5 +1,3 @@
---- TODO: Rename this... its an odd name "listeners"
-
 ---@class HarpoonExtensions
 ---@field listeners HarpoonExtension[]
 local HarpoonExtensions = {}
@@ -12,6 +10,7 @@ local HarpoonExtensions = {}
 ---@field UI_CREATE? fun(...): nil
 ---@field SETUP_CALLED? fun(...): nil
 ---@field LIST_CREATED? fun(...): nil
+---@field LIST_READ? fun(...): nil
 ---@field NAVIGATE? fun(...): nil
 
 HarpoonExtensions.__index = HarpoonExtensions
@@ -64,5 +63,6 @@ return {
         SETUP_CALLED = "SETUP_CALLED",
         LIST_CREATED = "LIST_CREATED",
         NAVIGATE = "NAVIGATE",
+        LIST_READ = "LIST_READ",
     },
 }
