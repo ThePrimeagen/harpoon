@@ -146,10 +146,10 @@ function M.get_default_config()
                 return vim.loop.cwd()
             end,
 
-            ---@param config HarpoonPartialConfigItem
+            ---@param _ HarpoonPartialConfigItem
             ---@param item? any
             ---@return HarpoonListItem
-            create_list_item = function(config, item)
+            create_list_item = function(_, item)
                 if item == nil then
                     item = vim.api.nvim_buf_get_name(
                         vim.api.nvim_get_current_buf()
