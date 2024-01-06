@@ -68,17 +68,16 @@ describe("harpoon", function()
     end)
 
     it("add relative files from ui contents and save", function()
+        -- vim.loop.cwd() is /harpoon
         local list = harpoon:list()
         local created_files = utils.fill_list_with_files(3, list)
 
         table.insert(created_files, "../relative_file_for_testing1")
-        created_files[4] = "../relative_file_for_testing1"
         table.insert(created_files, "../harpoon/relative_file_for_testing2")
-        created_files[5] = "relative_file_for_testing2"
         table.insert(created_files, "lua/relative_file_for_testing3")
-        created_files[6] = "lua/relative_file_for_testing3"
-        table.insert(created_files, "./lua/relative_file_for_testing3")
-        created_files[7] = "lua/relative_file_for_testing4"
+        table.insert(created_files, "./lua/relative_file_for_testing4")
+        table.insert(created_files, "../tests/relative_file_for_testing5")
+        table.insert(created_files, "lua/../lua/./relative_file_for_testing6")
 
         eq(list:length(), 3)
 
@@ -87,8 +86,15 @@ describe("harpoon", function()
         harpoon.ui:save()
         harpoon.ui:toggle_quick_menu()
 
-        eq(list:length(), 7)
-        eq(list:display(), created_files)
+        created_files[4] = "/relative_file_for_testing1"
+        created_files[5] = "relative_file_for_testing2"
+        created_files[6] = "lua/relative_file_for_testing3"
+        created_files[7] = "lua/relative_file_for_testing4"
+        created_files[8] = "/tests/relative_file_for_testing5"
+        created_files[9] = "lua/relative_file_for_testing6"
+
+        eq(9, list:length())
+        eq(created_files, list:display())
     end)
 
     it("edit ui but toggle should not save", function()
