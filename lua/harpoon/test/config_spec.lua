@@ -46,14 +46,17 @@ describe("config", function()
             local item = config_item.create_list_item(config_item, filename)
             eq("/foo/bar/baz.txt", item.value)
         end)
-        it("converts backtracking relative path to absolute", function()
+        it("converts backtracking relative path to absolute path", function()
             local config = Config.get_default_config()
             local config_item = Config.get_config(config, "foo")
 
             local filename = "../foo/bar/baz.txt"
 
             local item = config_item.create_list_item(config_item, filename)
-            eq("/foo/bar/baz.txt", item.value)
+
+            local parent_dir = string.sub(vim.loop.cwd(), 1, -9)
+            local expected_value = parent_dir .. "/foo/bar/baz.txt"
+            eq(expected_value, item.value)
         end)
         it("converts forward relative path to absolute", function()
             local config = Config.get_default_config()
