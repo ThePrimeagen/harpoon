@@ -147,7 +147,7 @@ function Harpoon.setup(self, partial_config)
                 self:_for_each_list(function(list, config)
                     local fn = config[ev.event]
                     if fn ~= nil then
-                        fn(ev, list)
+                        fn(ev, list, config)
                     end
 
                     if ev.event == "VimLeavePre" then

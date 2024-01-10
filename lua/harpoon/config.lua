@@ -181,10 +181,12 @@ function M.get_default_config()
                 }
             end,
 
-            BufLeave = function(arg, list)
+            BufLeave = function(arg, list, config)
                 local bufnr = arg.buf
                 local bufname = vim.api.nvim_buf_get_name(bufnr)
-                local item = list:get_by_display(bufname)
+                local item = list:get_by_display(
+                    normalize_path(bufname, config.get_root_dir())
+                )
 
                 if item then
                     local pos = vim.api.nvim_win_get_cursor(0)
