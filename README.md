@@ -44,6 +44,14 @@ use {
     requires = { {"nvim-lua/plenary.nvim"} }
 }
 ```
+* install using [lazy.nvim](https://github.com/folke/lazy.nvim)
+```lua
+{
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" }
+}
+```
 
 ## ⇁ Getting Started
 
@@ -202,24 +210,26 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 **HarpoonPartialConfigItem Definition**
 ```
 ---@class HarpoonPartialConfigItem
----@field encode? (fun(list_item: HarpoonListItem): string)
+---@field select_with_nil? boolean defaults to false
+---@field encode? (fun(list_item: HarpoonListItem): string) | boolean
 ---@field decode? (fun(obj: string): any)
 ---@field display? (fun(list_item: HarpoonListItem): string)
 ---@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
 ---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
----@field add? fun(item: any?): HarpoonListItem
+---@field create_list_item? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
 ---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
 ---@field get_root_dir? fun(): string
 ```
 
 **Detailed Definitions**
+* `select_with_nil`: allows for a list to call select even if the provided item is nil
 * `encode`: how to encode the list item to the harpoon file.  if encode is `false`, then the list will not be saved to disk (think terminals)
 * `decode`: how to decode the list
 * `display`: how to display the list item in the ui menu
 * `select`: the action taken when selecting a list item. called from `list:select(idx, options)`
 * `equals`: how to compare two list items for equality
-* `add`: called when `list:append()` or `list:prepend()` is called.  called with an item, which will be a string, when adding through the ui menu
+* `create_list_item`: called when `list:append()` or `list:prepend()` is called.  called with an item, which will be a string, when adding through the ui menu
 * `BufLeave`: this function is called for every list on BufLeave.  if you need custom behavior, this is the place
 * `VimLeavePre`: this function is called for every list on VimLeavePre.
 * `get_root_dir`: used for creating relative paths.  defaults to `vim.loop.cwd()`
@@ -293,6 +303,7 @@ local extensions = require("harpoon.extensions");
 
 harpoon:setup()
 harpoon:extend(extensions.builtins.command_on_nav("foo bar"));
+harpoon:extend(extensions.builtins.navigate_with_number());
 ```
 
 ## ⇁ Contribution
@@ -300,6 +311,9 @@ This project is officially open source, not just public source.  If you wish to
 contribute start with an issue and I am totally willing for PRs, but I will be
 very conservative on what I take.  I don't want Harpoon _solving_ specific
 issues, I want it to create the proper hooks to solve any problem
+
+**Running Tests**  
+To run the tests make sure [plenary](https://github.com/nvim-lua/plenary.nvim) is checked out in the parent directory of *this* repository, then run `make test`.
 
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
@@ -312,4 +326,3 @@ Original Harpoon will remain in a frozen state and i will merge PRs in with _no
 code review_ for those that wish to remain on that.  Harpoon 2 is significantly
 better and allows for MUCH greater control.  Please migrate to that (will
 become `master` within the next few months).
-

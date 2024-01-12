@@ -133,4 +133,59 @@ describe("harpoon", function()
         eq(harpoon.ui.bufnr, nil)
         eq(harpoon.ui.win_id, nil)
     end)
+
+    it("exiting the ui with q (see harpoon.buffer)", function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+
+        local bufnr = harpoon.ui.bufnr
+        local win_id = harpoon.ui.win_id
+
+        eq(vim.api.nvim_buf_is_valid(bufnr), true)
+        eq(vim.api.nvim_win_is_valid(win_id), true)
+        eq(vim.api.nvim_get_current_buf(), bufnr)
+
+        key("q")
+
+        eq(vim.api.nvim_buf_is_valid(bufnr), false)
+        eq(vim.api.nvim_win_is_valid(win_id), false)
+        eq(harpoon.ui.bufnr, nil)
+        eq(harpoon.ui.win_id, nil)
+    end)
+
+    it("exiting the ui with <Esc> (see harpoon.buffer)", function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+
+        local bufnr = harpoon.ui.bufnr
+        local win_id = harpoon.ui.win_id
+
+        eq(vim.api.nvim_buf_is_valid(bufnr), true)
+        eq(vim.api.nvim_win_is_valid(win_id), true)
+        eq(vim.api.nvim_get_current_buf(), bufnr)
+
+        key("<Esc>")
+
+        eq(vim.api.nvim_buf_is_valid(bufnr), false)
+        eq(vim.api.nvim_win_is_valid(win_id), false)
+        eq(harpoon.ui.bufnr, nil)
+        eq(harpoon.ui.win_id, nil)
+    end)
+
+    it("exiting the ui with something like :bprev / :bnext", function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+
+        local bufnr = harpoon.ui.bufnr
+        local win_id = harpoon.ui.win_id
+
+        eq(vim.api.nvim_buf_is_valid(bufnr), true)
+        eq(vim.api.nvim_win_is_valid(win_id), true)
+        eq(vim.api.nvim_get_current_buf(), bufnr)
+
+        -- Some people use keymaps that trigger these commands
+        vim.cmd("bprev")
+
+        eq(vim.api.nvim_buf_is_valid(bufnr), false)
+        eq(vim.api.nvim_win_is_valid(win_id), false)
+        eq(harpoon.ui.bufnr, nil)
+        eq(harpoon.ui.win_id, nil)
+    end)
 end)

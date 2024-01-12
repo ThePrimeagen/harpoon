@@ -1,0 +1,31 @@
+name: Feature Request
+description: Suggest a new feature for Harpoon.
+title: "[Feature Request]"
+body:
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: Include the basic, high-level concepts for this feature here.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Smaller details
+      description: These may include specific methods of implementation etc.
+    validations:
+      required: true
+  - type: textarea
+    id: request
+    attributes:
+      label: Nature of request
+    validations:
+      required: true
+  - type: textarea
+    id: feature
+    attributes:
+      label: Why would this feature be useful?
+      description: Remember that harpoon should not solve every problem, but provide the hooks required to solve them.
+    validations:
+      required: true

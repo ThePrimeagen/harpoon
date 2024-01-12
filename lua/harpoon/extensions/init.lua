@@ -1,5 +1,3 @@
---- TODO: Rename this... its an odd name "listeners"
-
 ---@class HarpoonExtensions
 ---@field listeners HarpoonExtension[]
 local HarpoonExtensions = {}
@@ -12,6 +10,7 @@ local HarpoonExtensions = {}
 ---@field UI_CREATE? fun(...): nil
 ---@field SETUP_CALLED? fun(...): nil
 ---@field LIST_CREATED? fun(...): nil
+---@field LIST_READ? fun(...): nil
 ---@field NAVIGATE? fun(...): nil
 
 HarpoonExtensions.__index = HarpoonExtensions
@@ -52,6 +51,18 @@ function Builtins.command_on_nav(cmd)
     }
 end
 
+function Builtins.navigate_with_number()
+    return {
+        UI_CREATE = function(cx)
+            for i = 1, 9 do
+                vim.keymap.set("n", "" .. i, function()
+                    require("harpoon"):list():select(i)
+                end, { buffer = cx.bufnr })
+            end
+        end,
+    }
+end
+
 return {
     builtins = Builtins,
     extensions = extensions,
@@ -64,5 +75,6 @@ return {
         SETUP_CALLED = "SETUP_CALLED",
         LIST_CREATED = "LIST_CREATED",
         NAVIGATE = "NAVIGATE",
+        LIST_READ = "LIST_READ",
     },
 }
