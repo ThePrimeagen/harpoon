@@ -93,6 +93,8 @@ In order to use [Telescope](https://github.com/nvim-telescope/telescope.nvim) as
 make sure to add `telescope` to your dependencies and paste this following snippet into your configuration.
 
 ```lua
+local conf = require("telescope.config").values
+local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
@@ -100,14 +102,13 @@ local harpoon = require('harpoon')
 harpoon:setup({})
 
 -- basic telescope configuration
-local conf = require("telescope.config").values
 local function toggle_telescope(harpoon_files)
     local file_paths = {}
     for _, item in ipairs(harpoon_files.items) do
         table.insert(file_paths, item.value)
     end
 
-    require("telescope.pickers").new({}, {
+    pickers.new({}, {
         prompt_title = "Harpoon",
         finder = finders.new_table({
             results = file_paths,
