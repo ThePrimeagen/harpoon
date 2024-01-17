@@ -88,11 +88,12 @@ function M.setup_autocmds_and_keymaps(bufnr)
         callback = function(ev)
             vim.schedule(function()
                 local ui = require("harpoon").ui
-                if
-                    not ui.closing
-                    and ev.buf ~= ui.bufnr
-                    and ui.win_id == vim.api.nvim_get_current_win()
-                then
+                local current_win = vim.api.nvim_get_current_win()
+                local current_win_buf = vim.api.nvim_win_get_buf(current_win)
+                if ui.win_id ~= current_win or ev.buf ~= current_win_buf then
+                    return
+                end
+                if not ui.closing and ev.buf ~= ui.bufnr then
                     require("harpoon").logger:log("toggle by FileType")
                     ui:toggle_quick_menu()
                 end
