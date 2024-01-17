@@ -81,6 +81,24 @@ function M.setup_autocmds_and_keymaps(bufnr)
             require("harpoon").ui:toggle_quick_menu()
         end,
     })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        group = HarpoonGroup,
+        pattern = "*",
+        callback = function(ev)
+            vim.schedule(function()
+                local ui = require("harpoon").ui
+                if
+                    not ui.closing
+                    and ev.buf ~= ui.bufnr
+                    and ui.win_id == vim.api.nvim_get_current_win()
+                then
+                    require("harpoon").logger:log("toggle by FileType")
+                    ui:toggle_quick_menu()
+                end
+            end)
+        end,
+    })
 end
 
 ---@param bufnr number
