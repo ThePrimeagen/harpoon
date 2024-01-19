@@ -164,7 +164,7 @@ function M.get_default_config()
                     )
 
                 Logger:log("config_default#create_list_item", name)
-
+                name = vim.fs.normalize(name)
                 local bufnr = vim.fn.bufnr(name, false)
 
                 local pos = { 1, 0 }
