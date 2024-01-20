@@ -108,10 +108,12 @@ function M.get_default_config()
                     bufnr = vim.fn.bufnr(list_item.value, true)
                 end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
-                    vim.fn.bufload(bufnr)
-                    vim.api.nvim_set_option_value("buflisted", true, {
-                        buf = bufnr,
-                    })
+                    local ok = pcall(vim.fn.bufload, bufnr)
+                    if ok then
+                        vim.api.nvim_set_option_value("buflisted", true, {
+                            buf = bufnr,
+                        })
+                    end
                 end
 
                 if options.vsplit then
