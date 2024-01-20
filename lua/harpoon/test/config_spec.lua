@@ -7,7 +7,7 @@ describe("config", function()
         local config_item = Config.get_config(config, "foo")
 
         local bufnr = vim.fn.bufnr("/tmp/harpoon-test", true)
-
+        vim.api.nvim_buf_set_option(bufnr, "swapfile", false)
         vim.api.nvim_set_current_buf(bufnr)
         vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, {
             "foo",
