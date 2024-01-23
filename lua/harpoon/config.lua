@@ -125,7 +125,7 @@ function M.get_default_config()
                 vim.api.nvim_set_current_buf(bufnr)
 
                 if set_position then
-                    vim.api.nvim_win_set_cursor(0, {
+                    pcall(vim.api.nvim_win_set_cursor, 0, {
                         list_item.context.row or 1,
                         list_item.context.col or 0,
                     })
