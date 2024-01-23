@@ -23,6 +23,7 @@ describe("config", function()
             context = {
                 row = 3,
                 col = 1,
+                name = "/tmp/harpoon-test",
             },
         })
     end)
