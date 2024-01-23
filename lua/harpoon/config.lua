@@ -202,7 +202,6 @@ function M.get_default_config()
                         break
                     end
                 end
-
             end,
 
             VimLeavePre = function(arg, list)
