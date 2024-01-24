@@ -104,9 +104,8 @@ function M.get_default_config()
                 local set_position = false
                 local bufnr = nil
 
-                local name = list_item.context.name
-                local path = Path:new(name):absolute()
-                bufnr = vim.uri_to_bufnr(vim.uri_from_fname(path))
+                local bufname = list_item.value
+                bufnr = vim.uri_to_bufnr(vim.uri_from_fname(bufname))
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
                     set_position = true
                     pcall(vim.fn.bufload, bufnr)
