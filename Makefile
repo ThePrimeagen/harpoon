@@ -11,7 +11,7 @@ test:
 	nvim --headless --noplugin -u scripts/tests/minimal.vim \
         -c "PlenaryBustedDirectory lua/harpoon/test/ {minimal_init = 'scripts/tests/minimal.vim'}"
 
-clean: 
+clean:
 	echo "===> Cleaning"
 	rm /tmp/lua_*
 
