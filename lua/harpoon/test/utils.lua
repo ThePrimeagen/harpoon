@@ -54,7 +54,7 @@ end
 ---@param name string
 ---@param contents string[]
 function M.create_file(name, contents, row, col)
-    local bufnr = vim.fn.bufnr(name, true)
+    local bufnr = vim.uri_to_bufnr(vim.uri_from_fname(name))
     vim.api.nvim_set_option_value("bufhidden", "hide", {
         buf = bufnr,
     })

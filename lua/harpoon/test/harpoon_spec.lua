@@ -135,4 +135,20 @@ describe("harpoon", function()
         eq(true, list_created)
         eq(Config.DEFAULT_LIST, list_name)
     end)
+
+    it("should append files with a common prefix", function()
+        local file_name_1 = "/tmp/harpoon-test-123"
+        local file_name_2 = "/tmp/harpoon-test-12"
+
+        utils.create_file(file_name_1, {})
+        local list = harpoon:list():append()
+
+        utils.create_file(file_name_2, {})
+        harpoon:list():append()
+
+        eq(list.items, {
+            { value = file_name_1, context = { row = 1, col = 0 } },
+            { value = file_name_2, context = { row = 1, col = 0 } },
+        })
+    end)
 end)
