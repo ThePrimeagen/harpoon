@@ -1,29 +1,29 @@
+local utils = require("harpoon.test.utils")
 local Config = require("harpoon.config")
+
 local eq = assert.are.same
 
 describe("config", function()
     it("default.create_list_item", function()
-        local config = Config.get_default_config()
-        local config_item = Config.get_config(config, "foo")
-
-        local bufnr = vim.fn.bufnr("/tmp/harpoon-test", true)
-
-        vim.api.nvim_set_current_buf(bufnr)
-        vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, {
+        local file_name = "/tmp/harpoon-test"
+        local row = 3
+        local col = 1
+        utils.create_file(file_name, {
             "foo",
             "bar",
             "baz",
             "qux",
-        })
-        vim.api.nvim_win_set_cursor(0, { 3, 1 })
+        }, row, col)
 
+        local config = Config.get_default_config()
+        local config_item = Config.get_config(config, "foo")
         local item = config_item.create_list_item(config_item)
-        eq(item, {
-            value = "/tmp/harpoon-test",
+        eq({
+            value = file_name,
             context = {
                 row = 3,
                 col = 1,
             },
-        })
+        }, item)
     end)
 end)
