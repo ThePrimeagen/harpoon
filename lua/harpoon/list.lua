@@ -101,6 +101,57 @@ function HarpoonList:remove(item)
 end
 
 ---@return HarpoonList
+function HarpoonList:replace(index, item)
+    item = item or self.config.create_list_item(self.config)
+
+    local item_index = index_of(self.items, item, self.config)
+    local old_item = self:get(index)
+
+    if item_index == index then
+        return self
+    end
+
+    if item_index and old_item then
+        Logger:log(
+            "HarpoonList:replace",
+            { item = item, index = index },
+            "and",
+            { item = old_item, index = item_index }
+        )
+        Listeners.listeners:emit(
+            Listeners.event_names.REORDER,
+            { list = self, item = item, idx = index }
+        )
+        Listeners.listeners:emit(
+            Listeners.event_names.REORDER,
+            { list = self, item = old_item, idx = item_index }
+        )
+        self.items[index], self.items[item_index] = item, old_item
+    elseif old_item then
+        Logger:log(
+            "HarpoonList:replace",
+            { item = old_item, index = index },
+            "with",
+            { item = item, index = index }
+        )
+        Listeners.listeners:emit(
+            Listeners.event_names.REMOVE,
+            { list = self, item = old_item, idx = index }
+        )
+        Listeners.listeners:emit(
+            Listeners.event_names.ADD,
+            { list = self, item = item, idx = index }
+        )
+
+        self.items[index] = item
+    else
+        self:append(item)
+    end
+
+    return self
+end
+
+---@return HarpoonList
 function HarpoonList:removeAt(index)
     if self.items[index] then
         Logger:log(
