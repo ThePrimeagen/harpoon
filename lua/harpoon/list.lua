@@ -68,6 +68,19 @@ function HarpoonList:append(item)
 end
 
 ---@return HarpoonList
+function HarpoonList:toggle(item)
+    item = item or self.config.create_list_item(self.config)
+
+    if self:get_by_display(item.value) then
+        self:remove(item)
+    else
+        self:append(item)
+    end
+
+    return self
+end
+
+---@return HarpoonList
 function HarpoonList:prepend(item)
     item = item or self.config.create_list_item(self.config)
     local index = index_of(self.items, item, self.config)
