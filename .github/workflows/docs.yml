@@ -1,0 +1,25 @@
+name: Docs
+
+on: [push, pull_request]
+
+jobs:
+    docs:
+        name: Auto generate docs
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: kdheepak/panvimdoc@main
+              with:
+                vimdoc: harpoon
+                pandoc: README.md
+                description: Best plugin ever created
+                demojify: true
+                treesitter: true
+                shiftheadinglevelby: -1 
+
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                commit_message: "Auto generate docs"
+                branch: ${{ github.head_ref }}
+                file_pattern: 'doc/*.txt'
