@@ -2,7 +2,7 @@ local Extensions = require("harpoon.extensions")
 local Logger = require("harpoon.logger")
 local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
-    return Path:new(buf_name):make_relative(root)
+    return vim.fs.normalize(Path:new(buf_name):make_relative(root))
 end
 
 local M = {}
@@ -151,11 +151,6 @@ function M.get_default_config()
             ---@return HarpoonListItem
             create_list_item = function(config, name)
                 name = name
-                    -- TODO: should we do path normalization???
-                    -- i know i have seen sometimes it becoming an absolute
-                    -- path, if that is the case we can use the context to
-                    -- store the bufname and then have value be the normalized
-                    -- value
                     or normalize_path(
                         vim.api.nvim_buf_get_name(
                             vim.api.nvim_get_current_buf()
@@ -164,7 +159,6 @@ function M.get_default_config()
                     )
 
                 Logger:log("config_default#create_list_item", name)
-
                 local bufnr = vim.fn.bufnr(name, false)
 
                 local pos = { 1, 0 }
