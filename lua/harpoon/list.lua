@@ -180,6 +180,7 @@ function HarpoonList:select(index, options)
             { list = self, item = item, idx = index }
         )
         self.config.select(item, self, options)
+        self._index = index
     end
 end
 
@@ -188,16 +189,16 @@ end
 function HarpoonList:next(opts)
     opts = opts or {}
 
-    self._index = self._index + 1
-    if self._index > #self.items then
+    local index = self._index + 1
+    if index > #self.items then
         if opts.ui_nav_wrap then
-            self._index = 1
+            index = 1
         else
-            self._index = #self.items
+            index = #self.items
         end
     end
 
-    self:select(self._index)
+    self:select(index)
 end
 
 ---
@@ -205,16 +206,16 @@ end
 function HarpoonList:prev(opts)
     opts = opts or {}
 
-    self._index = self._index - 1
-    if self._index < 1 then
+    local index = self._index - 1
+    if index < 1 then
         if opts.ui_nav_wrap then
-            self._index = #self.items
+            index = #self.items
         else
-            self._index = 1
+            index = 1
         end
     end
 
-    self:select(self._index)
+    self:select(index)
 end
 
 --- @return string[]
