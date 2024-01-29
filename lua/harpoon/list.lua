@@ -57,11 +57,11 @@ function HarpoonList:append(item)
     local index = index_of(self.items, item, self.config)
     Logger:log("HarpoonList:append", { item = item, index = index })
     if index == -1 then
+        table.insert(self.items, item)
         Extensions.extensions:emit(
             Extensions.event_names.ADD,
             { list = self, item = item, idx = #self.items + 1 }
         )
-        table.insert(self.items, item)
     end
 
     return self
@@ -73,11 +73,11 @@ function HarpoonList:prepend(item)
     local index = index_of(self.items, item, self.config)
     Logger:log("HarpoonList:prepend", { item = item, index = index })
     if index == -1 then
+        table.insert(self.items, 1, item)
         Extensions.extensions:emit(
             Extensions.event_names.ADD,
             { list = self, item = item, idx = 1 }
         )
-        table.insert(self.items, 1, item)
     end
 
     return self
@@ -88,12 +88,12 @@ function HarpoonList:remove(item)
     item = item or self.config.create_list_item(self.config)
     for i, v in ipairs(self.items) do
         if self.config.equals(v, item) then
+            Logger:log("HarpoonList:remove", { item = item, index = i })
+            table.remove(self.items, i)
             Extensions.extensions:emit(
                 Extensions.event_names.REMOVE,
                 { list = self, item = item, idx = i }
             )
-            Logger:log("HarpoonList:remove", { item = item, index = i })
-            table.remove(self.items, i)
             break
         end
     end
@@ -103,15 +103,13 @@ end
 ---@return HarpoonList
 function HarpoonList:removeAt(index)
     if self.items[index] then
-        Logger:log(
-            "HarpoonList:removeAt",
-            { item = self.items[index], index = index }
-        )
+        local item = self.items[index]
+        Logger:log("HarpoonList:removeAt", { item = item, index = index })
+        table.remove(self.items, index)
         Extensions.extensions:emit(
             Extensions.event_names.REMOVE,
-            { list = self, item = self.items[index], idx = index }
+            { list = self, item = item, idx = index }
         )
-        table.remove(self.items, index)
     end
     return self
 end
