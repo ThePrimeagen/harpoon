@@ -37,7 +37,7 @@ describe("harpoon", function()
         vim.api.nvim_set_current_buf(other_buf)
 
         local expected = {
-            { value = file_name, context = { row = row + 1, col = col } },
+            { value = file_name, context = { row = row + 1, col = col, name = file_name } },
         }
 
         eq(expected, list.items)
@@ -93,8 +93,8 @@ describe("harpoon", function()
         })
 
         eq(list.items, {
-            { value = file_name_2, context = { row = row_2, col = col_2 } },
-            { value = file_name_1, context = { row = row_1, col = col_1 } },
+            { value = file_name_2, context = { row = row_2, col = col_2, name = file_name_2 } },
+            { value = file_name_1, context = { row = row_1, col = col_1, name = file_name_1 } },
         })
 
         harpoon:list():append()
@@ -102,8 +102,8 @@ describe("harpoon", function()
         harpoon:list():prepend()
 
         eq(list.items, {
-            { value = file_name_2, context = { row = row_2, col = col_2 } },
-            { value = file_name_1, context = { row = row_1, col = col_1 } },
+            { value = file_name_2, context = { row = row_2, col = col_2, name = file_name_2 } },
+            { value = file_name_1, context = { row = row_1, col = col_1, name = file_name_1 } },
         })
     end)
 
