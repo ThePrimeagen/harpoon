@@ -10,7 +10,15 @@ local function filter_empty_string(list)
     local next = {}
     for idx = 1, #list do
         if list[idx].value ~= "" then
-            table.insert(next, list[idx])
+            local item = list[idx]
+            table.insert(next, {
+                index = idx,
+                value = item.value,
+                context = {
+                    row = item.context.row,
+                    col = item.context.col,
+                },
+            })
         end
     end
 
@@ -18,9 +26,14 @@ local function filter_empty_string(list)
 end
 
 local generate_new_finder = function()
+    local results = filter_empty_string(harpoon:list().items)
+    local results_idx_str_len = string.len(tostring(#results))
     return finders.new_table({
-        results = filter_empty_string(harpoon:list().items),
+        results = results,
         entry_maker = function(entry)
+            local entry_idx_str = tostring(entry.index)
+            local entry_idx_str_len = string.len(entry_idx_str)
+            local entry_idx_lpad = string.rep(" ", results_idx_str_len - entry_idx_str_len)
             local line = entry.value
                 .. ":"
                 .. entry.context.row
@@ -29,14 +42,14 @@ local generate_new_finder = function()
             local displayer = entry_display.create({
                 separator = " - ",
                 items = {
-                    { width = 2 },
+                    { width = results_idx_str_len },
                     { width = 50 },
                     { remaining = true },
                 },
             })
             local make_display = function()
                 return displayer({
-                    tostring(entry.index),
+                    entry_idx_lpad .. entry_idx_str,
                     line,
                 })
             end
