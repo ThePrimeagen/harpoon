@@ -5,6 +5,7 @@ local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local utils = require("telescope.utils")
 local make_entry = require("telescope.make_entry")
+local strings = require("plenary.strings")
 local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 
@@ -30,17 +31,39 @@ local generate_new_finder = function(opts)
     local results = filter_empty_string(harpoon:list().items)
     local results_idx_str_len = string.len(tostring(#results))
     local make_file_entry = make_entry.gen_from_file(opts)
+    local disable_devicons = opts.disable_devicons
+
+    local icon_width = 0
+    if not disable_devicons then
+        local icon, _ = utils.get_devicons("fname", disable_devicons)
+        icon_width = strings.strdisplaywidth(icon)
+    end
+
     return finders.new_table({
         results = results,
         entry_maker = function(harpoon_item)
             local entry = make_file_entry(harpoon_item.value) -- value => path
-            local displayer = entry_display.create({
-                separator = " - ",
-                items = {
-                    { width = results_idx_str_len },
-                    { remaining = true },
-                },
-            })
+            local icon, hl_group = utils.get_devicons(entry.filename, disable_devicons)
+            local display_config = nil
+            if not disable_devicons then
+                display_config = {
+                    separator = " ",
+                    items = {
+                        { width = results_idx_str_len },
+                        { width = icon_width },
+                        { remaining = true },
+                    },
+                }
+            else
+                display_config = {
+                    separator = " - ",
+                    items = {
+                        { width = results_idx_str_len },
+                        { remaining = true },
+                    },
+                }
+            end
+            local displayer = entry_display.create(display_config)
             entry.display = function(et)
                 local et_idx_str = tostring(et.index)
                 local et_idx_str_len = string.len(et_idx_str)
@@ -52,10 +75,20 @@ local generate_new_finder = function(opts)
                     .. harpoon_item.context.row
                     .. ":"
                     .. harpoon_item.context.col
-                return displayer({
-                    { et_idx_lpad .. et_idx_str },
-                    { line },
-                })
+                local entry_values = nil
+                if not disable_devicons then
+                    entry_values = {
+                        { et_idx_lpad .. et_idx_str },
+                        { icon, hl_group },
+                        { line },
+                    }
+                else
+                    entry_values = {
+                        { et_idx_lpad .. et_idx_str },
+                        { line },
+                    }
+                end
+                return displayer(entry_values)
             end
             return entry
         end,
