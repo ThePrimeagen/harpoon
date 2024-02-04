@@ -52,14 +52,16 @@ local generate_new_finder = function(opts)
                         { width = results_idx_str_len },
                         { width = icon_width },
                         { remaining = true },
+                        { width = 6 },
                     },
                 }
             else
                 display_config = {
-                    separator = " - ",
+                    separator = " ",
                     items = {
                         { width = results_idx_str_len },
                         { remaining = true },
+                        { width = 6 },
                     },
                 }
             end
@@ -69,23 +71,19 @@ local generate_new_finder = function(opts)
                 local et_idx_str_len = string.len(et_idx_str)
                 local et_idx_lpad = string.rep(" ", results_idx_str_len - et_idx_str_len)
                 local path_to_display = utils.transform_path(opts, et.value)
-                -- TODO create another column for the row and col, with a dynamic width, like the results-index!
-                local line = path_to_display
-                    .. ":"
-                    .. harpoon_item.context.row
-                    .. ":"
-                    .. harpoon_item.context.col
                 local entry_values = nil
                 if not disable_devicons then
                     entry_values = {
                         { et_idx_lpad .. et_idx_str },
                         { icon, hl_group },
-                        { line },
+                        { path_to_display },
+                        { harpoon_item.context.row .. ":" .. harpoon_item.context.col },
                     }
                 else
                     entry_values = {
                         { et_idx_lpad .. et_idx_str },
-                        { line },
+                        { path_to_display },
+                        { harpoon_item.context.row .. ":" .. harpoon_item.context.col },
                     }
                 end
                 return displayer(entry_values)
@@ -196,7 +194,7 @@ return function(opts)
     opts = opts or {}
     pickers
         .new(opts, {
-            prompt_title = "harpoon marks",
+            prompt_title = "Harpoon Marks",
             finder = generate_new_finder(opts),
             sorter = conf.generic_sorter(opts),
             previewer = conf.file_previewer(opts),
