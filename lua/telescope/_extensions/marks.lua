@@ -1,34 +1,31 @@
+local harpoon = require("harpoon")
+local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local action_utils = require("telescope.actions.utils")
-local entry_display = require("telescope.pickers.entry_display")
-local finders = require("telescope.finders")
-local pickers = require("telescope.pickers")
-local utils = require("telescope.utils")
-local make_entry = require("telescope.make_entry")
-local strings = require("plenary.strings")
 local conf = require("telescope.config").values
-local harpoon = require("harpoon")
+local finders = require("telescope.finders")
+local make_entry = require("telescope.make_entry")
+local pickers = require("telescope.pickers")
+local entry_display = require("telescope.pickers.entry_display")
+local utils = require("telescope.utils")
+local strings = require("plenary.strings")
 
-local function filter_empty_string(list)
-    local next = {}
-    for idx = 1, #list do
-        if list[idx].value ~= "" then
-            local item = list[idx]
-            table.insert(next, {
-                value = item.value,
-                context = {
-                    row = item.context.row,
-                    col = item.context.col,
-                },
-            })
-        end
+local function make_results(list)
+    local results = {}
+    for _, item in pairs(list) do
+        table.insert(results, {
+            value = item.value,
+            context = {
+                row = item.context.row,
+                col = item.context.col,
+            },
+        })
     end
-
-    return next
+    return results
 end
 
 local generate_new_finder = function(opts)
-    local results = filter_empty_string(harpoon:list().items)
+    local results = make_results(harpoon:list().items)
     local results_idx_str_len = string.len(tostring(#results))
     local make_file_entry = make_entry.gen_from_file(opts)
     local disable_devicons = opts.disable_devicons
@@ -93,7 +90,7 @@ local generate_new_finder = function(opts)
     })
 end
 
-local delete_harpoon_mark = function(prompt_bufnr, opts)
+local delete_mark_selections = function(prompt_bufnr)
     local selections = {}
     action_utils.map_selections(prompt_bufnr, function(entry)
         table.insert(selections, entry)
@@ -105,12 +102,14 @@ local delete_harpoon_mark = function(prompt_bufnr, opts)
     local count = 0
 
     if #selections > 0 then
+        -- delete marks from multi-selection
         for i = #selections, 1, -1 do
             local selection = selections[i]
             harpoon:list():removeAt(selection.index)
             count = count + 1
         end
     else
+        -- delete marks from single-selection
         local selection = action_state.get_selected_entry()
         if selection ~= nil then
             harpoon:list():removeAt(selection.index)
@@ -120,74 +119,112 @@ local delete_harpoon_mark = function(prompt_bufnr, opts)
         end
     end
 
+    -- delete picker-selections
     local current_picker = action_state.get_current_picker(prompt_bufnr)
-    current_picker:refresh(generate_new_finder(opts), { reset_prompt = true })
+    current_picker:delete_selection(function() end)
 
     return count
 end
 
-local delete_harpoon_mark_prompt = function(opts)
-    return function(prompt_bufnr)
-        vim.ui.input({
-            prompt = "Delete selected marks? [Yes/no]: ",
-            default = "y",
-        }, function(input)
-            if input == nil then
-                return
-            end
+local delete_mark_selections_prompt = function(prompt_bufnr)
+    vim.ui.input({
+        prompt = "Delete selected marks? [Yes/no]: ",
+        default = "y",
+    }, function(input)
+        if input == nil then
+            return
+        end
 
-            local input_str = string.lower(input)
-            if input_str == "y" or input_str == "yes" then
-                local deletion_count = delete_harpoon_mark(prompt_bufnr, opts)
-                if deletion_count == 0 then
-                    print("No marks deleted")
-                elseif deletion_count == 1 then
-                    print("Deleted 1 mark")
-                else
-                    print("Deleted " .. deletion_count .. " marks")
-                end
+        local input_str = string.lower(input)
+        if input_str == "y" or input_str == "yes" then
+            local deletion_count = delete_mark_selections(prompt_bufnr)
+            if deletion_count == 0 then
+                print("No marks deleted")
+            elseif deletion_count == 1 then
+                print("Deleted 1 mark")
             else
-                print("No action taken")
+                print("Deleted " .. deletion_count .. " marks")
             end
-        end)
-    end
+        else
+            print("No action taken")
+        end
+    end)
 end
 
-local move_mark_up = function(opts)
-    return function(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-        local length = harpoon:list():length()
-        local current_index = selection.index
-        if current_index == length then
-            return
-        end
+local move_mark_next = function(prompt_bufnr)
+    -- get current index
+    local current_selection = action_state.get_selected_entry()
+    local current_index = current_selection.index
 
-        local mark_list = harpoon:list().items
-        local current_item = mark_list[current_index]
-        table.remove(mark_list, selection.index)
-        table.insert(mark_list, selection.index + 1, current_item)
+    -- get next index
+    actions.move_selection_next(prompt_bufnr)
+    local next_selection = action_state.get_selected_entry()
+    local next_index = next_selection.index
 
-        local current_picker = action_state.get_current_picker(prompt_bufnr)
-        current_picker:refresh(generate_new_finder(opts), { reset_prompt = true })
-    end
+    -- swap harpoon-items
+    local mark_list = harpoon:list().items
+    local current_item = mark_list[current_index]
+    local next_item = mark_list[next_index]
+    mark_list[current_index] = next_item
+    mark_list[next_index] = current_item
+
+    -- swap telescope-entries
+    local current_value = current_selection.value
+    local next_value = next_selection.value
+    local current_display = current_selection.display
+    local next_display = next_selection.display
+    current_selection.value = next_value
+    next_selection.value = current_value
+    current_selection.display = next_display
+    next_selection.display = current_display
+
+    -- refresh picker
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    local selection_row = current_picker:get_selection_row()
+    current_picker:refresh()
+
+    vim.wait(1) -- wait for refresh
+
+    -- select row
+    current_picker:set_selection(selection_row)
 end
 
-local move_mark_down = function (opts)
-    return function(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-        local current_index = selection.index
-        if current_index == 1 then
-            return
-        end
+local move_mark_previous = function(prompt_bufnr)
+    -- get current index
+    local current_selection = action_state.get_selected_entry()
+    local current_index = current_selection.index
 
-        local mark_list = harpoon:list().items
-        local current_item = mark_list[current_index]
-        table.remove(mark_list, current_index)
-        table.insert(mark_list, current_index - 1, current_item)
+    -- get previous index
+    actions.move_selection_previous(prompt_bufnr)
+    local previous_selection = action_state.get_selected_entry()
+    local previous_index = previous_selection.index
 
-        local current_picker = action_state.get_current_picker(prompt_bufnr)
-        current_picker:refresh(generate_new_finder(opts), { reset_prompt = true })
-    end
+    -- swap harpoon items
+    local mark_list = harpoon:list().items
+    local current_item = mark_list[current_index]
+    local previous_item = mark_list[previous_index]
+    mark_list[current_index] = previous_item
+    mark_list[previous_index] = current_item
+
+    -- swap telescope entries
+    local current_value = current_selection.value
+    local previous_value = previous_selection.value
+    local current_display = current_selection.display
+    local previous_display = previous_selection.display
+    current_selection.value = previous_value
+    previous_selection.value = current_value
+    current_selection.display = previous_display
+    previous_selection.display = current_display
+
+    -- refresh picker
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    local selection_row = current_picker:get_selection_row()
+    current_picker:refresh()
+
+    vim.wait(1) -- wait for refresh
+
+    -- select row
+    current_picker:set_selection(selection_row)
 end
 
 return function(opts)
@@ -199,14 +236,12 @@ return function(opts)
             sorter = conf.generic_sorter(opts),
             previewer = conf.file_previewer(opts),
             attach_mappings = function(_, map)
-                map("i", "<c-d>", delete_harpoon_mark_prompt(opts))
-                map("n", "<c-d>", delete_harpoon_mark_prompt(opts))
-
-                map("i", "<c-p>", move_mark_up(opts))
-                map("n", "<c-p>", move_mark_up(opts))
-
-                map("i", "<c-n>", move_mark_down(opts))
-                map("n", "<c-n>", move_mark_down(opts))
+                map("i", "<c-d>", delete_mark_selections_prompt)
+                map("n", "<c-d>", delete_mark_selections_prompt)
+                map("i", "<c-p>", move_mark_previous)
+                map("n", "<c-p>", move_mark_previous)
+                map("i", "<c-n>", move_mark_next)
+                map("n", "<c-n>", move_mark_next)
                 return true
             end,
         })
