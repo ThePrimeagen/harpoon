@@ -69,18 +69,20 @@ local generate_new_finder = function(opts)
                 local et_idx_lpad = string.rep(" ", results_idx_str_len - et_idx_str_len)
                 local path_to_display = utils.transform_path(opts, et.value)
                 local entry_values = nil
+                local row = harpoon_item.context.row
+                local column = harpoon_item.context.col + 1
                 if not disable_devicons then
                     entry_values = {
                         { et_idx_lpad .. et_idx_str },
                         { icon, hl_group },
                         { path_to_display },
-                        { harpoon_item.context.row .. ":" .. harpoon_item.context.col },
+                        { row .. ":" .. column },
                     }
                 else
                     entry_values = {
                         { et_idx_lpad .. et_idx_str },
                         { path_to_display },
-                        { harpoon_item.context.row .. ":" .. harpoon_item.context.col },
+                        { row .. ":" .. column },
                     }
                 end
                 return displayer(entry_values)
