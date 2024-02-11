@@ -8,6 +8,7 @@ local make_entry = require("telescope.make_entry")
 local pickers = require("telescope.pickers")
 local entry_display = require("telescope.pickers.entry_display")
 local utils = require("telescope.utils")
+local sorters = require("telescope.sorters")
 local strings = require("plenary.strings")
 
 local function make_results(list)
@@ -24,7 +25,7 @@ local function make_results(list)
     return results
 end
 
-local generate_new_finder = function(opts)
+local make_finder = function(opts)
     local results = make_results(harpoon:list().items)
     local results_idx_str_len = string.len(tostring(#results))
     local make_file_entry = make_entry.gen_from_file(opts)
@@ -90,6 +91,40 @@ local generate_new_finder = function(opts)
             return entry
         end,
     })
+end
+
+local make_sorter = function(opts)
+    local sorter = conf.generic_sorter(opts)
+    local generic_scoring = sorter.scoring_function
+    sorter.scoring_function = function(self, prompt, line, entry)
+        local score = generic_scoring(self, prompt, line, entry)
+        local multiplier = 1
+
+        -- set the multiplier, when matching an index
+        local index = entry.index
+        local index_str = tostring(index)
+        for value in string.gmatch(prompt, "%S+") do
+            local num = tonumber(value)
+            if num ~= nil then
+                if num == index then
+                    multiplier = 0.25
+                    break -- found an exact match
+                elseif index_str:match(value) then
+                    multiplier = 0.5
+                    -- continue looking for a better match
+                end
+            end
+        end
+
+        if score ~= -1 then -- generic_sorter found a match
+            score = score * multiplier -- make the score better
+        elseif multiplier ~= 1 then -- has matched an index
+            score = multiplier -- make the score slightly better
+        end
+
+        return score
+    end
+    return sorter
 end
 
 local delete_mark_selections = function(prompt_bufnr)
@@ -234,8 +269,8 @@ return function(opts)
     pickers
         .new(opts, {
             prompt_title = "Harpoon Marks",
-            finder = generate_new_finder(opts),
-            sorter = conf.generic_sorter(opts),
+            finder = make_finder(opts),
+            sorter = make_sorter(opts),
             previewer = conf.file_previewer(opts),
             attach_mappings = function(_, map)
                 map("i", "<c-d>", delete_mark_selections_prompt)
