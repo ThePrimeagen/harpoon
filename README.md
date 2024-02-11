@@ -177,7 +177,11 @@ harpoon:setup({
 
 ### Getting the current mark
 If you want to be able to get the current mark for something like your
-status line you just need to call `:lua require("harpoon"):list():get_current_status()"`.
+status line you just need to call:
+
+```lua
+require("harpoon"):list():get_current_status()
+```
 
 The function will return the idx of the current mark if your current buffer is
 a mark. Otherwise, it will return nil.
