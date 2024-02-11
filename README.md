@@ -89,7 +89,7 @@ vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
 
 ### Telescope
 
-In order to use [Telescope](https://github.com/nvim-telescope/telescope.nvim) as a UI, 
+In order to use [Telescope](https://github.com/nvim-telescope/telescope.nvim) as a UI,
 make sure to add `telescope` to your dependencies and paste this following snippet into your configuration.
 
 ```lua
@@ -174,6 +174,17 @@ harpoon:setup({
 })
 
 ```
+
+### Getting the current mark
+If you want to be able to get the current mark for something like your
+status line you just need to call:
+
+```lua
+require("harpoon"):list():get_current_status()
+```
+
+The function will return the idx of the current mark if your current buffer is
+a mark. Otherwise, it will return nil.
 
 ### Config
 There is quite a bit of behavior you can configure via `harpoon:setup()`
@@ -287,7 +298,7 @@ contribute start with an issue and I am totally willing for PRs, but I will be
 very conservative on what I take.  I don't want Harpoon _solving_ specific
 issues, I want it to create the proper hooks to solve any problem
 
-**Running Tests**  
+**Running Tests**
 To run the tests make sure [plenary](https://github.com/nvim-lua/plenary.nvim) is checked out in the parent directory of *this* repository, then run `make test`.
 
 ## ⇁ Social

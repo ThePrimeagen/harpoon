@@ -116,6 +116,19 @@ function HarpoonList:removeAt(index)
     return self
 end
 
+---@return number | nil
+function HarpoonList:get_current_status()
+    local current_file = vim.api.nvim_buf_get_name(0):gsub(vim.fn.getcwd() .. "/", "")
+
+    for idx, item in ipairs(self.items) do
+        if item.value == current_file then
+            return idx
+        end
+    end
+
+    return nil
+end
+
 function HarpoonList:get(index)
     return self.items[index]
 end
