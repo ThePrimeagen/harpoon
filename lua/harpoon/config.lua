@@ -114,15 +114,28 @@ function M.get_default_config()
                     })
                 end
 
-                if options.vsplit then
-                    vim.cmd("vsplit")
-                elseif options.split then
-                    vim.cmd("split")
-                elseif options.tabedit then
-                    vim.cmd("tabedit")
+                local visible = false
+                local wins = vim.api.nvim_tabpage_list_wins(0)
+                for _, win in ipairs(wins) do
+                    local winbufnr = vim.api.nvim_win_get_buf(win)
+
+                    if winbufnr == bufnr then
+                        vim.api.nvim_set_current_win(win)
+                        visible = true
+                        break
+                    end
                 end
 
-                vim.api.nvim_set_current_buf(bufnr)
+                if not visible then
+                    if options.vsplit then
+                        vim.cmd("vsplit")
+                    elseif options.split then
+                        vim.cmd("split")
+                    elseif options.tabedit then
+                        vim.cmd("tabedit")
+                    end
+                    vim.api.nvim_set_current_buf(bufnr)
+                end
 
                 if set_position then
                     vim.api.nvim_win_set_cursor(0, {
