@@ -52,6 +52,9 @@ end
 
 ---@return HarpoonList
 function HarpoonList:append(item)
+    if vim.bo.buftype ~= "" then
+        return self
+    end
     item = item or self.config.create_list_item(self.config)
 
     local index = index_of(self.items, item, self.config)
@@ -69,6 +72,9 @@ end
 
 ---@return HarpoonList
 function HarpoonList:prepend(item)
+    if vim.bo.buftype ~= "" then
+        return self
+    end
     item = item or self.config.create_list_item(self.config)
     local index = index_of(self.items, item, self.config)
     Logger:log("HarpoonList:prepend", { item = item, index = index })
