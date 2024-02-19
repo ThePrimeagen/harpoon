@@ -1,0 +1,27 @@
+name: Documentation
+
+on: [push]
+
+jobs:
+  docs:
+    name: Generate vim docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: kdheepak/panvimdoc@main
+        with:
+          description: Getting you where you want with the fewest keystrokes
+          vimdoc: harpoon
+          pandoc: README.md
+          toc: "false"
+      - run: |
+          sudo add-apt-repository ppa:neovim-ppa/stable
+          sudo apt-get update
+          sudo apt-get install -y neovim
+          nvim +"helptags doc | exit"
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_author: Harpoon <harpoon@localhost>
+          commit_message: 'doc: generate vim docs'
