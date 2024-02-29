@@ -1,5 +1,6 @@
 local Extensions = require("harpoon.extensions")
 local Logger = require("harpoon.logger")
+local List = require("harpoon.list")
 local Utils = require("harpoon.utils")
 
 local M = {}
@@ -98,10 +99,10 @@ function M.get_default_config()
                     return
                 end
 
+                list:sync_cursor()
+
                 local bufnr = vim.fn.bufnr(list_item.value)
-                local set_position = false
                 if bufnr == -1 then
-                    set_position = true
                     bufnr = vim.fn.bufnr(list_item.value, true)
                 end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -121,12 +122,11 @@ function M.get_default_config()
 
                 vim.api.nvim_set_current_buf(bufnr)
 
-                if set_position then
-                    vim.api.nvim_win_set_cursor(0, {
-                        list_item.context.row or 1,
-                        list_item.context.col or 0,
-                    })
-                end
+                -- The stored cursor position could be outside of the file bounds.
+                pcall(vim.api.nvim_win_set_cursor, 0, {
+                    list_item.context.row or 1,
+                    list_item.context.col or 0,
+                })
 
                 Extensions.extensions:emit(Extensions.event_names.NAVIGATE, {
                     buffer = bufnr,
@@ -184,8 +184,7 @@ function M.get_default_config()
                 local item = list:get_by_display(bufname)
 
                 if item then
-                    local pos = vim.api.nvim_win_get_cursor(0)
-
+                    local pos = List._sync_cursor(item)
                     Logger:log(
                         "config_default#BufLeave updating position",
                         bufnr,
@@ -194,9 +193,6 @@ function M.get_default_config()
                         "to position",
                         pos
                     )
-
-                    item.context.row = pos[1]
-                    item.context.col = pos[2]
                 end
             end,
 

@@ -92,6 +92,7 @@ function Harpoon:sync()
             return
         end
 
+        list:sync_cursor()
         local encoded = list:encode()
         self.data:update(key, list_name, encoded)
     end)
