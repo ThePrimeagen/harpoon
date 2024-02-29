@@ -1,5 +1,6 @@
 local Extensions = require("harpoon.extensions")
 local Logger = require("harpoon.logger")
+local List = require("harpoon.list")
 local Utils = require("harpoon.utils")
 
 local function to_exact_name(value)
@@ -102,13 +103,11 @@ function M.get_default_config()
                     return
                 end
 
+                list:sync_cursor()
                 options = options or {}
 
                 local bufnr = vim.fn.bufnr(to_exact_name(list_item.value))
-                local set_position = false
                 if bufnr == -1 then -- must create a buffer!
-                    set_position = true
-                    -- bufnr = vim.fn.bufnr(list_item.value, true)
                     bufnr = vim.fn.bufadd(list_item.value)
                 end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -128,38 +127,36 @@ function M.get_default_config()
 
                 vim.api.nvim_set_current_buf(bufnr)
 
-                if set_position then
-                    local lines = vim.api.nvim_buf_line_count(bufnr)
+                local lines = vim.api.nvim_buf_line_count(bufnr)
 
-                    local edited = false
-                    if list_item.context.row > lines then
-                        list_item.context.row = lines
-                        edited = true
-                    end
+                local edited = false
+                if list_item.context.row > lines then
+                    list_item.context.row = lines
+                    edited = true
+                end
 
-                    local row = list_item.context.row
-                    local row_text =
-                        vim.api.nvim_buf_get_lines(0, row - 1, row, false)
-                    local col = #row_text[1]
+                local row = list_item.context.row
+                local row_text =
+                    vim.api.nvim_buf_get_lines(0, row - 1, row, false)
+                local col = #row_text[1]
 
-                    if list_item.context.col > col then
-                        list_item.context.col = col
-                        edited = true
-                    end
+                if list_item.context.col > col then
+                    list_item.context.col = col
+                    edited = true
+                end
 
-                    vim.api.nvim_win_set_cursor(0, {
-                        list_item.context.row or 1,
-                        list_item.context.col or 0,
-                    })
+                vim.api.nvim_win_set_cursor(0, {
+                    list_item.context.row or 1,
+                    list_item.context.col or 0,
+                })
 
-                    if edited then
-                        Extensions.extensions:emit(
-                            Extensions.event_names.POSITION_UPDATED,
-                            {
-                                list_item = list_item,
-                            }
-                        )
-                    end
+                if edited then
+                    Extensions.extensions:emit(
+                        Extensions.event_names.POSITION_UPDATED,
+                        {
+                            list_item = list_item,
+                        }
+                    )
                 end
 
                 Extensions.extensions:emit(Extensions.event_names.NAVIGATE, {
@@ -224,7 +221,7 @@ function M.get_default_config()
                 local item = list:get_by_value(bufname)
 
                 if item then
-                    local pos = vim.api.nvim_win_get_cursor(0)
+                    local pos = List._sync_cursor(item)
 
                     Logger:log(
                         "config_default#BufLeave updating position",

@@ -1,5 +1,6 @@
 local Logger = require("harpoon.logger")
 local Extensions = require("harpoon.extensions")
+local Utils = require("harpoon.utils")
 
 local function guess_length(arr)
     local last_known = #arr
@@ -284,6 +285,17 @@ function HarpoonList:resolve_displayed(displayed, length)
     end
 end
 
+function HarpoonList:sync_cursor()
+    local current_path = Utils.normalize_path(
+        vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()),
+        self.config.get_root_dir()
+    )
+    local item = self:get_by_value(current_path)
+    if item then
+        HarpoonList._sync_cursor(item)
+    end
+end
+
 function HarpoonList:select(index, options)
     local item = self.items[index]
     if item or self.config.select_with_nil then
@@ -361,6 +373,15 @@ function HarpoonList.decode(list_config, name, items)
     end
 
     return HarpoonList:new(list_config, name, list_items)
+end
+
+--- @return integer[]
+--- @param item HarpoonItem
+function HarpoonList._sync_cursor(item)
+    local pos = vim.api.nvim_win_get_cursor(0)
+    item.context.row = pos[1]
+    item.context.col = pos[2]
+    return pos
 end
 
 return HarpoonList
