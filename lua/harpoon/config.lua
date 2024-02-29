@@ -100,7 +100,7 @@ function M.get_default_config()
                 if list_item == nil then
                     return
                 end
-
+                vim.cmd("silent! mkview") -- Store current state before switching buffers.
                 local bufnr = vim.fn.bufnr(list_item.value)
                 local set_position = false
                 if bufnr == -1 then
@@ -130,6 +130,7 @@ function M.get_default_config()
                         list_item.context.col or 0,
                     })
                 end
+                vim.cmd("silent! loadview") -- Restore marks, cursor position, etc.
 
                 Extensions.extensions:emit(Extensions.event_names.NAVIGATE, {
                     buffer = bufnr,
@@ -200,6 +201,7 @@ function M.get_default_config()
 
                     item.context.row = pos[1]
                     item.context.col = pos[2]
+                    vim.cmd("silent! mkview")
                 end
             end,
 

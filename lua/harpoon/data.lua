@@ -130,6 +130,8 @@ function Data:sync()
         return
     end
 
+    vim.cmd("silent! mkview")
+
     local ok, data = pcall(read_data)
     if not ok then
         error("Harpoon: unable to sync data, error reading data file")
