@@ -54,8 +54,8 @@ end
 function Builtins.navigate_with_number()
     return {
         UI_CREATE = function(cx)
-            for i = 1, 9 do
-                vim.keymap.set("n", "" .. i, function()
+            for i = 1, 10 do
+                vim.keymap.set("n", "" .. i % 10, function()
                     require("harpoon"):list():select(i)
                 end, { buffer = cx.bufnr })
             end
