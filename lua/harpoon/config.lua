@@ -1,9 +1,7 @@
 local Extensions = require("harpoon.extensions")
 local Logger = require("harpoon.logger")
-local Path = require("plenary.path")
-local function normalize_path(buf_name, root)
-    return Path:new(buf_name):make_relative(root)
-end
+local Utils = require("harpoon.utils")
+
 local function to_exact_name(value)
     return "^" .. value .. "$"
 end
@@ -190,7 +188,7 @@ function M.get_default_config()
             ---@return HarpoonListItem
             create_list_item = function(config, name)
                 name = name
-                    or normalize_path(
+                    or Utils.normalize_path(
                         vim.api.nvim_buf_get_name(
                             vim.api.nvim_get_current_buf()
                         ),
@@ -219,7 +217,7 @@ function M.get_default_config()
             ---@param list HarpoonList
             BufLeave = function(arg, list)
                 local bufnr = arg.buf
-                local bufname = normalize_path(
+                local bufname = Utils.normalize_path(
                     vim.api.nvim_buf_get_name(bufnr),
                     list.config.get_root_dir()
                 )

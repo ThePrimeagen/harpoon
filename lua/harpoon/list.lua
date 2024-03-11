@@ -1,5 +1,4 @@
 local Logger = require("harpoon.logger")
-local utils = require("harpoon.utils")
 local Extensions = require("harpoon.extensions")
 
 local function guess_length(arr)
@@ -259,7 +258,7 @@ function HarpoonList:resolve_displayed(displayed, length)
     for i = 1, length do
         local v = displayed[i]
         local index = index_of(list_displayed, self._length, v)
-        if utils.is_white_space(v) then
+        if Utils.is_white_space(v) then
             new_list[i] = nil
         elseif index == -1 then
             new_list[i] = self.config.create_list_item(self.config, v)
