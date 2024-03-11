@@ -1,9 +1,6 @@
 local Extensions = require("harpoon.extensions")
 local Logger = require("harpoon.logger")
-local Path = require("plenary.path")
-local function normalize_path(buf_name, root)
-    return Path:new(buf_name):make_relative(root)
-end
+local Utils = require("harpoon.utils")
 
 local M = {}
 local DEFAULT_LIST = "__harpoon_files"
@@ -156,7 +153,7 @@ function M.get_default_config()
                     -- path, if that is the case we can use the context to
                     -- store the bufname and then have value be the normalized
                     -- value
-                    or normalize_path(
+                    or Utils.normalize_path(
                         vim.api.nvim_buf_get_name(
                             vim.api.nvim_get_current_buf()
                         ),
