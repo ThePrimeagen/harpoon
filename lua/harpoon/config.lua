@@ -4,6 +4,9 @@ local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
     return Path:new(buf_name):make_relative(root)
 end
+local function to_exact_name(value)
+    return "^" .. value .. "$"
+end
 
 local M = {}
 local DEFAULT_LIST = "__harpoon_files"
@@ -101,11 +104,12 @@ function M.get_default_config()
                     return
                 end
 
-                local bufnr = vim.fn.bufnr(list_item.value)
+                local bufnr = vim.fn.bufnr(to_exact_name(list_item.value))
                 local set_position = false
-                if bufnr == -1 then
+                if bufnr == -1 then -- must create a buffer!
                     set_position = true
-                    bufnr = vim.fn.bufnr(list_item.value, true)
+                    -- bufnr = vim.fn.bufnr(list_item.value, true)
+                    bufnr = vim.fn.bufadd(list_item.value)
                 end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
                     vim.fn.bufload(bufnr)
