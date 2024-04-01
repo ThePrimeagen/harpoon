@@ -6,47 +6,36 @@ local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 
-local function filter_empty_string(list)
-    local next = {}
-    for idx = 1, #list do
-        if list[idx].value ~= "" then
-            table.insert(next, list[idx])
-        end
-    end
-
-    return next
-end
-
 local generate_new_finder = function()
+    local list = harpoon:list()
+    local results = list.items
+    local index_entry_width = math.log(#results, 10) + 1
+
     return finders.new_table({
-        results = filter_empty_string(harpoon:list().items),
-        entry_maker = function(entry)
-            local line = entry.value
-                .. ":"
-                .. entry.context.row
-                .. ":"
-                .. entry.context.col
+        results = results,
+        entry_maker = function(item)
+            local line = list.config.display(item)
             local displayer = entry_display.create({
-                separator = " - ",
+                separator = " ",
                 items = {
-                    { width = 2 },
-                    { width = 50 },
+                    { width = index_entry_width },
                     { remaining = true },
                 },
             })
-            local make_display = function()
+            local make_display = function(entry)
                 return displayer({
                     tostring(entry.index),
                     line,
                 })
             end
+
             return {
-                value = entry,
+                value = item,
                 ordinal = line,
                 display = make_display,
-                lnum = entry.row,
-                col = entry.col,
-                filename = entry.value,
+                lnum = item.row,
+                col = item.col,
+                filename = item.value,
             }
         end,
     })
@@ -117,7 +106,7 @@ return function(opts)
 
     pickers
         .new(opts, {
-            prompt_title = "harpoon marks",
+            prompt_title = "Harpoon",
             finder = generate_new_finder(),
             sorter = conf.generic_sorter(opts),
             previewer = conf.grep_previewer(opts),
