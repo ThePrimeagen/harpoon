@@ -67,6 +67,23 @@ function HarpoonList:append(item)
     return self
 end
 
+
+---@param index number
+---@return HarpoonList
+function HarpoonList:replace(index)
+    local item = self.config.create_list_item(self.config)
+
+    if index < 1 or index > #(self.items) then
+        return self
+    end
+
+    self.items[index] = item
+
+    Logger:log("HarpoonList:replace", { item = item, index = index })
+
+    return self
+end
+
 ---@return HarpoonList
 function HarpoonList:prepend(item)
     item = item or self.config.create_list_item(self.config)
