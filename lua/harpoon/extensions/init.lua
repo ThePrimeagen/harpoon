@@ -64,6 +64,25 @@ function Builtins.navigate_with_number()
     }
 end
 
+function Builtins.sync_index_with_current_file()
+    return {
+        SELECT = function(cx)
+            cx.list._index = cx.idx
+        end,
+        UI_CREATE = function(cx)
+            local path = require("plenary.path"):new(cx.current_file)
+            local current_file = path:make_relative(vim.loop.cwd())
+            local contents = require("harpoon.buffer").get_contents(cx.bufnr)
+            for i, file in ipairs(contents) do
+                if file == current_file then
+                    require("harpoon"):list()._index = i
+                    vim.api.nvim_win_set_cursor(cx.win_id, { i, 0 })
+                end
+            end
+        end,
+    }
+end
+
 return {
     builtins = Builtins,
     extensions = extensions,
