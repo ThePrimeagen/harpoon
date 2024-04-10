@@ -114,7 +114,7 @@ function M.get_default_config()
                     bufnr = vim.fn.bufadd(list_item.value)
                 end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
-                    vim.fn.bufload(bufnr)
+                    vim.api.nvim_command("buffer " .. bufnr)
                     vim.api.nvim_set_option_value("buflisted", true, {
                         buf = bufnr,
                     })
