@@ -31,7 +31,7 @@ local function create_terminal()
         "new-window",
         "-P",
         "-F",
-        "#{pane_id}",
+        "#{window_id}",
     }, vim.loop.cwd())
 
     if ret == 0 then
@@ -102,7 +102,7 @@ local function find_terminal(args)
         end
 
         window_handle = {
-            window_id = "%" .. window_id,
+            window_id = "@" .. window_id,
         }
 
         tmux_windows[args.idx] = window_handle
