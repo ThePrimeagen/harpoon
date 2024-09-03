@@ -3,6 +3,7 @@ local action_utils = require("telescope.actions.utils")
 local entry_display = require("telescope.pickers.entry_display")
 local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
+local utils = require("telescope.utils")
 local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 local harpoon_mark = require("harpoon.mark")
@@ -23,12 +24,16 @@ local generate_new_finder = function()
     return finders.new_table({
         results = prepare_results(harpoon.get_mark_config().marks),
         entry_maker = function(entry)
-            local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
+            local dirs = utils.reverse_table(vim.split(entry.filename, utils.get_separator()))
+            local filename = table.remove(dirs, 1)
+            local tail = table.concat(dirs, utils.get_separator())
+            local line = filename .. ":" .. entry.row .. ":" .. entry.col
             local displayer = entry_display.create({
-                separator = " - ",
+                separator = " ",
                 items = {
                     { width = 2 },
-                    { width = 50 },
+                    {},
+                    {},
                     { remaining = true },
                 },
             })
@@ -36,11 +41,12 @@ local generate_new_finder = function()
                 return displayer({
                     tostring(entry.index),
                     line,
+                    {tail, "TelescopeResultsComment"},
                 })
             end
             return {
                 value = entry,
-                ordinal = line,
+                ordinal = tail .. utils.get_separator() .. line ,
                 display = make_display,
                 lnum = entry.row,
                 col = entry.col,
