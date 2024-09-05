@@ -97,6 +97,10 @@ lua require('harpoon.cmd-ui').toggle_quick_menu()       -- shows the commands me
 lua require("harpoon.term").sendCommand(1, 1)           -- sends command 1 to term 1
 ```
 
+### Removing Entries
+Essentially, once you open the quick menu, it behaves like a buffer, so you can use anything you'd like.  
+So, if you want to remove a file, you can use `dd` to delete it.
+
 ### Tmux Support
 tmux is supported out of the box and can be used as a drop-in replacement to normal terminals
 by simply switching `'term' with 'tmux'` like so
