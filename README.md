@@ -17,6 +17,8 @@
 * [API](#-API)
     * [Config](#config)
     * [Settings](#settings)
+    * [Extend](#extend)
+    * [Builtin Extensions](#builtin-extensions)
 * [Contribution](#-Contribution)
 * [Social](#-Social)
 * [Note to legacy Harpoon 1 users](#-Note-to-legacy-Harpoon-1-users)
@@ -238,9 +240,25 @@ settings = {
 ```
 
 ### Extend
-The 'extend' functionality can be used to add keymaps for opening files in splits & tabs.
+You can extend harpoon's functionality by defining functions that run in response to certain events.
 
+**Available Events**
+| Name | Description |
+| :---: | --- |
+| SETUP_CALLED     | Triggers on `Harpoon:setup` |
+| LIST_CREATED     | Triggers on `Harpoon:list` if the list was created |
+| LIST_READ        | Triggers on `Harpoon:list` if the list was already created |
+| LIST_CHANGE      | Triggers on `HarpoonList:save` |
+| ADD              | Triggers on `HarpoonList:add` and `HarpoonList:prepend` |
+| REMOVE           | Triggers on `HarpoonList:remove` and `HarpoonList:remove_at` |
+| REPLACE          | Triggers on `HarpoonList:replace_at` |
+| SELECT           | Triggers on `HarpoonList:select` |
+| POSITION_UPDATED | Triggers on `HarpoonList:select` when the cursor position is saved by default. Select functionality can be overwritten in setup |
+| NAVIGATE         | Triggers on `HarpoonList:select` by default. Select functionality can be overwritten in setup |
+
+**Example**
 ```lua
+-- adding keymaps to open buffers in a new split/tab
 harpoon:extend({
   UI_CREATE = function(cx)
     vim.keymap.set("n", "<C-v>", function()
@@ -258,6 +276,29 @@ harpoon:extend({
 })
 ```
 
+### Builtin Extensions
+Harpoon has a couple builtin extensions you can use.
+
+**Available Builtins**
+* `navigate_with_number`
+    - Sets up keymaps within the harpoon buffer to map keys 1-9 to select the corresponding row.
+* `command_on_nav`
+    - Execute a vim command when a file is navigated to.
+
+**Example**
+```lua
+local harpoon = require("harpoon");
+local extensions = require("harpoon.extensions");
+harpoon:setup()
+
+-- Setup keymaps for number row
+harpoon:extend(extensions.builtins.navigate_with_number());
+
+-- Setup notifications when a file is navigated to
+local command = ":lua vim.notify('Switched to ' .. vim.fn.expand('%:p'))"
+harpoon:extend(extensions.builtins.command_on_nav(command));
+```
+
 ### Highlight Groups
 TODO: Fill in the idea that we will emit out window information
 
@@ -268,18 +309,6 @@ This can help debug issues on other's computer.  To get your debug log please do
 1. perform exact operation to cause bug
 1. execute vim command `:lua require("harpoon").logger:show()` and copy the buffer
 1. paste the buffer as part of the bug creation
-
-## Extends
-THIS PART OF THE DOCS NEEDS FILLING OUT
-
-```lua
-local harpoon = require("harpoon");
-local extensions = require("harpoon.extensions");
-
-harpoon:setup()
-harpoon:extend(extensions.builtins.command_on_nav("foo bar"));
-harpoon:extend(extensions.builtins.navigate_with_number());
-```
 
 ## ⇁ Contribution
 This project is officially open source, not just public source.  If you wish to
