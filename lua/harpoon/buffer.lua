@@ -99,4 +99,27 @@ function M.set_contents(bufnr, contents)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, contents)
 end
 
+function M.set_current_menu_item_highlight(
+    bufnr,
+    win_id,
+    current_file,
+    contents
+)
+    for line_number, file in pairs(contents) do
+        if string.match(current_file, file) then
+            -- highlight the harpoon menu line that corresponds to the current buffer
+            vim.api.nvim_buf_add_highlight(
+                bufnr,
+                -1,
+                "CursorLineNr",
+                line_number - 1,
+                0,
+                -1
+            )
+            -- set the position of the cursor in the harpoon menu to the start of the current buffer line
+            vim.api.nvim_win_set_cursor(win_id, { line_number, 0 })
+        end
+    end
+end
+
 return M
