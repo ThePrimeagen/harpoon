@@ -106,7 +106,7 @@ function M.set_current_menu_item_highlight(
     contents
 )
     for line_number, file in pairs(contents) do
-        if string.match(current_file, file) then
+        if string.find(current_file, file, 1, true) then
             -- highlight the harpoon menu line that corresponds to the current buffer
             vim.api.nvim_buf_add_highlight(
                 bufnr,
