@@ -207,7 +207,7 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 * `create_list_item`: called when `list:add()` or `list:prepend()` is called.  called with an item, which will be a string, when adding through the ui menu
 * `BufLeave`: this function is called for every list on BufLeave.  if you need custom behavior, this is the place
 * `VimLeavePre`: this function is called for every list on VimLeavePre.
-* `get_root_dir`: used for creating relative paths.  defaults to `vim.loop.cwd()`
+* `get_root_dir`: used for creating relative paths.  defaults to `vim.uv.cwd()`
 
 ### Settings
 Settings can alter the experience of harpoon
@@ -232,7 +232,7 @@ settings = {
     save_on_toggle = false,
     sync_on_ui_close = false,
     key = function()
-        return vim.loop.cwd()
+        return vim.uv.cwd()
     end,
 },
 ```
@@ -242,19 +242,19 @@ The 'extend' functionality can be used to add keymaps for opening files in split
 
 ```lua
 harpoon:extend({
-  UI_CREATE = function(cx)
+    UI_CREATE = function(cx)
     vim.keymap.set("n", "<C-v>", function()
-      harpoon.ui:select_menu_item({ vsplit = true })
+        harpoon.ui:select_menu_item({ vsplit = true })
     end, { buffer = cx.bufnr })
 
     vim.keymap.set("n", "<C-x>", function()
-      harpoon.ui:select_menu_item({ split = true })
+        harpoon.ui:select_menu_item({ split = true })
     end, { buffer = cx.bufnr })
 
     vim.keymap.set("n", "<C-t>", function()
-      harpoon.ui:select_menu_item({ tabedit = true })
+        harpoon.ui:select_menu_item({ tabedit = true })
     end, { buffer = cx.bufnr })
-  end,
+    end,
 })
 ```
 
