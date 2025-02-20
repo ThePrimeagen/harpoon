@@ -155,12 +155,17 @@ function HarpoonUI:toggle_quick_menu(list, opts)
 
     vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, contents)
 
-    Extensions.extensions:emit(Extensions.event_names.UI_CREATE, {
+    local data = {
         win_id = win_id,
         bufnr = bufnr,
         current_file = current_file,
         contents = contents,
+    }
+    vim.api.nvim_exec_autocmds("User", {
+        pattern = "HarpoonUiCreate",
+        data = data,
     })
+    Extensions.extensions:emit(Extensions.event_names.UI_CREATE, data)
 end
 
 function HarpoonUI:_get_processed_ui_contents()

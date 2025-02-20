@@ -155,18 +155,27 @@ function M.get_default_config()
                     })
 
                     if edited then
+                        local data = { list_item = list_item }
+                        vim.api.nvim_exec_autocmds("User", {
+                            pattern = "HarpoonPositionUpdated",
+                            data = data,
+                        })
                         Extensions.extensions:emit(
                             Extensions.event_names.POSITION_UPDATED,
-                            {
-                                list_item = list_item,
-                            }
+                            data
                         )
                     end
                 end
 
-                Extensions.extensions:emit(Extensions.event_names.NAVIGATE, {
-                    buffer = bufnr,
+                local data = { buffer = bufnr }
+                vim.api.nvim_exec_autocmds("User", {
+                    pattern = "HarpoonNavigate",
+                    data = data,
                 })
+                Extensions.extensions:emit(
+                    Extensions.event_names.NAVIGATE,
+                    data
+                )
             end,
 
             ---@param list_item_a HarpoonListItem
@@ -240,6 +249,10 @@ function M.get_default_config()
                     item.context.row = pos[1]
                     item.context.col = pos[2]
 
+                    vim.api.nvim_exec_autocmds("User", {
+                        pattern = "HarpoonPositionUpdated",
+                        data = item,
+                    })
                     Extensions.extensions:emit(
                         Extensions.event_names.POSITION_UPDATED,
                         item
