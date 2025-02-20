@@ -24,8 +24,8 @@ local function determine_length(arr, previous_length)
     return idx
 end
 
---- @class HarpoonNavOptions
---- @field ui_nav_wrap? boolean
+---@class HarpoonNavOptions
+---@field ui_nav_wrap? boolean
 
 ---@param items any[]
 ---@param element any
@@ -65,19 +65,26 @@ local function prepend_to_array(arr, value)
     return idx
 end
 
---- @class HarpoonItem
---- @field value string
---- @field context any
+---@class HarpoonItemContext
+---@field row integer
+---@field col integer
 
---- @class HarpoonList
---- @field config HarpoonPartialConfigItem
---- @field name string
---- @field _length number
---- @field _index number
---- @field items HarpoonItem[]
+---@class HarpoonItem
+---@field value string
+---@field context HarpoonItemContext
+
+---@class HarpoonList
+---@field config HarpoonPartialConfigItem
+---@field name string
+---@field _length number
+---@field _index number
+---@field items HarpoonItem[]
 local HarpoonList = {}
 
 HarpoonList.__index = HarpoonList
+---@param config HarpoonPartialConfigItem
+---@param name string
+---@param items HarpoonItem[]
 function HarpoonList:new(config, name, items)
     items = items or {}
     return setmetatable({
@@ -159,6 +166,13 @@ function HarpoonList:add(item)
             data = data,
         })
         Extensions.extensions:emit(Extensions.event_names.ADD, data)
+    else
+        local pos = vim.api.nvim_win_get_cursor(0)
+        local ctx = self.items[index].context
+        ctx.row = pos[1]
+        ctx.col = pos[2]
+
+        self.items[index].context = ctx
     end
 
     return self
@@ -314,7 +328,7 @@ function HarpoonList:select(index, options)
 end
 
 ---
---- @param opts? HarpoonNavOptions
+---@param opts? HarpoonNavOptions
 function HarpoonList:next(opts)
     opts = opts or {}
 
@@ -331,7 +345,7 @@ function HarpoonList:next(opts)
 end
 
 ---
---- @param opts? HarpoonNavOptions
+---@param opts? HarpoonNavOptions
 function HarpoonList:prev(opts)
     opts = opts or {}
 
@@ -347,7 +361,7 @@ function HarpoonList:prev(opts)
     self:select(self._index)
 end
 
---- @return string[]
+---@return string[]
 function HarpoonList:display()
     local out = {}
     for i = 1, self._length do
@@ -358,24 +372,34 @@ function HarpoonList:display()
     return out
 end
 
---- @return string[]
+---@return string[]
 function HarpoonList:encode()
     local out = {}
     for k, v in pairs(self.items) do
-        out[k] = self.config.encode(v)
+        if k > #out + 1 then
+            for _ = 1, k - #out - 1 do
+                table.insert(out, "")
+            end
+        end
+        table.insert(out, self.config.encode(v))
     end
 
     return out
 end
 
---- @return HarpoonList
---- @param list_config HarpoonPartialConfigItem
---- @param name string
---- @param items string[]
+---@return HarpoonList
+---@param list_config HarpoonPartialConfigItem
+---@param name string
+---@param items string[]
 function HarpoonList.decode(list_config, name, items)
     local list_items = {}
-    for k, item in pairs(items) do
-        list_items[k] = item ~= vim.NIL and list_config.decode(item) or nil
+    for i, item in ipairs(items) do
+        if item ~= "" then
+            local ok, data = pcall(list_config.decode, item)
+            if ok then
+                table.insert(list_items, i, data)
+            end
+        end
     end
 
     return HarpoonList:new(list_config, name, list_items)

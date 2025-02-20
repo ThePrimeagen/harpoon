@@ -48,12 +48,12 @@ function M.info()
     }
 end
 
---- @alias HarpoonRawData {[string]: {[string]: string[]}}
+---@alias HarpoonRawData {[string]: {[string]: string[]}}
 
---- @class HarpoonData
---- @field _data HarpoonRawData
---- @field has_error boolean
---- @field config HarpoonConfig
+---@class HarpoonData
+---@field _data HarpoonRawData
+---@field has_error boolean
+---@field config HarpoonConfig
 local Data = {}
 
 -- 1. load the data
@@ -71,18 +71,7 @@ local function read_data(config, provided_path)
     provided_path = provided_path or fullpath(config)
     local path = Path:new(provided_path)
     local exists = path:exists()
-
-    if not exists then
-        write_data({}, config)
-    end
-
-    local out_data = path:read()
-
-    if not out_data or out_data == "" then
-        write_data({}, config)
-        out_data = "{}"
-    end
-
+    local out_data = exists and path:read() or "{}"
     local data = vim.json.decode(out_data)
     return data
 end
@@ -145,11 +134,28 @@ function Data:sync()
         error("Harpoon: unable to sync data, error reading data file")
     end
 
+    local has_data = false
+
     for k, v in pairs(self._data) do
         data[k] = v
+
+        local _, ctx = next(v)
+
+        if next(ctx) then
+            has_data = true
+            break
+        end
     end
 
-    pcall(write_data, data, self.config)
+    if has_data then
+        pcall(write_data, data, self.config)
+    else
+        local path = Path:new(fullpath(self.config))
+
+        if path:exists() then
+            path:rm()
+        end
+    end
 end
 
 M.Data = Data
