@@ -213,6 +213,8 @@ end
 function M.add_file(file_name_or_buf_id)
     filter_filetype()
     local buf_name = get_buf_name(file_name_or_buf_id)
+    -- Support for URI-like buffers. Without this, the "//" will be "/" in the quick menu
+    buf_name = string.gsub(buf_name, "://", ":\\/\\/")
     log.trace("add_file():", buf_name)
 
     if M.valid_index(M.get_index_of(buf_name)) then
