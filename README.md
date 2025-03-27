@@ -245,6 +245,19 @@ vim.cmd('highlight! TabLineFill guibg=NONE guifg=white')
 Result:
 ![tabline](https://i.imgur.com/8i8mKJD.png)
 
+#### Auto-save
+
+Auto-save will trigger `BufWrite` events when Harpoon quick menu is opened.
+This then triggers Harpoon to close the quick menu, resulting in the menu appearing then quickly closing.
+
+To resolve this you can use `condition` config variable to disable auto-save for the harpoon file type.
+
+```lua
+condition = function(buf)
+  return vim.fn.getbufvar(buf, "&filetype") ~= "harpoon"
+end,
+```
+
 ## ⇁ Social
 For questions about Harpoon, there's a #harpoon channel on [the Primeagen's Discord](https://discord.gg/theprimeagen) server.
 * [Discord](https://discord.gg/theprimeagen)
