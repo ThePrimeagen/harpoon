@@ -68,6 +68,8 @@ function Builtins.highlight_current_file()
     return {
         UI_CREATE = function(cx)
             for line_number, file in pairs(cx.contents) do
+                -- check to make sure it is the same file (prevents multiple files of same name getting confused)
+                file = vim.fs.abspath(file)
                 if string.find(cx.current_file, file, 1, true) then
                     -- highlight the harpoon menu line that corresponds to the current buffer
                     vim.api.nvim_buf_add_highlight(
