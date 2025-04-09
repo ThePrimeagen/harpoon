@@ -10,6 +10,7 @@ local Extensions = require("harpoon.extensions")
 ---@field ui_width_ratio? number this is the ratio of the editor window to use
 ---@field ui_max_width? number this is the max width the window can be
 ---@field height_in_lines? number this is the max height in lines that the window can be
+---@field close_on_esc? boolean this marks whether window should close on <esc>
 
 ---@return HarpoonToggleOptions
 local function toggle_config(config)
@@ -109,6 +110,13 @@ function HarpoonUI:_create_window(toggle_opts)
         border = toggle_opts.border or "single",
     })
 
+    local close_on_esc
+    if toggle_opts.close_on_esc == nil then
+        close_on_esc = true
+    else
+        close_on_esc = toggle_opts.close_on_esc
+    end
+
     if win_id == 0 then
         Logger:log(
             "ui#_create_window failed to create window, win_id returned 0"
@@ -118,7 +126,7 @@ function HarpoonUI:_create_window(toggle_opts)
         error("Failed to create window")
     end
 
-    Buffer.setup_autocmds_and_keymaps(bufnr)
+    Buffer.setup_autocmds_and_keymaps(bufnr, close_on_esc)
 
     self.win_id = win_id
     vim.api.nvim_set_option_value("number", true, {
