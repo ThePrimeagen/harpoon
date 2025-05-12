@@ -75,6 +75,7 @@ end
 --- @field _length number
 --- @field _index number
 --- @field items HarpoonItem[]
+--- @field __is_harpoon_list boolean
 local HarpoonList = {}
 
 HarpoonList.__index = HarpoonList
@@ -86,6 +87,7 @@ function HarpoonList:new(config, name, items)
         name = name,
         _length = guess_length(items),
         _index = 1,
+        __is_harpoon_list = true,
     }, self)
 end
 
