@@ -292,6 +292,7 @@ function HarpoonList:select(index, options)
             Extensions.event_names.SELECT,
             { list = self, item = item, idx = index }
         )
+        self._index = index
         self.config.select(item, self, options)
     end
 end
@@ -301,16 +302,16 @@ end
 function HarpoonList:next(opts)
     opts = opts or {}
 
-    self._index = self._index + 1
-    if self._index > self._length then
+    new_index = self._index + 1
+    if new_index > self._length then
         if opts.ui_nav_wrap then
-            self._index = 1
+            new_index = 1
         else
-            self._index = self._length
+            new_index = self._length
         end
     end
 
-    self:select(self._index)
+    self:select(new_index, opts)
 end
 
 ---
@@ -318,16 +319,16 @@ end
 function HarpoonList:prev(opts)
     opts = opts or {}
 
-    self._index = self._index - 1
-    if self._index < 1 then
+    new_index = self._index - 1
+    if new_index < 1 then
         if opts.ui_nav_wrap then
-            self._index = #self.items
+            new_index = #self.items
         else
-            self._index = 1
+            new_index = 1
         end
     end
 
-    self:select(self._index)
+    self:select(new_index, opts)
 end
 
 --- @return string[]
