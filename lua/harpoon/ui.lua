@@ -160,6 +160,7 @@ function HarpoonUI:toggle_quick_menu(list, opts)
         bufnr = bufnr,
         current_file = current_file,
         contents = contents,
+        active_list = list,
     })
 end
 
