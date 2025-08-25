@@ -46,7 +46,7 @@ use {
 ```
 * install using [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
-{
+return {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
     dependencies = { "nvim-lua/plenary.nvim" }
