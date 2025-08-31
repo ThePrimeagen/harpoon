@@ -81,6 +81,8 @@ function M.setup_autocmds_and_keymaps(bufnr)
             require("harpoon").ui:toggle_quick_menu()
         end,
     })
+
+    vim.api.nvim_set_hl(0, "harpoonDirectory", { fg = "#8091A0" })
 end
 
 ---@param bufnr number
