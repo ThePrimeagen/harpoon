@@ -193,7 +193,7 @@ function M.get_default_config()
                 if swap then
                     local actions = {
                         {
-                            label = "Edit anyway (requires Vim confirmation)",
+                            label = "Edit anyway (Neovim will re-confirm with full info)",
                             value = "edit",
                         },
                         { label = "Recover", value = "recover" },
@@ -203,6 +203,7 @@ function M.get_default_config()
                     }
 
                     vim.ui.select(actions, {
+                        title = "swap file",
                         prompt = "Swap file exists for "
                             .. filepath
                             .. ". Choose action:",
