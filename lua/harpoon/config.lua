@@ -60,6 +60,7 @@ function M.get_default_config()
         settings = {
             save_on_toggle = false,
             sync_on_ui_close = false,
+            swap_strategy = "prompt", -- "edit", "recover", "delete", "readonly", "quit", "abort", "prompt"
 
             key = function()
                 return vim.loop.cwd()
@@ -93,7 +94,7 @@ function M.get_default_config()
             ---@param list_item? HarpoonListFileItem
             ---@param list HarpoonList
             ---@param options HarpoonListFileOptions
-            select = function(list_item, list, options)
+            _do_select = function(list_item, list, options)
                 Logger:log(
                     "config_default#select",
                     list_item,
@@ -168,7 +169,62 @@ function M.get_default_config()
                     buffer = bufnr,
                 })
             end,
+            select = function(list_item, list, options)
+                if list_item == nil then
+                    return
+                end
 
+                local filepath = list_item.value
+
+                -- helper: check for swap file
+                local function check_swap(path)
+                    local dirs = vim.opt.directory:get()
+                    for _, dir in ipairs(dirs) do
+                        local name =
+                            vim.fn.fnamemodify(path, ":p"):gsub("/", "%%")
+                        local swap = dir .. name .. ".swp"
+                        if vim.loop.fs_stat(swap) then
+                            return swap
+                        end
+                    end
+                end
+
+                local swap = check_swap(filepath)
+                if swap then
+                    vim.ui.select({
+                        { label = "Edit anyway", value = "edit" },
+                        { label = "Recover", value = "recover" },
+                        { label = "Delete swap & open", value = "delete" },
+                        { label = "Read-only", value = "readonly" },
+                        { label = "Abort", value = "abort" },
+                    }, {
+                        prompt = "Swap file exists for "
+                            .. filepath
+                            .. ". Choose action:",
+                    }, function(choice)
+                        if not choice or choice.value == "abort" then
+                            return
+                        end
+                        if choice.value == "delete" then
+                            vim.loop.fs_unlink(swap)
+                        end
+                        if choice.value == "recover" then
+                            vim.cmd("recover " .. filepath)
+                            return
+                        end
+                        if choice.value == "readonly" then
+                            vim.cmd("edit " .. filepath .. " readonly")
+                            return
+                        end
+                        -- default: edit normally
+                        vim.schedule(function()
+                            list.config._do_select(list_item, list, options)
+                        end)
+                    end)
+                else
+                    list.config._do_select(list_item, list, options)
+                end
+            end,
             ---@param list_item_a HarpoonListItem
             ---@param list_item_b HarpoonListItem
             equals = function(list_item_a, list_item_b)
