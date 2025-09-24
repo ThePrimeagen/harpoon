@@ -169,76 +169,99 @@ function M.get_default_config()
                     buffer = bufnr,
                 })
             end,
+
+            ---@param list_item? HarpoonListFileItem
+            ---@param list HarpoonList
+            ---@param options HarpoonListFileOptions
             select = function(list_item, list, options)
-                if list_item == nil then
+                if not list_item then
                     return
                 end
 
                 local filepath = list_item.value
+                options = options or {}
 
-                -- helper: check for swap file
-                local function check_swap(path)
-                    local dirs = vim.opt.directory:get()
-                    for _, dir in ipairs(dirs) do
-                        local name =
-                            vim.fn.fnamemodify(path, ":p"):gsub("/", "%%")
-                        local swap = dir .. name .. ".swp"
-                        if vim.loop.fs_stat(swap) then
-                            return swap
-                        end
-                    end
-                end
+                -- get or create buffer
+                local bufnr = vim.fn.bufnr(filepath, true)
 
-                local swap = check_swap(filepath)
-                if swap then
-                    vim.ui.select({
-                        { label = "Edit anyway", value = "edit" },
-                        { label = "Recover", value = "recover" },
-                        { label = "Delete swap & open", value = "delete" },
-                        { label = "Read-only", value = "readonly" },
-                        { label = "Abort", value = "abort" },
-                    }, {
+                -- check if swap exists for this buffer
+                local swap = vim.fn.swapname(bufnr)
+                if swap ~= "" and list.config.swap_strategy == "prompt" then
+                    local actions = {
+                        "Edit anyway",
+                        "Recover",
+                        "Delete swap & open",
+                        "Read-only",
+                        "Abort",
+                    }
+
+                    vim.ui.select(actions, {
                         prompt = "Swap file exists for "
                             .. filepath
                             .. ". Choose action:",
                     }, function(choice)
-                        if not choice or choice.value == "abort" then
+                        if not choice or choice == "Abort" then
                             return
                         end
-                        if choice.value == "delete" then
+                        if choice == "Delete swap & open" then
                             vim.loop.fs_unlink(swap)
-                        end
-                        if choice.value == "recover" then
+                            vim.cmd("edit " .. filepath)
+                        elseif choice == "Recover" then
                             vim.cmd("recover " .. filepath)
-                            return
+                        elseif choice == "Read-only" then
+                            vim.cmd("view " .. filepath)
+                        else
+                            -- Edit anyway
+                            vim.cmd("edit " .. filepath)
                         end
-                        if choice.value == "readonly" then
-                            vim.cmd("edit " .. filepath .. " readonly")
-                            return
-                        end
-                        -- default: edit normally
-                        vim.schedule(function()
-                            list.config._do_select(list_item, list, options)
-                        end)
                     end)
-                else
-                    list.config._do_select(list_item, list, options)
-                end
-            end,
-            ---@param list_item_a HarpoonListItem
-            ---@param list_item_b HarpoonListItem
-            equals = function(list_item_a, list_item_b)
-                if list_item_a == nil and list_item_b == nil then
-                    return true
-                elseif list_item_a == nil or list_item_b == nil then
-                    return false
+
+                    return
                 end
 
-                return list_item_a.value == list_item_b.value
-            end,
+                -- No swap conflict → normal Harpoon flow
+                -- replicate original _do_select logic
+                local set_position = false
+                if not vim.api.nvim_buf_is_loaded(bufnr) then
+                    set_position = true
+                    vim.fn.bufload(bufnr)
+                    vim.api.nvim_set_option_value(
+                        "buflisted",
+                        true,
+                        { buf = bufnr }
+                    )
+                end
 
-            get_root_dir = function()
-                return vim.loop.cwd()
+                if options.vsplit then
+                    vim.cmd("vsplit")
+                elseif options.split then
+                    vim.cmd("split")
+                elseif options.tabedit then
+                    vim.cmd("tabedit")
+                end
+
+                vim.api.nvim_set_current_buf(bufnr)
+
+                if set_position then
+                    local lines = vim.api.nvim_buf_line_count(bufnr)
+                    local row = list_item.context.row or 1
+                    local col = list_item.context.col or 0
+
+                    if row > lines then
+                        row = lines
+                    end
+                    local line = vim.api.nvim_buf_get_lines(
+                        bufnr,
+                        row - 1,
+                        row,
+                        false
+                    )[1]
+                    if col > #line then
+                        col = #line
+                    end
+
+                    vim.api.nvim_win_set_cursor(0, { row, col })
+                end
             end,
 
             ---@param config HarpoonPartialConfigItem
