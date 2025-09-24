@@ -192,7 +192,10 @@ function M.get_default_config()
                 local swap = check_swap(filepath)
                 if swap then
                     local actions = {
-                        { label = "Edit anyway", value = "edit" },
+                        {
+                            label = "Edit anyway (requires Vim confirmation)",
+                            value = "edit",
+                        },
                         { label = "Recover", value = "recover" },
                         { label = "Delete swap & open", value = "delete" },
                         { label = "Read-only", value = "readonly" },
@@ -216,6 +219,9 @@ function M.get_default_config()
                         end
                         if choice.value == "delete" then
                             vim.loop.fs_unlink(swap)
+                            vim.schedule(function()
+                                list.config._do_select(list_item, list, options)
+                            end)
                         end
                         if choice.value == "recover" then
                             vim.cmd("recover " .. filepath)
@@ -225,10 +231,10 @@ function M.get_default_config()
                             vim.cmd("view " .. filepath)
                             return
                         end
-                        -- default: edit normally
-                        vim.schedule(function()
-                            list.config._do_select(list_item, list, options)
-                        end)
+                        if choice.value == "edit" then
+                            vim.cmd("edit! " .. filepath)
+                            return
+                        end
                     end)
                 else
                     list.config._do_select(list_item, list, options)
