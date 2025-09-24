@@ -191,13 +191,22 @@ function M.get_default_config()
 
                 local swap = check_swap(filepath)
                 if swap then
-                    vim.ui.select({
-                        { label = "Edit anyway", value = "edit" },
-                        { label = "Recover", value = "recover" },
-                        { label = "Delete swap & open", value = "delete" },
-                        { label = "Read-only", value = "readonly" },
-                        { label = "Abort", value = "abort" },
-                    }, {
+                    local actions = {
+                        "Edit anyway",
+                        "Recover",
+                        "Delete swap & open",
+                        "Read-only",
+                        "Abort",
+                    }
+                    -- local actions = {
+                    --     { label = "Edit anyway", value = "edit" },
+                    --     { label = "Recover", value = "recover" },
+                    --     { label = "Delete swap & open", value = "delete" },
+                    --     { label = "Read-only", value = "readonly" },
+                    --     { label = "Abort", value = "abort" },
+                    -- }
+
+                    vim.ui.select(actions, {
                         prompt = "Swap file exists for "
                             .. filepath
                             .. ". Choose action:",
@@ -225,6 +234,7 @@ function M.get_default_config()
                     list.config._do_select(list_item, list, options)
                 end
             end,
+
             ---@param list_item_a HarpoonListItem
             ---@param list_item_b HarpoonListItem
             equals = function(list_item_a, list_item_b)
