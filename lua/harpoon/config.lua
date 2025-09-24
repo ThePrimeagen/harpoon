@@ -192,26 +192,26 @@ function M.get_default_config()
                 local swap = check_swap(filepath)
                 if swap then
                     local actions = {
-                        "Edit anyway",
-                        "Recover",
-                        "Delete swap & open",
-                        "Read-only",
-                        "Abort",
+                        { label = "Edit anyway", value = "edit" },
+                        { label = "Recover", value = "recover" },
+                        { label = "Delete swap & open", value = "delete" },
+                        { label = "Read-only", value = "readonly" },
+                        { label = "Abort", value = "abort" },
                     }
-                    -- local actions = {
-                    --     { label = "Edit anyway", value = "edit" },
-                    --     { label = "Recover", value = "recover" },
-                    --     { label = "Delete swap & open", value = "delete" },
-                    --     { label = "Read-only", value = "readonly" },
-                    --     { label = "Abort", value = "abort" },
-                    -- }
 
                     vim.ui.select(actions, {
                         prompt = "Swap file exists for "
                             .. filepath
                             .. ". Choose action:",
+                        format_item = function(item)
+                            return item.label
+                        end,
                     }, function(choice)
-                        if not choice or choice.value == "abort" then
+                        if not choice then
+                            return
+                        end
+
+                        if choice.value == "abort" then
                             return
                         end
                         if choice.value == "delete" then
@@ -222,7 +222,7 @@ function M.get_default_config()
                             return
                         end
                         if choice.value == "readonly" then
-                            vim.cmd("edit " .. filepath .. " readonly")
+                            vim.cmd("view " .. filepath)
                             return
                         end
                         -- default: edit normally
