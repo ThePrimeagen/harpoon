@@ -90,7 +90,7 @@ function M.get_default_config()
                 return list_item.value
             end,
 
-            --- the select function is called when a user selects an item from
+            --- the _do_select function is called when a user selects an item from
             --- the corresponding list and can be nil if select_with_nil is true
             ---@param list_item? HarpoonListFileItem
             ---@param list HarpoonList
@@ -112,7 +112,6 @@ function M.get_default_config()
                 local set_position = false
                 if bufnr == -1 then -- must create a buffer!
                     set_position = true
-                    -- bufnr = vim.fn.bufnr(list_item.value, true)
                     bufnr = vim.fn.bufadd(list_item.value)
                 end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -170,6 +169,9 @@ function M.get_default_config()
                     buffer = bufnr,
                 })
             end,
+
+            -- Wrapper for _do_select()
+            -- Handles E325 swap file `errors`
             select = function(list_item, list, options)
                 if list_item == nil then
                     return
@@ -177,8 +179,7 @@ function M.get_default_config()
 
                 local filepath = list_item.value
 
-                -- helper: check for swap file
-                local function check_swap(path)
+                local function check_for_swap_file(path)
                     local dirs = vim.opt.directory:get()
                     for _, dir in ipairs(dirs) do
                         local name =
@@ -190,32 +191,51 @@ function M.get_default_config()
                     end
                 end
 
-                local swap = check_swap(filepath)
+                local swap = check_for_swap_file(filepath)
                 if swap then
-                    swap_ui(filepath, swap, function(choice)
+                    swap_ui.show(filepath, swap, function(choice)
                         if not choice then
                             return
                         end
 
-                        if choice == "abort" then
+                        if choice == swap_ui.ACTIONS.ABORT then
                             return
                         end
-                        if choice == "delete" then
+                        if choice == swap_ui.ACTIONS.DELETE then
                             vim.loop.fs_unlink(swap)
                             vim.schedule(function()
                                 list.config._do_select(list_item, list, options)
                             end)
                         end
-                        if choice == "recover" then
-                            vim.cmd("recover " .. filepath)
+                        if choice == swap_ui.ACTIONS.RECOVER then
+                            local ok, err =
+                                pcall(vim.cmd, "recover " .. filepath)
+                            if not ok then
+                                vim.notify(
+                                    "Recovery failed: " .. err,
+                                    vim.log.levels.WARN
+                                )
+                            end
                             return
                         end
-                        if choice == "readonly" then
-                            vim.cmd("view " .. filepath)
+                        if choice == swap_ui.ACTIONS.READONLY then
+                            local ok, err = pcall(vim.cmd, "view " .. filepath)
+                            if not ok then
+                                vim.notify(
+                                    "Read-only failed: " .. err,
+                                    vim.log.levels.WARN
+                                )
+                            end
                             return
                         end
-                        if choice == "edit" then
-                            vim.cmd("edit! " .. filepath)
+                        if choice == swap_ui.ACTIONS.EDIT then
+                            local ok, err = pcall(vim.cmd, "edit! " .. filepath)
+                            if not ok then
+                                vim.notify(
+                                    "Edit failed: " .. err,
+                                    vim.log.levels.WARN
+                                )
+                            end
                             return
                         end
                     end)

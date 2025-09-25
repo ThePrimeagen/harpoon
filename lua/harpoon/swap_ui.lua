@@ -1,16 +1,26 @@
+local ACTIONS = {
+    READONLY = "readonly",
+    EDIT = "edit",
+    RECOVER = "recover",
+    DELETE = "delete",
+    ABORT = "abort",
+}
+
 ---@param filepath string
 ---@param swap string
 ---@param on_choice fun(value: string)
-local function show_swap_ui(filepath, swap, on_choice)
+local function show(filepath, swap, on_choice)
     local width = math.min(80, vim.o.columns - 10)
     local height = 14
     local row = math.floor((vim.o.lines - height) / 2)
     local col = math.floor((vim.o.columns - width) / 2)
 
+    -- Create scratch buffer
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.bo[bufnr].bufhidden = "wipe"
+    vim.bo[bufnr].buftype = "nofile"
+    vim.bo[bufnr].buflisted = false
 
-    local action_header = "Choose an action:"
     local lines = {
         "E325: ATTENTION",
         "",
@@ -18,18 +28,16 @@ local function show_swap_ui(filepath, swap, on_choice)
         "",
         "While opening file: " .. filepath,
         "",
-        action_header,
+        "Choose an action:",
         " [O]pen Read-only",
         " (E)dit anyway",
         " (R)ecover",
         " (D)elete swap & edit",
         " (A)bort / (Q)uit",
     }
-
-    vim.bo[bufnr].modifiable = true
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-    vim.bo[bufnr].modifiable = false
 
+    -- Open floating window
     local win_id = vim.api.nvim_open_win(bufnr, true, {
         relative = "editor",
         width = width,
@@ -40,45 +48,57 @@ local function show_swap_ui(filepath, swap, on_choice)
         border = "rounded",
         title = "Harpoon: Swap File Found",
         title_pos = "left",
+        focusable = true,
     })
-
-    -- Enable highlight of current line
     vim.wo[win_id].cursorline = true
-    -- Optional: set a specific highlight (defaults to CursorLine)
-    -- vim.api.nvim_set_hl(0, "CursorLine", { bg = "#3c3836" })
 
-    -- Get start and end of actions
-    local action_start, action_end
-    for i, line in ipairs(lines) do
-        if line:match(action_header) then
-            action_start = i + 1
-            action_end = #lines
-            break
-        end
-    end
-
-    local choice_map = {
-        "readonly",
-        "edit",
-        "recover",
-        "delete",
-        "abort",
-    }
-
-    -- Place cursor on first option
+    local action_start, action_end = 8, 12
     local column = 2
     vim.api.nvim_win_set_cursor(win_id, { action_start, column })
 
+    -- Prevent switching to another buffer or window
+    local group =
+        vim.api.nvim_create_augroup("HarpoonSwapModal", { clear = true })
+    vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+        group = group,
+        callback = function(ev)
+            if ev.buf ~= bufnr then
+                vim.schedule(function()
+                    if vim.api.nvim_win_is_valid(win_id) then
+                        vim.api.nvim_set_current_win(win_id)
+                    end
+                end)
+            end
+        end,
+    })
+
+    local function close(choice)
+        if vim.api.nvim_win_is_valid(win_id) then
+            vim.api.nvim_win_close(win_id, true)
+        end
+        vim.api.nvim_del_augroup_by_id(group)
+        on_choice(choice)
+    end
+
+    local choice_map = {
+        ACTIONS.READONLY,
+        ACTIONS.EDIT,
+        ACTIONS.RECOVER,
+        ACTIONS.DELETE,
+        ACTIONS.ABORT,
+    }
+
+    -- <CR> to confirm
     vim.keymap.set("n", "<CR>", function()
         local lnum = vim.fn.line(".")
         local idx = lnum - action_start + 1
         local choice = choice_map[idx]
         if choice then
-            vim.api.nvim_win_close(win_id, true)
-            on_choice(choice)
+            close(choice)
         end
     end, { buffer = bufnr, nowait = true })
 
+    -- j/k navigation
     vim.keymap.set("n", "j", function()
         local lnum = vim.fn.line(".")
         if lnum >= action_end then
@@ -97,33 +117,33 @@ local function show_swap_ui(filepath, swap, on_choice)
         end
     end, { buffer = bufnr, nowait = true })
 
+    -- Hotkeys
     local hotkeys = {
-        O = "readonly",
-        o = "readonly",
-        E = "edit",
-        e = "edit",
-        R = "recover",
-        r = "recover",
-        D = "delete",
-        d = "delete",
-        A = "abort",
-        a = "abort",
-        Q = "abort",
-        q = "abort",
+        O = ACTIONS.READONLY,
+        o = ACTIONS.READONLY,
+        E = ACTIONS.EDIT,
+        e = ACTIONS.EDIT,
+        R = ACTIONS.RECOVER,
+        r = ACTIONS.RECOVER,
+        D = ACTIONS.DELETE,
+        d = ACTIONS.DELETE,
+        A = ACTIONS.ABORT,
+        a = ACTIONS.ABORT,
+        Q = ACTIONS.ABORT,
+        q = ACTIONS.ABORT,
     }
     for key, action in pairs(hotkeys) do
         vim.keymap.set("n", key, function()
-            vim.api.nvim_win_close(win_id, true)
-            on_choice(action)
+            close(action)
         end, { buffer = bufnr, nowait = true })
     end
 
-    local function close_abort()
-        vim.api.nvim_win_close(win_id, true)
-        on_choice("abort")
-    end
-    vim.keymap.set("n", "q", close_abort, { buffer = bufnr, nowait = true })
-    vim.keymap.set("n", "<Esc>", close_abort, { buffer = bufnr, nowait = true })
+    vim.keymap.set("n", "<Esc>", function()
+        close(ACTIONS.ABORT)
+    end, { buffer = bufnr, nowait = true })
 end
 
-return show_swap_ui
+return {
+    show = show,
+    ACTIONS = ACTIONS,
+}
