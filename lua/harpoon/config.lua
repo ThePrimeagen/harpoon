@@ -192,32 +192,12 @@ function M.get_default_config()
 
                 local swap = check_swap(filepath)
                 if swap then
-                    local actions = {
-                        {
-                            label = "Edit anyway (requires Vim confirmation)",
-                            value = "edit",
-                        },
-                        { label = "Recover", value = "recover" },
-                        { label = "Delete swap & open", value = "delete" },
-                        { label = "Read-only", value = "readonly" },
-                        { label = "Abort", value = "abort" },
-                    }
-
-                    -- vim.ui.select(actions, {
-                    -- prompt = "Swap file exists for "
-                    --     .. filepath
-                    --     .. ". Choose action:",
-                    -- format_item = function(item)
-                    --     return item.label
-                    -- end,
-                    -- }, function(choice)
                     swap_ui(filepath, swap, function(choice)
                         if not choice then
                             return
                         end
 
                         if choice == "abort" then
-                            print("Abort!")
                             return
                         end
                         if choice == "delete" then
