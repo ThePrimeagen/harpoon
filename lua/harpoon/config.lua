@@ -1,4 +1,5 @@
 local Extensions = require("harpoon.extensions")
+local swap_ui = require("harpoon.swap_ui")
 local Logger = require("harpoon.logger")
 local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
@@ -89,7 +90,7 @@ function M.get_default_config()
                 return list_item.value
             end,
 
-            --- the select function is called when a user selects an item from
+            --- the _do_select function is called when a user selects an item from
             --- the corresponding list and can be nil if select_with_nil is true
             ---@param list_item? HarpoonListFileItem
             ---@param list HarpoonList
@@ -111,7 +112,6 @@ function M.get_default_config()
                 local set_position = false
                 if bufnr == -1 then -- must create a buffer!
                     set_position = true
-                    -- bufnr = vim.fn.bufnr(list_item.value, true)
                     bufnr = vim.fn.bufadd(list_item.value)
                 end
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -170,9 +170,8 @@ function M.get_default_config()
                 })
             end,
 
-            ---@param list_item? HarpoonListFileItem
-            ---@param list HarpoonList
-            ---@param options HarpoonListFileOptions
+            -- Wrapper for _do_select()
+            -- Handles E325 swap file `errors`
             select = function(list_item, list, options)
                 if not list_item then
                     return
@@ -181,38 +180,29 @@ function M.get_default_config()
                 local filepath = list_item.value
                 options = options or {}
 
-                -- get or create buffer
-                local bufnr = vim.fn.bufnr(filepath, true)
+                local function check_for_swap_file(path)
+                    local dirs = vim.opt.directory:get()
+                    for _, dir in ipairs(dirs) do
+                        local name =
+                            vim.fn.fnamemodify(path, ":p"):gsub("/", "%%")
+                        local swap = dir .. name .. ".swp"
+                        if vim.loop.fs_stat(swap) then
+                            return swap
+                        end
+                    end
+                end
 
-                -- check if swap exists for this buffer
-                local swap = vim.fn.swapname(bufnr)
-                if swap ~= "" and list.config.swap_strategy == "prompt" then
-                    local actions = {
-                        "Edit anyway",
-                        "Recover",
-                        "Delete swap & open",
-                        "Read-only",
-                        "Abort",
-                    }
-
-                    vim.ui.select(actions, {
-                        title = "swap file",
-                        prompt = "Swap file exists for "
-                            .. filepath
-                            .. ". Choose action:",
-                        format_item = function(item)
-                            return item.label
-                        end,
-                    }, function(choice)
-                        if not choice or choice == "Abort" then
+                local swap = check_for_swap_file(filepath)
+                if swap then
+                    swap_ui.show(filepath, swap, function(choice)
                         if not choice then
                             return
                         end
 
-                        if choice.value == "abort" then
+                        if choice == swap_ui.ACTIONS.ABORT then
                             return
                         end
-                        if choice == "Delete swap & open" then
+                        if choice == swap_ui.ACTIONS.DELETE then
                             vim.loop.fs_unlink(swap)
                             vim.cmd("edit " .. filepath)
                         elseif choice == "Recover" then
@@ -220,13 +210,36 @@ function M.get_default_config()
                                 list.config._do_select(list_item, list, options)
                             end)
                         end
-                        if choice.value == "recover" then
-                            vim.cmd("recover " .. filepath)
-                        elseif choice == "Read-only" then
-                            vim.cmd("view " .. filepath)
-                        else
-                            -- Edit anyway
-                            vim.cmd("edit " .. filepath)
+                        if choice == swap_ui.ACTIONS.RECOVER then
+                            local ok, err =
+                                pcall(vim.cmd, "recover " .. filepath)
+                            if not ok then
+                                vim.notify(
+                                    "Recovery failed: " .. err,
+                                    vim.log.levels.WARN
+                                )
+                            end
+                            return
+                        end
+                        if choice == swap_ui.ACTIONS.READONLY then
+                            local ok, err = pcall(vim.cmd, "view " .. filepath)
+                            if not ok then
+                                vim.notify(
+                                    "Read-only failed: " .. err,
+                                    vim.log.levels.WARN
+                                )
+                            end
+                            return
+                        end
+                        if choice == swap_ui.ACTIONS.EDIT then
+                            local ok, err = pcall(vim.cmd, "edit! " .. filepath)
+                            if not ok then
+                                vim.notify(
+                                    "Edit failed: " .. err,
+                                    vim.log.levels.WARN
+                                )
+                            end
+                            return
                         end
                     end)
 
