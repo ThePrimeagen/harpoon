@@ -1,4 +1,5 @@
 local Extensions = require("harpoon.extensions")
+local swap_ui = require("harpoon.swap_ui")
 local Logger = require("harpoon.logger")
 local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
@@ -202,36 +203,38 @@ function M.get_default_config()
                         { label = "Abort", value = "abort" },
                     }
 
-                    vim.ui.select(actions, {
-                        prompt = "Swap file exists for "
-                            .. filepath
-                            .. ". Choose action:",
-                        format_item = function(item)
-                            return item.label
-                        end,
-                    }, function(choice)
+                    -- vim.ui.select(actions, {
+                    -- prompt = "Swap file exists for "
+                    --     .. filepath
+                    --     .. ". Choose action:",
+                    -- format_item = function(item)
+                    --     return item.label
+                    -- end,
+                    -- }, function(choice)
+                    swap_ui(filepath, swap, function(choice)
                         if not choice then
                             return
                         end
 
-                        if choice.value == "abort" then
+                        if choice == "abort" then
+                            print("Abort!")
                             return
                         end
-                        if choice.value == "delete" then
+                        if choice == "delete" then
                             vim.loop.fs_unlink(swap)
                             vim.schedule(function()
                                 list.config._do_select(list_item, list, options)
                             end)
                         end
-                        if choice.value == "recover" then
+                        if choice == "recover" then
                             vim.cmd("recover " .. filepath)
                             return
                         end
-                        if choice.value == "readonly" then
+                        if choice == "readonly" then
                             vim.cmd("view " .. filepath)
                             return
                         end
-                        if choice.value == "edit" then
+                        if choice == "edit" then
                             vim.cmd("edit! " .. filepath)
                             return
                         end
