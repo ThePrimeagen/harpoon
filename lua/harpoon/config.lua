@@ -196,17 +196,31 @@ function M.get_default_config()
                     }
 
                     vim.ui.select(actions, {
+                        title = "swap file",
                         prompt = "Swap file exists for "
                             .. filepath
                             .. ". Choose action:",
+                        format_item = function(item)
+                            return item.label
+                        end,
                     }, function(choice)
                         if not choice or choice == "Abort" then
+                        if not choice then
+                            return
+                        end
+
+                        if choice.value == "abort" then
                             return
                         end
                         if choice == "Delete swap & open" then
                             vim.loop.fs_unlink(swap)
                             vim.cmd("edit " .. filepath)
                         elseif choice == "Recover" then
+                            vim.schedule(function()
+                                list.config._do_select(list_item, list, options)
+                            end)
+                        end
+                        if choice.value == "recover" then
                             vim.cmd("recover " .. filepath)
                         elseif choice == "Read-only" then
                             vim.cmd("view " .. filepath)
