@@ -42,6 +42,11 @@ local function show_swap_ui(filepath, swap, on_choice)
         title_pos = "left",
     })
 
+    -- Enable highlight of current line
+    vim.wo[win_id].cursorline = true
+    -- Optional: set a specific highlight (defaults to CursorLine)
+    -- vim.api.nvim_set_hl(0, "CursorLine", { bg = "#3c3836" })
+
     -- Get start and end of actions
     local action_start, action_end
     for i, line in ipairs(lines) do
@@ -113,10 +118,12 @@ local function show_swap_ui(filepath, swap, on_choice)
         end, { buffer = bufnr, nowait = true })
     end
 
-    vim.keymap.set("n", "q", function()
+    local function close_abort()
         vim.api.nvim_win_close(win_id, true)
         on_choice("abort")
-    end, { buffer = bufnr, nowait = true })
+    end
+    vim.keymap.set("n", "q", close_abort, { buffer = bufnr, nowait = true })
+    vim.keymap.set("n", "<Esc>", close_abort, { buffer = bufnr, nowait = true })
 end
 
 return show_swap_ui
