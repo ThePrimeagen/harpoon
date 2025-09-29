@@ -1,7 +1,6 @@
 local Extensions = require("harpoon.extensions")
 local Logger = require("harpoon.logger")
 local Path = require("plenary.path")
-local swap_ui = require("harpoon.swap_ui")
 local function normalize_path(buf_name, root)
     return Path:new(buf_name):make_relative(root)
 end
@@ -96,29 +95,24 @@ function M.get_default_config()
             ---@param list HarpoonList The list object containing this item and config
             ---@param options HarpoonListFileOptions Optional flags: split, vsplit, tabedit
             select = function(list_item, list, options)
-                Logger:log(
-                    "config_default#select",
-                    list_item,
-                    list.name,
-                    options
-                )
-                if list_item == nil then
+                if not list_item then
                     return
                 end
-
                 options = options or {}
 
-                local bufnr = vim.fn.bufnr(to_exact_name(list_item.value))
+                local bufnr = vim.fn.bufnr(list_item.value)
                 local first_open = bufnr == -1
                     or not vim.api.nvim_buf_is_loaded(bufnr)
 
                 if first_open then
+                    -- check for swapfile
                     local swap
                     for _, dir in ipairs(vim.opt.directory:get()) do
-                        local name = vim.fn
-                            .fnamemodify(list_item.value, ":p")
-                            :gsub("/", "%%")
-                        local candidate = dir .. name .. ".swp"
+                        local candidate = dir
+                            .. vim.fn
+                                .fnamemodify(list_item.value, ":p")
+                                :gsub("/", "%%")
+                            .. ".swp"
                         if vim.loop.fs_stat(candidate) then
                             swap = candidate
                             break
@@ -126,43 +120,38 @@ function M.get_default_config()
                     end
 
                     if swap then
+                        local swap_ui = require("harpoon.swap_ui")
+                        -- BLOCK default select
                         swap_ui.show(list_item.value, swap, function(choice)
                             if
                                 not choice
                                 or choice == swap_ui.ACTIONS.ABORT
                             then
-                                return
+                                return -- do nothing
                             end
-                            if choice == swap_ui.ACTIONS.DELETE then
-                                vim.loop.fs_unlink(swap)
-                                vim.schedule(function()
-                                    pcall(
-                                        list.config._do_select,
-                                        list_item,
-                                        list,
-                                        options
-                                    )
-                                end)
-                                return
-                            end
-                            if choice == swap_ui.ACTIONS.RECOVER then
-                                pcall(vim.cmd, "recover " .. list_item.value)
-                                return
-                            end
+
                             if choice == swap_ui.ACTIONS.READONLY then
-                                pcall(vim.cmd, "view " .. list_item.value)
-                                return
-                            end
-                            if choice == swap_ui.ACTIONS.EDIT then
-                                pcall(vim.cmd, "edit! " .. list_item.value)
-                                return
+                                vim.cmd("view " .. list_item.value)
+                            elseif choice == swap_ui.ACTIONS.EDIT then
+                                vim.cmd("edit! " .. list_item.value)
+                            elseif choice == swap_ui.ACTIONS.RECOVER then
+                                vim.cmd("recover " .. list_item.value)
+                            elseif choice == swap_ui.ACTIONS.DELETE then
+                                vim.loop.fs_unlink(swap)
+                                -- call _do_select only if you want Harpoon to register/open buffer
+                                pcall(
+                                    list.config._do_select,
+                                    list_item,
+                                    list,
+                                    options
+                                )
                             end
                         end)
-                        return
+                        return -- do not run _do_select yet
                     end
                 end
 
-                -- No swap or buffer already loaded → fallback to original logic
+                -- fallback if no swapfile exists
                 pcall(list.config._do_select, list_item, list, options)
             end,
 
