@@ -1,8 +1,8 @@
 ---@class SwapUI
 ---@field ACTIONS table<string, string>
-local SwapUI = {}
+local M = {}
 
-SwapUI.ACTIONS = {
+M.ACTIONS = {
     READONLY = "readonly",
     EDIT = "edit",
     RECOVER = "recover",
@@ -13,7 +13,7 @@ SwapUI.ACTIONS = {
 ---@param filepath string
 ---@param swap string
 ---@param on_choice fun(value: string)
-function SwapUI.show(filepath, swap, on_choice)
+function M.show(filepath, swap, on_choice)
     local width = math.min(80, vim.o.columns - 10)
     local height = 14
     local row = math.floor((vim.o.lines - height) / 2)
@@ -65,11 +65,11 @@ function SwapUI.show(filepath, swap, on_choice)
     end
 
     local choice_map = {
-        SwapUI.ACTIONS.READONLY,
-        SwapUI.ACTIONS.EDIT,
-        SwapUI.ACTIONS.RECOVER,
-        SwapUI.ACTIONS.DELETE,
-        SwapUI.ACTIONS.ABORT,
+        M.ACTIONS.READONLY,
+        M.ACTIONS.EDIT,
+        M.ACTIONS.RECOVER,
+        M.ACTIONS.DELETE,
+        M.ACTIONS.ABORT,
     }
 
     local column = 2
@@ -107,18 +107,18 @@ function SwapUI.show(filepath, swap, on_choice)
 
     -- Hotkeys
     local hotkeys = {
-        O = SwapUI.ACTIONS.READONLY,
-        o = SwapUI.ACTIONS.READONLY,
-        E = SwapUI.ACTIONS.EDIT,
-        e = SwapUI.ACTIONS.EDIT,
-        R = SwapUI.ACTIONS.RECOVER,
-        r = SwapUI.ACTIONS.RECOVER,
-        D = SwapUI.ACTIONS.DELETE,
-        d = SwapUI.ACTIONS.DELETE,
-        A = SwapUI.ACTIONS.ABORT,
-        a = SwapUI.ACTIONS.ABORT,
-        Q = SwapUI.ACTIONS.ABORT,
-        q = SwapUI.ACTIONS.ABORT,
+        O = M.ACTIONS.READONLY,
+        o = M.ACTIONS.READONLY,
+        E = M.ACTIONS.EDIT,
+        e = M.ACTIONS.EDIT,
+        R = M.ACTIONS.RECOVER,
+        r = M.ACTIONS.RECOVER,
+        D = M.ACTIONS.DELETE,
+        d = M.ACTIONS.DELETE,
+        A = M.ACTIONS.ABORT,
+        a = M.ACTIONS.ABORT,
+        Q = M.ACTIONS.ABORT,
+        q = M.ACTIONS.ABORT,
     }
     for key, action in pairs(hotkeys) do
         vim.keymap.set("n", key, function()
@@ -130,8 +130,8 @@ function SwapUI.show(filepath, swap, on_choice)
     -- Escape closes window
     vim.keymap.set("n", "<Esc>", function()
         vim.api.nvim_win_close(win_id, true)
-        on_choice(SwapUI.ACTIONS.ABORT)
+        on_choice(M.ACTIONS.ABORT)
     end, { buffer = bufnr, nowait = true })
 end
 
-return SwapUI
+return M

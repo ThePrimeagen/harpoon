@@ -1,12 +1,10 @@
 local Extensions = require("harpoon.extensions")
-local swap_ui = require("harpoon.swap_ui")
 local Logger = require("harpoon.logger")
 local Path = require("plenary.path")
-
+local swap_ui = require("harpoon.swap_ui")
 local function normalize_path(buf_name, root)
     return Path:new(buf_name):make_relative(root)
 end
-
 local function to_exact_name(value)
     return "^" .. value .. "$"
 end
@@ -20,28 +18,26 @@ M.DEFAULT_LIST = DEFAULT_LIST
 ---@alias HarpoonListFileOptions {split: boolean, vsplit: boolean, tabedit: boolean}
 
 ---@class HarpoonPartialConfigItem
----@field select_with_nil? boolean
----@field encode? fun(list_item: HarpoonListItem): string
----@field decode? fun(obj: string): any
----@field display? fun(list_item: HarpoonListItem): string
----@field select? fun(list_item?: HarpoonListItem, list: HarpoonList, options?: any): nil
----@field equals? fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean
+---@field select_with_nil? boolean defaults to false
+---@field encode? (fun(list_item: HarpoonListItem): string) | boolean
+---@field decode? (fun(obj: string): any)
+---@field display? (fun(list_item: HarpoonListItem): string)
+---@field select? (fun(list_item?: HarpoonListItem, list: HarpoonList, options: any?): nil)
+---@field equals? (fun(list_line_a: HarpoonListItem, list_line_b: HarpoonListItem): boolean)
 ---@field create_list_item? fun(config: HarpoonPartialConfigItem, item: any?): HarpoonListItem
 ---@field BufLeave? fun(evt: any, list: HarpoonList): nil
 ---@field VimLeavePre? fun(evt: any, list: HarpoonList): nil
 ---@field get_root_dir? fun(): string
 
 ---@class HarpoonSettings
----@field save_on_toggle boolean
+---@field save_on_toggle boolean defaults to false
 ---@field sync_on_ui_close? boolean
----@field key fun(): string
----@field swap_strategy? string
+---@field key (fun(): string)
 
 ---@class HarpoonPartialSettings
 ---@field save_on_toggle? boolean
 ---@field sync_on_ui_close? boolean
----@field key? fun(): string
----@field swap_strategy? string
+---@field key? (fun(): string)
 
 ---@class HarpoonConfig
 ---@field default HarpoonPartialConfigItem
@@ -61,19 +57,23 @@ end
 ---@return HarpoonConfig
 function M.get_default_config()
     return {
+
         settings = {
             save_on_toggle = false,
             sync_on_ui_close = false,
-            swap_strategy = "prompt", -- "edit", "recover", "delete", "readonly", "quit", "abort", "prompt"
+
             key = function()
                 return vim.loop.cwd()
             end,
         },
 
         default = {
+
+            --- select_with_nill allows for a list to call select even if the provided item is nil
             select_with_nil = false,
 
             ---@param obj HarpoonListItem
+            ---@return string
             encode = function(obj)
                 return vim.json.encode(obj)
             end,
@@ -89,33 +89,114 @@ function M.get_default_config()
                 return list_item.value
             end,
 
-            --- Internal select function that performs the real buffer navigation
-            _do_select = function(list_item, list, options)
+            --- Handles selection of a list item in Harpoon
+            --- It first checks if the buffer exists or is loaded. If this is the first time
+            --- the file is opened, it checks for swapfiles and shows a floating swap UI if needed.
+            ---@param list_item? HarpoonListFileItem The item to select; may be nil if `select_with_nil` is true
+            ---@param list HarpoonList The list object containing this item and config
+            ---@param options HarpoonListFileOptions Optional flags: split, vsplit, tabedit
+            select = function(list_item, list, options)
                 Logger:log(
                     "config_default#select",
                     list_item,
                     list.name,
                     options
                 )
-                if not list_item then
+                if list_item == nil then
                     return
                 end
+
+                options = options or {}
+
+                local bufnr = vim.fn.bufnr(to_exact_name(list_item.value))
+                local first_open = bufnr == -1
+                    or not vim.api.nvim_buf_is_loaded(bufnr)
+
+                if first_open then
+                    local swap
+                    for _, dir in ipairs(vim.opt.directory:get()) do
+                        local name = vim.fn
+                            .fnamemodify(list_item.value, ":p")
+                            :gsub("/", "%%")
+                        local candidate = dir .. name .. ".swp"
+                        if vim.loop.fs_stat(candidate) then
+                            swap = candidate
+                            break
+                        end
+                    end
+
+                    if swap then
+                        swap_ui.show(list_item.value, swap, function(choice)
+                            if
+                                not choice
+                                or choice == swap_ui.ACTIONS.ABORT
+                            then
+                                return
+                            end
+                            if choice == swap_ui.ACTIONS.DELETE then
+                                vim.loop.fs_unlink(swap)
+                                vim.schedule(function()
+                                    pcall(
+                                        list.config._do_select,
+                                        list_item,
+                                        list,
+                                        options
+                                    )
+                                end)
+                                return
+                            end
+                            if choice == swap_ui.ACTIONS.RECOVER then
+                                pcall(vim.cmd, "recover " .. list_item.value)
+                                return
+                            end
+                            if choice == swap_ui.ACTIONS.READONLY then
+                                pcall(vim.cmd, "view " .. list_item.value)
+                                return
+                            end
+                            if choice == swap_ui.ACTIONS.EDIT then
+                                pcall(vim.cmd, "edit! " .. list_item.value)
+                                return
+                            end
+                        end)
+                        return
+                    end
+                end
+
+                -- No swap or buffer already loaded → fallback to original logic
+                pcall(list.config._do_select, list_item, list, options)
+            end,
+
+            --- Performs the actual buffer loading and navigation.
+            --- This is separated so that swap handling can safely call it via `pcall`.
+            --- Handles buffer creation, loading, cursor placement, and emits navigation events.
+            ---@param list_item? HarpoonListFileItem The item to open
+            ---@param list HarpoonList The list containing the item and config
+            ---@param options HarpoonListFileOptions Optional flags: split, vsplit, tabedit
+            _do_select = function(list_item, list, options)
+                Logger:log(
+                    "config_default#_do_select",
+                    list_item,
+                    list.name,
+                    options
+                )
+                if list_item == nil then
+                    return
+                end
+
                 options = options or {}
 
                 local bufnr = vim.fn.bufnr(to_exact_name(list_item.value))
                 local set_position = false
-                if bufnr == -1 then
+                if bufnr == -1 then -- must create a buffer!
                     set_position = true
+                    -- bufnr = vim.fn.bufnr(list_item.value, true)
                     bufnr = vim.fn.bufadd(list_item.value)
                 end
-
                 if not vim.api.nvim_buf_is_loaded(bufnr) then
                     vim.fn.bufload(bufnr)
-                    vim.api.nvim_set_option_value(
-                        "buflisted",
-                        true,
-                        { buf = bufnr }
-                    )
+                    vim.api.nvim_set_option_value("buflisted", true, {
+                        buf = bufnr,
+                    })
                 end
 
                 if options.vsplit then
@@ -130,8 +211,8 @@ function M.get_default_config()
 
                 if set_position then
                     local lines = vim.api.nvim_buf_line_count(bufnr)
-                    local edited = false
 
+                    local edited = false
                     if list_item.context.row > lines then
                         list_item.context.row = lines
                         edited = true
@@ -155,74 +236,27 @@ function M.get_default_config()
                     if edited then
                         Extensions.extensions:emit(
                             Extensions.event_names.POSITION_UPDATED,
-                            { list_item = list_item }
+                            {
+                                list_item = list_item,
+                            }
                         )
                     end
                 end
 
-                Extensions.extensions:emit(
-                    Extensions.event_names.NAVIGATE,
-                    { buffer = bufnr }
-                )
-            end,
-
-            --- Public select wrapper that handles swap files
-            select = function(list_item, list, options)
-                if not list_item then
-                    return
-                end
-                local filepath = list_item.value
-
-                local function check_for_swap_file(path)
-                    local dirs = vim.opt.directory:get()
-                    for _, dir in ipairs(dirs) do
-                        local name =
-                            vim.fn.fnamemodify(path, ":p"):gsub("/", "%%")
-                        local swap = dir .. name .. ".swp"
-                        if vim.loop.fs_stat(swap) then
-                            return swap
-                        end
-                    end
-                end
-
-                local swap = check_for_swap_file(filepath)
-                if swap then
-                    -- Use the swap_ui wrapper to ask user or smooth open
-                    swap_ui.show(filepath, swap, function(choice)
-                        if not choice then
-                            return
-                        end
-
-                        if choice == swap_ui.ACTIONS.ABORT then
-                            return
-                        end
-                        if choice == swap_ui.ACTIONS.DELETE then
-                            vim.loop.fs_unlink(swap)
-                            vim.schedule(function()
-                                list.config._do_select(list_item, list, options)
-                            end)
-                        elseif choice == swap_ui.ACTIONS.RECOVER then
-                            vim.cmd("recover " .. filepath)
-                        elseif choice == swap_ui.ACTIONS.READONLY then
-                            vim.cmd("view " .. filepath)
-                        elseif choice == swap_ui.ACTIONS.EDIT then
-                            vim.cmd("edit! " .. filepath)
-                        end
-                    end)
-                else
-                    list.config._do_select(list_item, list, options)
-                end
+                Extensions.extensions:emit(Extensions.event_names.NAVIGATE, {
+                    buffer = bufnr,
+                })
             end,
 
             ---@param list_item_a HarpoonListItem
             ---@param list_item_b HarpoonListItem
             equals = function(list_item_a, list_item_b)
-                if not list_item_a and not list_item_b then
+                if list_item_a == nil and list_item_b == nil then
                     return true
-                end
-                if not list_item_a or not list_item_b then
+                elseif list_item_a == nil or list_item_b == nil then
                     return false
                 end
+
                 return list_item_a.value == list_item_b.value
             end,
 
@@ -231,7 +265,7 @@ function M.get_default_config()
             end,
 
             ---@param config HarpoonPartialConfigItem
-            ---@param name? string
+            ---@param name? any
             ---@return HarpoonListItem
             create_list_item = function(config, name)
                 name = name
@@ -241,15 +275,23 @@ function M.get_default_config()
                         ),
                         config.get_root_dir()
                     )
+
                 Logger:log("config_default#create_list_item", name)
 
                 local bufnr = vim.fn.bufnr(name, false)
+
                 local pos = { 1, 0 }
                 if bufnr ~= -1 then
                     pos = vim.api.nvim_win_get_cursor(0)
                 end
 
-                return { value = name, context = { row = pos[1], col = pos[2] } }
+                return {
+                    value = name,
+                    context = {
+                        row = pos[1],
+                        col = pos[2],
+                    },
+                }
             end,
 
             ---@param arg {buf: number}
@@ -261,8 +303,10 @@ function M.get_default_config()
                     list.config.get_root_dir()
                 )
                 local item = list:get_by_value(bufname)
+
                 if item then
                     local pos = vim.api.nvim_win_get_cursor(0)
+
                     Logger:log(
                         "config_default#BufLeave updating position",
                         bufnr,
@@ -271,8 +315,10 @@ function M.get_default_config()
                         "to position",
                         pos
                     )
+
                     item.context.row = pos[1]
                     item.context.col = pos[2]
+
                     Extensions.extensions:emit(
                         Extensions.event_names.POSITION_UPDATED,
                         item
@@ -306,10 +352,35 @@ end
 ---@param settings HarpoonPartialSettings
 function M.create_config(settings)
     local config = M.get_default_config()
-    for k, v in pairs(settings) do
+    for k, v in ipairs(settings) do
         config.settings[k] = v
     end
     return config
 end
+
+-- Helper to check if a swapfile exists for a given filename
+local function has_swapfile(fname)
+    local ok, result = pcall(vim.api.nvim_exec2, "swaplist", { output = true })
+    if not ok then
+        return false
+    end
+    -- Look for the absolute filename in the swaplist output
+    return result.output:find(fname, 1, true) ~= nil
+end
+
+-- Autocmd for checking swapfiles only when a file is first read
+vim.api.nvim_create_autocmd("BufReadPre", {
+    callback = function(args)
+        local fname = vim.fn.expand(args.file)
+        if has_swapfile(fname) then
+            vim.notify(
+                "Swapfile detected for " .. vim.fn.fnamemodify(fname, ":t"),
+                vim.log.levels.WARN
+            )
+            -- 🔧 Here you could trigger your custom swap_ui
+            -- require("harpoon.swap_ui").show_swap_ui(fname)
+        end
+    end,
+})
 
 return M
