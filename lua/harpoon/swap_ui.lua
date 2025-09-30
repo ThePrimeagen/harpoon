@@ -77,22 +77,27 @@ function M.show(filepath, swap, on_choice)
     local stop_on_key_id
 
     local function close(choice)
+        -- Unregister on_key listener safely
         if stop_on_key_id then
-            vim.on_key(nil, stop_on_key_id) -- unregister
+            pcall(vim.on_key, nil, stop_on_key_id)
             stop_on_key_id = nil
         end
         if vim.api.nvim_win_is_valid(win_id) then
             vim.api.nvim_win_close(win_id, true)
         end
-        on_choice(choice)
+        if type(on_choice) == "function" then
+            pcall(on_choice, choice)
+        end
     end
 
+    -- Map hotkeys
     for key, action in pairs(hotkeys) do
         vim.keymap.set("n", key, function()
             close(action)
-        end, { buffer = bufnr, nowait = true })
+        end, { buffer = bufnr, nowait = true, silent = true })
     end
 
+    -- Enter selects current line
     vim.keymap.set("n", "<CR>", function()
         local lnum = vim.fn.line(".")
         local idx = math.max(1, math.min(lnum - action_start + 1, 5))
@@ -104,8 +109,9 @@ function M.show(filepath, swap, on_choice)
             M.ACTIONS.ABORT,
         }
         close(choice_map[idx] or M.ACTIONS.ABORT)
-    end, { buffer = bufnr, nowait = true })
+    end, { buffer = bufnr, nowait = true, silent = true })
 
+    -- Navigation
     vim.keymap.set("n", "j", function()
         local lnum = vim.fn.line(".")
         if lnum >= action_end then
@@ -113,7 +119,7 @@ function M.show(filepath, swap, on_choice)
         else
             vim.api.nvim_win_set_cursor(win_id, { lnum + 1, column })
         end
-    end, { buffer = bufnr, nowait = true })
+    end, { buffer = bufnr, nowait = true, silent = true })
 
     vim.keymap.set("n", "k", function()
         local lnum = vim.fn.line(".")
@@ -122,7 +128,7 @@ function M.show(filepath, swap, on_choice)
         else
             vim.api.nvim_win_set_cursor(win_id, { lnum - 1, column })
         end
-    end, { buffer = bufnr, nowait = true })
+    end, { buffer = bufnr, nowait = true, silent = true })
 
     -- Silent abort on any other key
     stop_on_key_id = vim.on_key(function(key)
