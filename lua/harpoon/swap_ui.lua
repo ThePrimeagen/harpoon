@@ -37,7 +37,6 @@ function M.show(filepath, swap, on_choice)
         " (A)bort / (Q)uit",
     }
 
-    -- Safely set buffer lines
     vim.bo[bufnr].modifiable = true
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
     vim.bo[bufnr].modifiable = false
@@ -59,7 +58,6 @@ function M.show(filepath, swap, on_choice)
     local column = 2
     vim.api.nvim_win_set_cursor(win_id, { action_start, column })
 
-    -- Allowed hotkeys
     local hotkeys = {
         O = M.ACTIONS.READONLY,
         o = M.ACTIONS.READONLY,
@@ -78,11 +76,8 @@ function M.show(filepath, swap, on_choice)
 
     local stop_on_key_id
 
-    -- Function to safely close
     local function close(choice)
-        print("choice: " .. choice)
         if stop_on_key_id then
-            print("stop_on_key off")
             vim.on_key(nil, stop_on_key_id) -- unregister
             stop_on_key_id = nil
         end
@@ -92,14 +87,12 @@ function M.show(filepath, swap, on_choice)
         on_choice(choice)
     end
 
-    -- Map hotkeys
     for key, action in pairs(hotkeys) do
         vim.keymap.set("n", key, function()
             close(action)
         end, { buffer = bufnr, nowait = true })
     end
 
-    -- Enter selects the current action line
     vim.keymap.set("n", "<CR>", function()
         local lnum = vim.fn.line(".")
         local idx = math.max(1, math.min(lnum - action_start + 1, 5))
@@ -113,7 +106,6 @@ function M.show(filepath, swap, on_choice)
         close(choice_map[idx] or M.ACTIONS.ABORT)
     end, { buffer = bufnr, nowait = true })
 
-    -- Navigation j/k
     vim.keymap.set("n", "j", function()
         local lnum = vim.fn.line(".")
         if lnum >= action_end then
@@ -132,7 +124,7 @@ function M.show(filepath, swap, on_choice)
         end
     end, { buffer = bufnr, nowait = true })
 
-    -- Catch-all: abort on any other key
+    -- Silent abort on any other key
     stop_on_key_id = vim.on_key(function(key)
         local ok, key_str = pcall(vim.fn.nr2char, key)
         if not ok or not key_str or key_str == "" then
