@@ -21,9 +21,7 @@ function M.show(filepath, swap, on_choice)
 
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.bo[bufnr].bufhidden = "wipe"
-    vim.bo[bufnr].modifiable = true
 
-    local action_header = "Choose an action:"
     local lines = {
         "E325: ATTENTION",
         "",
@@ -31,7 +29,7 @@ function M.show(filepath, swap, on_choice)
         "",
         "While opening file: " .. filepath,
         "",
-        action_header,
+        "Choose an action:",
         " [O]pen Read-only",
         " (E)dit anyway",
         " (R)ecover",
@@ -39,6 +37,8 @@ function M.show(filepath, swap, on_choice)
         " (A)bort / (Q)uit",
     }
 
+    -- Safely set buffer lines
+    vim.bo[bufnr].modifiable = true
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
     vim.bo[bufnr].modifiable = false
 
@@ -54,58 +54,66 @@ function M.show(filepath, swap, on_choice)
         title_pos = "left",
     })
 
-    -- Detect action start/end
-    local action_start, action_end
-    for i, line in ipairs(lines) do
-        if line:match(action_header) then
-            action_start = i + 1
-            action_end = #lines
-            break
-        end
-    end
-
-    local choice_map = {
-        M.ACTIONS.READONLY,
-        M.ACTIONS.EDIT,
-        M.ACTIONS.RECOVER,
-        M.ACTIONS.DELETE,
-        M.ACTIONS.ABORT,
-    }
-
+    local action_start = 8
+    local action_end = #lines
     local column = 2
     vim.api.nvim_win_set_cursor(win_id, { action_start, column })
 
-    -- Allowed keys
-    local allowed_keys = {
-        "O",
-        "o",
-        "E",
-        "e",
-        "R",
-        "r",
-        "D",
-        "d",
-        "A",
-        "a",
-        "Q",
-        "q",
-        "<CR>",
-        "<Esc>",
+    -- Allowed hotkeys
+    local hotkeys = {
+        O = M.ACTIONS.READONLY,
+        o = M.ACTIONS.READONLY,
+        E = M.ACTIONS.EDIT,
+        e = M.ACTIONS.EDIT,
+        R = M.ACTIONS.RECOVER,
+        r = M.ACTIONS.RECOVER,
+        D = M.ACTIONS.DELETE,
+        d = M.ACTIONS.DELETE,
+        A = M.ACTIONS.ABORT,
+        a = M.ACTIONS.ABORT,
+        Q = M.ACTIONS.ABORT,
+        q = M.ACTIONS.ABORT,
+        ["<Esc>"] = M.ACTIONS.ABORT,
     }
 
-    -- Block everything else in this buffer
-    vim.keymap.set("n", "<buffer>", function() end)
+    local stop_on_key_id
 
-    -- Enter to select current
+    -- Function to safely close
+    local function close(choice)
+        print("choice: " .. choice)
+        if stop_on_key_id then
+            print("stop_on_key off")
+            vim.on_key(nil, stop_on_key_id) -- unregister
+            stop_on_key_id = nil
+        end
+        if vim.api.nvim_win_is_valid(win_id) then
+            vim.api.nvim_win_close(win_id, true)
+        end
+        on_choice(choice)
+    end
+
+    -- Map hotkeys
+    for key, action in pairs(hotkeys) do
+        vim.keymap.set("n", key, function()
+            close(action)
+        end, { buffer = bufnr, nowait = true })
+    end
+
+    -- Enter selects the current action line
     vim.keymap.set("n", "<CR>", function()
         local lnum = vim.fn.line(".")
-        local idx = lnum - action_start + 1
-        local choice = choice_map[idx] or M.ACTIONS.ABORT
-        vim.api.nvim_win_close(win_id, true)
-        on_choice(choice)
+        local idx = math.max(1, math.min(lnum - action_start + 1, 5))
+        local choice_map = {
+            M.ACTIONS.READONLY,
+            M.ACTIONS.EDIT,
+            M.ACTIONS.RECOVER,
+            M.ACTIONS.DELETE,
+            M.ACTIONS.ABORT,
+        }
+        close(choice_map[idx] or M.ACTIONS.ABORT)
     end, { buffer = bufnr, nowait = true })
 
-    -- Cycle with j/k
+    -- Navigation j/k
     vim.keymap.set("n", "j", function()
         local lnum = vim.fn.line(".")
         if lnum >= action_end then
@@ -124,28 +132,16 @@ function M.show(filepath, swap, on_choice)
         end
     end, { buffer = bufnr, nowait = true })
 
-    -- Hotkeys
-    local hotkeys = {
-        O = M.ACTIONS.READONLY,
-        o = M.ACTIONS.READONLY,
-        E = M.ACTIONS.EDIT,
-        e = M.ACTIONS.EDIT,
-        R = M.ACTIONS.RECOVER,
-        r = M.ACTIONS.RECOVER,
-        D = M.ACTIONS.DELETE,
-        d = M.ACTIONS.DELETE,
-        A = M.ACTIONS.ABORT,
-        a = M.ACTIONS.ABORT,
-        Q = M.ACTIONS.ABORT,
-        q = M.ACTIONS.ABORT,
-        ["<Esc>"] = M.ACTIONS.ABORT,
-    }
-    for key, action in pairs(hotkeys) do
-        vim.keymap.set("n", key, function()
-            vim.api.nvim_win_close(win_id, true)
-            on_choice(action)
-        end, { buffer = bufnr, nowait = true })
-    end
+    -- Catch-all: abort on any other key
+    stop_on_key_id = vim.on_key(function(key)
+        local ok, key_str = pcall(vim.fn.nr2char, key)
+        if not ok or not key_str or key_str == "" then
+            return
+        end
+        if not hotkeys[key_str] then
+            close(M.ACTIONS.ABORT)
+        end
+    end)
 end
 
 return M
