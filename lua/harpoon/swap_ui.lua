@@ -111,7 +111,6 @@ function M.show(filepath, swap, on_choice)
         close(choice_map[idx] or M.ACTIONS.ABORT)
     end, { buffer = bufnr, nowait = true, silent = true })
 
-    -- Navigation
     vim.keymap.set("n", "j", function()
         local lnum = vim.fn.line(".")
         if lnum >= action_end then
@@ -130,7 +129,6 @@ function M.show(filepath, swap, on_choice)
         end
     end, { buffer = bufnr, nowait = true, silent = true })
 
-    -- Silent abort on any other key
     stop_on_key_id = vim.on_key(function(key)
         local ok, key_str = pcall(vim.fn.nr2char, key)
         if not ok or not key_str or key_str == "" then
