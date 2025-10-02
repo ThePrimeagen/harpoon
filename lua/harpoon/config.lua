@@ -107,6 +107,15 @@ function M.get_default_config()
 
                 options = options or {}
 
+                if vim.fn.bufexists(list_item.value) == 1 then
+                    return pcall(
+                        list.config._do_select,
+                        list_item,
+                        list,
+                        options
+                    )
+                end
+
                 -- Check if swap exists BEFORE creating/loading the buffer
                 local swap
                 for _, dir in ipairs(vim.opt.directory:get()) do
@@ -139,7 +148,6 @@ function M.get_default_config()
                             pcall(vim.cmd, "edit!" .. list_item.value)
                         end
 
-                        -- Only now call _do_select if we need Harpoon tracking
                         vim.schedule(function()
                             pcall(
                                 list.config._do_select,
