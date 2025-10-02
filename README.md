@@ -124,7 +124,7 @@ bind-key -r G run-shell "path-to-harpoon/harpoon/scripts/tmux/switch-back-to-nvi
 ### Telescope Support
 1st register harpoon as a telescope extension
 ```lua
-require("telescope").load_extension('harpoon')
+:lua require("telescope").load_extension('harpoon')
 ```
 currently only marks are supported in telescope
 ```
