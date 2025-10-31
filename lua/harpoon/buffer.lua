@@ -28,7 +28,7 @@ function M.run_toggle_command(key)
 end
 
 ---@param bufnr number
-function M.setup_autocmds_and_keymaps(bufnr)
+function M.setup_autocmds_and_keymaps(bufnr, close_on_esc)
     local curr_file = vim.api.nvim_buf_get_name(0)
     local cmd = string.format(
         "autocmd Filetype harpoon "
@@ -53,9 +53,11 @@ function M.setup_autocmds_and_keymaps(bufnr)
         M.run_toggle_command("q")
     end, { buffer = bufnr, silent = true })
 
-    vim.keymap.set("n", "<Esc>", function()
-        M.run_toggle_command("Esc")
-    end, { buffer = bufnr, silent = true })
+    if close_on_esc then
+        vim.keymap.set("n", "<Esc>", function()
+            M.run_toggle_command("Esc")
+        end, { buffer = bufnr, silent = true })
+    end
 
     vim.keymap.set("n", "<CR>", function()
         M.run_select_command()
