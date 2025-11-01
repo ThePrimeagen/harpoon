@@ -267,6 +267,9 @@ harpoon:extend(harpoon_extensions.builtins.highlight_current_file())
 ```
 
 ### Highlight Groups
+*   Use `HarpoonFile` to highlight the *file* part of a path in the harpoon buffer
+*   Use `HarpoonDirectory` to highlight the *directory* part of a path in the harpoon buffer
+
 TODO: Fill in the idea that we will emit out window information
 
 ### Logger
