@@ -6,11 +6,12 @@ local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
 local harpoon = require("harpoon")
 
-local function filter_empty_string(list)
+local function filter_empty_item(harpoon_list)
     local next = {}
-    for idx = 1, #list do
-        if list[idx].value ~= "" then
-            table.insert(next, list[idx])
+    for idx = 1, harpoon_list:length() do
+        local item = harpoon_list:get(idx)
+        if item ~= nil then
+            table.insert(next, item)
         end
     end
 
@@ -19,7 +20,7 @@ end
 
 local generate_new_finder = function()
     return finders.new_table({
-        results = filter_empty_string(harpoon:list().items),
+        results = filter_empty_item(harpoon:list()),
         entry_maker = function(entry)
             local line = entry.value
                 .. ":"
@@ -83,33 +84,44 @@ local delete_harpoon_mark = function(prompt_bufnr)
     current_picker:refresh(generate_new_finder(), { reset_prompt = true })
 end
 
-local move_mark_up = function(prompt_bufnr)
-    local selection = action_state.get_selected_entry()
-    local length = harpoon:list():length()
+local get_selection_info = function()
+    local mark_name = action_state.get_selected_entry().value.value
+    return harpoon:list():get_by_value(mark_name)
+end
 
-    if selection.index == length then
-        return
+local move_mark_directed = function(prompt_bufnr, step, index, value)
+    local harpoon_list = harpoon:list()
+
+    local other = harpoon_list:get(index + step)
+    if other ~= nil then
+        harpoon_list:replace_at(index, other)
+    else
+        harpoon_list:remove_at(index)
     end
-
-    local mark_list = harpoon:list().items
-
-    table.remove(mark_list, selection.index)
-    table.insert(mark_list, selection.index + 1, selection.value)
+    harpoon_list:replace_at(index + step, value)
 
     local current_picker = action_state.get_current_picker(prompt_bufnr)
     current_picker:refresh(generate_new_finder(), { reset_prompt = true })
 end
 
-local move_mark_down = function(prompt_bufnr)
-    local selection = action_state.get_selected_entry()
-    if selection.index == 1 then
+local move_mark_up = function(prompt_bufnr)
+    local value, index = get_selection_info()
+
+    if index == harpoon:list():length() then
         return
     end
-    local mark_list = harpoon:list().items
-    table.remove(mark_list, selection.index)
-    table.insert(mark_list, selection.index - 1, selection.value)
-    local current_picker = action_state.get_current_picker(prompt_bufnr)
-    current_picker:refresh(generate_new_finder(), { reset_prompt = true })
+
+    move_mark_directed(prompt_bufnr, 1, index, value)
+end
+
+local move_mark_down = function(prompt_bufnr)
+    local value, index = get_selection_info()
+
+    if index == 1 then
+        return
+    end
+
+    move_mark_directed(prompt_bufnr, -1, index, value)
 end
 
 return function(opts)
@@ -135,3 +147,4 @@ return function(opts)
         })
         :find()
 end
+
