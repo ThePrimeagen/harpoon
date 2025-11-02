@@ -144,6 +144,18 @@ function Harpoon.setup(self, partial_config)
         self = the_harpoon
     end
 
+    if partial_config then
+        for list_name, value in pairs(partial_config) do
+            -- Handle list instances passed directly
+            if type(value) == "table" and value.__is_harpoon_list then
+                local key = self.config.settings.key()
+                self.lists[key] = self.lists[key] or {}
+                self.lists[key][list_name] = value
+                partial_config[list_name] = nil  -- Remove from config to avoid merging
+            end
+        end
+    end
+
     ---@diagnostic disable-next-line: param-type-mismatch
     self.config = Config.merge_config(partial_config, self.config)
     self.data = Data.Data:new(self.config)
