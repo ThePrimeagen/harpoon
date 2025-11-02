@@ -69,6 +69,10 @@ function Harpoon:list(name)
     local existing_list = lists[name]
 
     if existing_list then
+        vim.api.nvim_exec_autocmds("User", {
+            pattern = "HarpoonListRead",
+            data = existing_list,
+        })
         self._extensions:emit(Extensions.event_names.LIST_READ, existing_list)
         return existing_list
     end
@@ -77,6 +81,10 @@ function Harpoon:list(name)
     local list_config = Config.get_config(self.config, name)
 
     local list = List.decode(list_config, name, data)
+    vim.api.nvim_exec_autocmds("User", {
+        pattern = "HarpoonListCreated",
+        data = list,
+    })
     self._extensions:emit(Extensions.event_names.LIST_CREATED, list)
     lists[name] = list
 
@@ -148,6 +156,10 @@ function Harpoon.setup(self, partial_config)
     self.config = Config.merge_config(partial_config, self.config)
     self.data = Data.Data:new(self.config)
     self.ui:configure(self.config.settings)
+    vim.api.nvim_exec_autocmds("User", {
+        pattern = "HarpoonSetupCalled",
+        data = self.config,
+    })
     self._extensions:emit(Extensions.event_names.SETUP_CALLED, self.config)
 
     ---TODO: should we go through every seen list and update its config?
