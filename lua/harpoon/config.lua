@@ -85,7 +85,19 @@ function M.get_default_config()
 
             ---@param list_item HarpoonListItem
             display = function(list_item)
-                return list_item.value
+                local nbsp = "\u{00A0}"
+                local icons_loaded, icons_package =
+                    pcall(require, "nvim-web-devicons")
+
+                if not icons_loaded then
+                    return list_item.value
+                end
+
+                local icon = icons_package.get_icon(
+                    vim.fn.fnamemodify(list_item.value, ":t")
+                ) or ""
+
+                return icon .. nbsp .. list_item.value
             end,
 
             --- the select function is called when a user selects an item from
