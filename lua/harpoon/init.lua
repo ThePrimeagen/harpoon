@@ -173,6 +173,7 @@ function Harpoon.setup(self, partial_config)
         self.hooks_setup = true
     end
 
+    sync_on_change(self)
     return self
 end
 
