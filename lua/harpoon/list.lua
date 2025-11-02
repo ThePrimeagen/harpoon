@@ -299,7 +299,7 @@ end
 ---
 --- @param opts? HarpoonNavOptions
 function HarpoonList:next(opts)
-    opts = opts or {}
+    opts = opts or { ui_nav_wrap = true }
 
     self._index = self._index + 1
     if self._index > self._length then
@@ -316,7 +316,7 @@ end
 ---
 --- @param opts? HarpoonNavOptions
 function HarpoonList:prev(opts)
-    opts = opts or {}
+    opts = opts or { ui_nav_wrap = true }
 
     self._index = self._index - 1
     if self._index < 1 then
