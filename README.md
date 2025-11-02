@@ -34,8 +34,9 @@ tmux windows, or dream up your own custom action and execute with a single key
 1. Unlimited lists and items within the lists
 
 ## ⇁ Installation
-* neovim 0.8.0+ required
-* install using your favorite plugin manager (i am using `packer` in this case)
+*neovim 0.8.0+ required*
+Install using your favorite plugin manager
+### Using Packer
 ```lua
 use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
 use {
@@ -44,14 +45,13 @@ use {
     requires = { {"nvim-lua/plenary.nvim"} }
 }
 ```
-* install using [lazy.nvim](https://github.com/folke/lazy.nvim)
+### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+Harpoon2 is available as an extra lazyvim plugin. Just add this import in the specs
+of `lazy.lua` config file:
 ```lua
-{
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" }
-}
+{ import = "lazyvim.plugins.extras.editor.harpoon2" }
 ```
+(see the [default configuration](https://github.com/Buer-Nahida/LazyVim/blob/1f5c005c030233438f049ec4de312b4e60184fda/lua/lazyvim/plugins/extras/editor/harpoon2.lua))
 
 ## ⇁ Getting Started
 
