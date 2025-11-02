@@ -44,8 +44,8 @@ local generate_new_finder = function()
                 value = entry,
                 ordinal = line,
                 display = make_display,
-                lnum = entry.row,
-                col = entry.col,
+                lnum = entry.context.row,
+                col = entry.context.col,
                 filename = entry.value,
             }
         end,
