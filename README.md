@@ -207,7 +207,7 @@ There is quite a bit of behavior you can configure via `harpoon:setup()`
 * `create_list_item`: called when `list:add()` or `list:prepend()` is called.  called with an item, which will be a string, when adding through the ui menu
 * `BufLeave`: this function is called for every list on BufLeave.  if you need custom behavior, this is the place
 * `VimLeavePre`: this function is called for every list on VimLeavePre.
-* `get_root_dir`: used for creating relative paths.  defaults to `vim.loop.cwd()`
+* `get_root_dir`: used for creating relative paths.  defaults to `vim.uv.cwd()`
 
 ### Settings
 Settings can alter the experience of harpoon
@@ -232,7 +232,7 @@ settings = {
     save_on_toggle = false,
     sync_on_ui_close = false,
     key = function()
-        return vim.loop.cwd()
+        return vim.uv.cwd()
     end,
 },
 ```
