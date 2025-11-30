@@ -39,7 +39,7 @@ tmux windows, or dream up your own custom action and execute with a single key
 ```lua
 use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
 use {
-    "ThePrimeagen/harpoon",
+    "theprimeagen/harpoon",
     branch = "harpoon2",
     requires = { {"nvim-lua/plenary.nvim"} }
 }
