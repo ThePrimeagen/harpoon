@@ -4,6 +4,7 @@ local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
     return Path:new(buf_name):make_relative(root)
 end
+
 local function to_exact_name(value)
     return "^" .. value .. "$"
 end
@@ -13,7 +14,7 @@ local DEFAULT_LIST = "__harpoon_files"
 M.DEFAULT_LIST = DEFAULT_LIST
 
 ---@alias HarpoonListItem {value: any, context: any}
----@alias HarpoonListFileItem {value: string, context: {row: number, col: number}}
+---@alias HarpoonListFileItem {value: string, context: {row: number, col: number, viewport: table}}
 ---@alias HarpoonListFileOptions {split: boolean, vsplit: boolean, tabedit: boolean}
 
 ---@class HarpoonPartialConfigItem
@@ -60,6 +61,7 @@ function M.get_default_config()
         settings = {
             save_on_toggle = false,
             sync_on_ui_close = false,
+            restore_viewport = false,
 
             key = function()
                 return vim.loop.cwd()
@@ -164,6 +166,10 @@ function M.get_default_config()
                     end
                 end
 
+                if settings.viewport then
+                    vim.fn.winrestview(list_item.context.viewport)
+                end
+
                 Extensions.extensions:emit(Extensions.event_names.NAVIGATE, {
                     buffer = bufnr,
                 })
@@ -211,6 +217,7 @@ function M.get_default_config()
                     context = {
                         row = pos[1],
                         col = pos[2],
+                        viewport = vim.fn.winsaveview(),
                     },
                 }
             end,
@@ -239,6 +246,7 @@ function M.get_default_config()
 
                     item.context.row = pos[1]
                     item.context.col = pos[2]
+                    item.context.viewport = vim.fn.winsaveview()
 
                     Extensions.extensions:emit(
                         Extensions.event_names.POSITION_UPDATED,

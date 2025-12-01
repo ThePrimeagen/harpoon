@@ -46,6 +46,7 @@ local generate_new_finder = function()
                 display = make_display,
                 lnum = entry.row,
                 col = entry.col,
+                viewport = entry.viewport,
                 filename = entry.value,
             }
         end,
