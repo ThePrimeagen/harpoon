@@ -24,7 +24,10 @@ end
 
 ---@param extension HarpoonExtension
 function HarpoonExtensions:add_listener(extension)
-    table.insert(self.listeners, extension)
+    for k, v in pairs(extension) do
+        self.listeners[k] = self.listeners[k] or {}
+        table.insert(self.listeners[k], v)
+    end
 end
 
 function HarpoonExtensions:clear_listeners()
@@ -34,9 +37,9 @@ end
 ---@param type string
 ---@param ... any
 function HarpoonExtensions:emit(type, ...)
-    for _, cb in ipairs(self.listeners) do
-        if cb[type] then
-            cb[type](...)
+    if self.listeners[type] then
+        for _, cb in ipairs(self.listeners[type]) do
+            cb(...)
         end
     end
 end
