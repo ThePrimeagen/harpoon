@@ -2,7 +2,7 @@ local Extensions = require("harpoon.extensions")
 local Logger = require("harpoon.logger")
 local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
-    return Path:new(buf_name):make_relative(root)
+    return vim.fs.normalize(Path:new(buf_name):make_relative(root))
 end
 local function to_exact_name(value)
     return "^" .. value .. "$"
@@ -198,7 +198,6 @@ function M.get_default_config()
                     )
 
                 Logger:log("config_default#create_list_item", name)
-
                 local bufnr = vim.fn.bufnr(name, false)
 
                 local pos = { 1, 0 }
