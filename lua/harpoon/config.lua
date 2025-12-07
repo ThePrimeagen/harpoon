@@ -4,8 +4,8 @@ local Path = require("plenary.path")
 local function normalize_path(buf_name, root)
     return Path:new(buf_name):make_relative(root)
 end
-local function to_exact_name(value)
-    return "^" .. value .. "$"
+local function to_absolute_path(value)
+    return vim.loop.fs_realpath(value)
 end
 
 local M = {}
@@ -106,7 +106,7 @@ function M.get_default_config()
 
                 options = options or {}
 
-                local bufnr = vim.fn.bufnr(to_exact_name(list_item.value))
+                local bufnr = vim.fn.bufnr(to_absolute_path(list_item.value))
                 local set_position = false
                 if bufnr == -1 then -- must create a buffer!
                     set_position = true
