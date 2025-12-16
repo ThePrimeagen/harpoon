@@ -52,6 +52,11 @@ use {
     dependencies = { "nvim-lua/plenary.nvim" }
 }
 ```
+* install using [vim-plug](https://github.com/junegunn/vim-plug)
+```vim
+Plug 'nvim-lua/plenary.nvim'
+Plug 'ThePrimeagen/harpoon', { 'branch': 'harpoon2' }
+```
 
 ## ⇁ Getting Started
 
