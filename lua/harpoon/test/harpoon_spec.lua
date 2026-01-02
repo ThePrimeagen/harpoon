@@ -128,7 +128,7 @@ describe("harpoon", function()
             col = 3,
         }, {
             row = 4,
-            col = 3,
+            col = 2,
         })
     end)
 
@@ -138,7 +138,7 @@ describe("harpoon", function()
             col = 4,
         }, {
             row = 4,
-            col = 3,
+            col = 2,
         })
     end)
 
@@ -148,7 +148,7 @@ describe("harpoon", function()
             col = 4,
         }, {
             row = 4,
-            col = 3,
+            col = 2,
         })
     end)
 

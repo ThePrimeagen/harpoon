@@ -1,3 +1,5 @@
+local Path = require("plenary.path")
+
 local M = {}
 
 function M.trim(str)
@@ -20,6 +22,10 @@ end
 
 function M.is_white_space(str)
     return str:gsub("%s", "") == ""
+end
+
+function M.normalize_path(buf_name, root)
+    return Path:new(buf_name):make_relative(root)
 end
 
 return M
