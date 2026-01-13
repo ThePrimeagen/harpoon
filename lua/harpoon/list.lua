@@ -220,6 +220,27 @@ function HarpoonList:remove_at(index)
     return self
 end
 
+function HarpoonList:remove_empty_entries()
+    local j = 1;
+    local newLength = self._length
+
+    for i = 1, self._length do
+        if self.items[i] == nil then
+            while j < self._length and self.items[j] == nil do
+                j = j + 1
+            end
+            if self.items[j] == nil then
+                break
+            end
+            self.items[i] = self.items[j]
+            self.items[j] = nil
+        end
+        j = j + 1
+        newLength = i
+    end
+    self._length = newLength
+end
+
 function HarpoonList:get(index)
     return self.items[index]
 end
