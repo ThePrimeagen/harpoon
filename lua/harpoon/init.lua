@@ -146,6 +146,7 @@ function Harpoon.setup(self, partial_config)
 
     ---@diagnostic disable-next-line: param-type-mismatch
     self.config = Config.merge_config(partial_config, self.config)
+    self.data = Data.Data:new(self.config)
     self.ui:configure(self.config.settings)
     self._extensions:emit(Extensions.event_names.SETUP_CALLED, self.config)
 
