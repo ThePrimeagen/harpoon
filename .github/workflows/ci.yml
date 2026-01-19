@@ -3,38 +3,42 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  unit_tests:
-    name: unit tests
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-22.04
-            rev: nightly/nvim-linux64.tar.gz
-          - os: ubuntu-22.04
-            rev: v0.9.0/nvim-linux64.tar.gz
-    steps:
-      - uses: actions/checkout@v3
-      - run: date +%F > todays-date
-      - name: Restore from todays cache
-        uses: actions/cache@v3
-        with:
-          path: _neovim
-          key: ${{ runner.os }}-${{ matrix.rev }}-${{ hashFiles('todays-date') }}
+    unit_tests:
+        name: unit tests
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: ubuntu-22.04
+                      rev: nightly/nvim-linux-x86_64.tar.gz
+                    - os: ubuntu-22.04
+                      rev: v0.11.5/nvim-linux-x86_64.tar.gz
+        steps:
+            - uses: actions/checkout@v3
 
-      - name: Prepare
-        run: |
-          test -d _neovim || {
-            mkdir -p _neovim
-            curl -sL "https://github.com/neovim/neovim/releases/download/${{ matrix.rev }}" | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
-          }
-      - name: Dependencies
-        run: |
-            git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
-            ln -s "$(pwd)" ~/.local/share/nvim/site/pack/vendor/start
-      - name: Run tests
-        run: |
-          export PATH="${PWD}/_neovim/bin:${PATH}"
-          nvim --version
-          make test
+            - run: date +%F > todays-date
+
+            - name: Restore from todays cache
+              uses: actions/cache@v3
+              with:
+                  path: _neovim
+                  key: ${{ runner.os }}-${{ matrix.rev }}-${{ hashFiles('todays-date') }}
+
+            - name: Prepare
+              run: |
+                  test -d _neovim || {
+                    mkdir -p _neovim
+                    curl -sL "https://github.com/neovim/neovim/releases/download/${{ matrix.rev }}" | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
+                  }
+
+            - name: Dependencies
+              run: |
+                  git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
+                  ln -s "$(pwd)" ~/.local/share/nvim/site/pack/vendor/start
+
+            - name: Run tests
+              run: |
+                  export PATH="${PWD}/_neovim/bin:${PATH}"
+                  nvim --version
+                  make test
