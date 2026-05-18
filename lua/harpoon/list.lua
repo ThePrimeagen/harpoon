@@ -1,7 +1,7 @@
 local Logger = require("harpoon.logger")
 local utils = require("harpoon.utils")
 local Extensions = require("harpoon.extensions")
-local config = require("harpoon.config")
+local harpoon_config = require("harpoon.config")
 
 local function guess_length(arr)
     local last_known = #arr
@@ -157,7 +157,7 @@ function HarpoonList:add(item)
             { list = self, item = item, idx = idx }
         )
     else
-        config.update_harpoon_item_position(self)
+        harpoon_config.update_harpoon_item_position(self)
     end
 
     return self
@@ -179,7 +179,7 @@ function HarpoonList:prepend(item)
             { list = self, item = item, idx = 1 }
         )
     else
-        config.update_harpoon_item_position(self)
+        harpoon_config.update_harpoon_item_position(self)
     end
 
     return self

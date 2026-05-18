@@ -251,7 +251,13 @@ function M.get_default_config()
                 M.update_harpoon_item_position(list, arg.buf)
             end,
 
-            autocmds = { "BufLeave" },
+            ---@param arg {buf: number}
+            ---@param list HarpoonList
+            VimLeavePre = function(arg, list)
+                M.update_harpoon_item_position(list, arg.buf)
+            end,
+
+            autocmds = { "BufLeave", "VimLeavePre" },
         },
     }
 end
